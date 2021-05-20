@@ -10,32 +10,33 @@ type game struct {
 }
 
 func initGame() *game {
-	return &game{
+	g := &game{
 		currentTurn: 0,
-		currentEnemies: []*enemy{
-			{
-				name:    "hydra",
-				heads:   5,
-				element: ELEMENT_NONE,
-			},
-		},
+		currentEnemies: []*enemy{},
 		player: &player{
 			hp:    10,
 			maxhp: 10,
 			weapons: []*weapon{
 				{
 					weaponType: WTYPE_SUBSTRACTOR,
-					element:    ELEMENT_NONE,
+					element:    getRandomElement(),
 					damage:     1,
 				},
 				{
 					weaponType: WTYPE_SUBSTRACTOR,
-					element:    ELEMENT_NONE,
+					element:    getRandomElement(),
+					damage:     2,
+				},
+				{
+					weaponType: WTYPE_DIVISOR,
+					element:    getRandomElement(),
 					damage:     2,
 				},
 			},
 		},
 	}
+	g.currentEnemies = append(g.currentEnemies, g.generateHydra(1, 1))
+	return g
 }
 
 func (g *game) run() {
@@ -51,6 +52,7 @@ func (g *game) run() {
 				}
 			}
 			g.currentTurn++
+			g.turnMade = false
 		}
 	}
 }
