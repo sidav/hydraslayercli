@@ -16,21 +16,36 @@ func initGame() *game {
 		player: &player{
 			hp:    10,
 			maxhp: 10,
-			weapons: []*weapon{
+			items: []*item{
 				{
-					weaponType: WTYPE_SUBSTRACTOR,
-					element:    getRandomElement(),
-					damage:     1,
+					weaponInfo: &weapon{
+						weaponType: WTYPE_SUBSTRACTOR,
+						element:    getRandomElement(),
+						damage:     1,
+					},
 				},
 				{
-					weaponType: WTYPE_SUBSTRACTOR,
-					element:    getRandomElement(),
-					damage:     2,
+					weaponInfo: &weapon{
+						weaponType: WTYPE_SUBSTRACTOR,
+						element:    getRandomElement(),
+						damage:     2,
+					},
 				},
 				{
-					weaponType: WTYPE_DIVISOR,
-					element:    getRandomElement(),
-					damage:     2,
+					weaponInfo: &weapon{
+						weaponType: WTYPE_DIVISOR,
+						element:    getRandomElement(),
+						damage:     2,
+					},
+				},
+				{
+					itemType: ITEM_HEAL,
+				},
+				{
+					itemType: ITEM_ENCHANTER,
+				},
+				{
+					itemType: ITEM_DESTROY_HYDRA,
 				},
 			},
 		},

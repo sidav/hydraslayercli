@@ -54,7 +54,7 @@ func (g *game) calculateHeadsRegrowAfterHitBy(enemy *enemy, weapon *weapon) int 
 		panic("ELEMENT NOT FOUND IN TABLE")
 	}
 	if regrow == -2 {
-		return 2*(enemy.heads - g.calculateDamageOnHeads(weapon, enemy))
+		return enemy.heads - g.calculateDamageOnHeads(weapon, enemy)
 	}
 	return regrow
 }

@@ -26,12 +26,16 @@ func (gs *gameScreen) renderScreen(g *game) {
 		println(fmt.Sprintf("%s%d: %s", selectStr, i+1, e.getName()))
 	}
 	println(fmt.Sprintf("You have %d/%d hp and:", g.player.hp, g.player.maxhp))
-	for i, w := range g.player.weapons {
+	for i, w := range g.player.items {
 		selectStr := "  "
 		if uint8(i) == gs.currSelectedItem {
 			selectStr = "->"
 		}
 		println(fmt.Sprintf("%s %c: %s", selectStr, 'A'+i, w.getName()))
+	}
+	if len(g.currentEnemies) > 0 {
+		gs.currLog = g.getPossibleAttackStringDescription(g.player.items[gs.currSelectedItem].weaponInfo,
+			g.currentEnemies[gs.currSelectedEnemy])
 	}
 	println(gs.currLog)
 	print("Your action?\n> ")
@@ -39,7 +43,6 @@ func (gs *gameScreen) renderScreen(g *game) {
 }
 
 func (gs *gameScreen) doInput(g *game) {
-	gs.currLog = ""
 	reader := bufio.NewReader(os.Stdin)
 	gs.input, _ = reader.ReadString('\n')
 	gs.input = strings.Trim(gs.input, " \n")
@@ -58,7 +61,7 @@ func (gs *gameScreen) doInput(g *game) {
 		}
 		if splitted[0] == "hit" {
 			if len(g.currentEnemies) > 0 {
-				g.performPlayerHit(g.player.weapons[gs.currSelectedItem],
+				g.performPlayerHit(g.player.items[gs.currSelectedItem].weaponInfo,
 					g.currentEnemies[gs.currSelectedEnemy])
 			}
 			return
@@ -68,9 +71,13 @@ func (gs *gameScreen) doInput(g *game) {
 		if splitted[0][0] >= 'a' && splitted[0][0] <= 'z' {
 			itemnum := 255 - ('a' - splitted[0][0] - 1)
 			print(splitted[0][0], " ", itemnum)
-			if uint8(len(g.player.weapons)) > itemnum {
+			if uint8(len(g.player.items)) > itemnum {
 				// gs.currLog = g.player.weapons[itemnum].getName()
-				gs.currSelectedItem = itemnum
+				if g.player.items[itemnum].isWeapon() {
+					gs.currSelectedItem = itemnum
+				} else {
+					// Item description!..
+				}
 			}
 		}
 
@@ -82,11 +89,6 @@ func (gs *gameScreen) doInput(g *game) {
 				// gs.currLog = g.currentEnemies[enemynum].getName()
 				gs.currSelectedEnemy = enemynum
 			}
-		}
-
-		if len(g.currentEnemies) > 0 {
-			gs.currLog += g.getPossibleAttackStringDescription(g.player.weapons[gs.currSelectedItem],
-				g.currentEnemies[gs.currSelectedEnemy])
 		}
 	}
 }
