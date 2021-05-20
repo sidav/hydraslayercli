@@ -35,6 +35,9 @@ func (g *game) calculateDamageOnHeads(weapon *weapon, enemy *enemy) int {
 	// TODO: consider elements
 	switch weapon.weaponType {
 	case WTYPE_SUBSTRACTOR:
+		if weapon.damage > enemy.heads {
+			return 0
+		}
 		return weapon.damage
 	case WTYPE_DIVISOR:
 		if enemy.heads % weapon.damage != 0 {
@@ -46,7 +49,14 @@ func (g *game) calculateDamageOnHeads(weapon *weapon, enemy *enemy) int {
 }
 
 func (g *game) calculateHeadsRegrowAfterHitBy(enemy *enemy, weapon *weapon) int {
-	return 1
+	regrow, found := headRegrowsForElement[enemy.element][weapon.element]
+	if !found {
+		panic("ELEMENT NOT FOUND IN TABLE")
+	}
+	if regrow == -2 {
+		return 2*(enemy.heads - g.calculateDamageOnHeads(weapon, enemy))
+	}
+	return regrow
 }
 
 func (g *game) calculateDamageByHeads(headsNum int) int {

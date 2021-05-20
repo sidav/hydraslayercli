@@ -15,12 +15,11 @@ type gameScreen struct {
 
 func (gs *gameScreen) renderScreen(g *game) {
 	fmt.Println("\033[2J") // linux only!
-	println("==================")
 	println("Turn ", g.currentTurn)
 	println("")
 	println("You see here enemies:")
 	for i, e := range g.currentEnemies {
-		selectStr := "  "
+		selectStr := "   "
 		if uint8(i) == gs.currSelectedEnemy {
 			selectStr = "-> "
 		}
@@ -76,9 +75,10 @@ func (gs *gameScreen) doInput(g *game) {
 		}
 
 		//select enemy
-		if splitted[0][0] > '0' && splitted[0][0] < '9' {
-			enemynum := '1' - splitted[0][0]
-			if uint8(len(g.player.weapons)) > enemynum {
+		if splitted[0][0] >= '0' && splitted[0][0] <= '9' {
+			enemynum := splitted[0][0] - '1'
+			// print(splitted[0][0], '1', '0', enemynum)
+			if uint8(len(g.currentEnemies)) > enemynum {
 				// gs.currLog = g.currentEnemies[enemynum].getName()
 				gs.currSelectedEnemy = enemynum
 			}

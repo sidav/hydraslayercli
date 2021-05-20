@@ -12,5 +12,9 @@ type enemy struct {
 }
 
 func (e *enemy) getName() string {
-	return strings.Title(fmt.Sprintf("%s %s (%d heads)", getElementName(e.element), e.name, e.heads))
+	name := fmt.Sprintf("%s (%d heads)", e.name, e.heads)
+	if getElementName(e.element) != "" {
+		name = getElementName(e.element) + " " + name
+	}
+	return getElementColorStr(e.element) + strings.Title(name) + Reset
 }

@@ -36,6 +36,7 @@ func initGame() *game {
 		},
 	}
 	g.currentEnemies = append(g.currentEnemies, g.generateHydra(1, 1))
+	g.currentEnemies = append(g.currentEnemies, g.generateHydra(1, 1))
 	return g
 }
 
@@ -44,7 +45,7 @@ func (g *game) run() {
 	for !g.exit {
 		gs.renderScreen(g)
 		if g.turnMade {
-			for i := range g.currentEnemies {
+			for i := len(g.currentEnemies) - 1; i >= 0; i-- {
 				if g.currentEnemies[i].heads == 0 {
 					g.currentEnemies = append(g.currentEnemies[:i], g.currentEnemies[i+1:]...)
 				} else {
