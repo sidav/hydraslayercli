@@ -27,7 +27,7 @@ func (i *item) applyPassiveEffect(g *game) {
 	}
 	switch i.passiveEffect.effectType {
 	case PASSIVE_EFFECT_HEALER:
-		if g.currentTurn == 1 {
+		if g.currentTurn == 0 {
 			g.player.hp = g.player.maxhp
 		}
 	case PASSIVE_EFFECT_REGENERATOR:
