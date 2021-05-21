@@ -1,9 +1,7 @@
 package main
 
-type element uint8
-
 const (
-	ELEMENT_NONE element = iota
+	ELEMENT_NONE uint8 = iota
 	ELEMENT_FIRE
 	ELEMENT_ICE
 	ELEMENT_STONE
@@ -11,7 +9,7 @@ const (
 	ELEMENTS_TOTAL // for random
 )
 
-func getElementName(element element) string {
+func getElementName(element uint8) string {
 	switch element {
 	case ELEMENT_NONE:
 		return ""
@@ -27,7 +25,7 @@ func getElementName(element element) string {
 	return "MISSING ELEMENT NAME"
 }
 
-func getElementColorStr(element element) string {
+func getElementColorStr(element uint8) string {
 	switch element {
 	case ELEMENT_NONE:
 		return White
@@ -43,11 +41,11 @@ func getElementColorStr(element element) string {
 	return "MISSING ELEMENT NAME"
 }
 
-func getRandomElement() element {
-	return element(uint8(rnd.Rand(int(ELEMENTS_TOTAL))))
+func getRandomElement() uint8 {
+	return uint8(uint8(rnd.Rand(int(ELEMENTS_TOTAL))))
 }
 
-var headRegrowsForElement = map[element]map[element]int{
+var headRegrowsForElement = map[uint8]map[uint8]int{
 	// HEADS_ELEM: {WEAPON_ELEM: REGROW}
 	// -2 regrow means duplicate remaining heads
 	ELEMENT_NONE: {ELEMENT_NONE: 1, ELEMENT_FIRE: 1, ELEMENT_ICE: 1, ELEMENT_STONE: 1, ELEMENT_STORM: 1},

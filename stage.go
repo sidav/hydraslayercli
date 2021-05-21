@@ -22,4 +22,12 @@ var StageInfo = []stage {
 		enemies:  3,
 		treasure: 2,
 	},
+	{
+		enemies:  3,
+		treasure: 3,
+	},
+	{
+		enemies:  1,
+		treasure: 5,
+	},
 }

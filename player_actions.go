@@ -41,7 +41,7 @@ func (g *game) justUseItem(item *item) {
 		g.player.hp = g.player.maxhp
 	case ITEM_INCREASE_HP:
 		g.currLog = fmt.Sprintf("%s makes you feel amazing!", item.getName())
-		g.player.maxhp += 1 
+		g.player.maxhp += 1
 		g.player.hp = g.player.maxhp
 	default:
 		g.currLog = fmt.Sprintf("ERROR: ADD SIMPLE USAGE OF %s.", item.getName())
@@ -56,9 +56,16 @@ func (g *game) useItemOnEnemy(item *item, enemy *enemy) {
 	case ITEM_HEAL:
 		g.currLog = fmt.Sprintf("Use %s on enemy? Srsly?", item.getName())
 		return
+	case ITEM_INCREASE_HP:
+		g.currLog = fmt.Sprintf("Are you nuts?")
+		return
 	case ITEM_DESTROY_HYDRA:
 		g.currLog = fmt.Sprintf("The magic obliterates poor %s!", enemy.getName())
 		enemy.heads = 0
+	case ITEM_CHANGE_ELEMENT:
+		g.currLog = fmt.Sprintf("You use %s on %s, making it into ", item.getName(), enemy.getName())
+		enemy.element = getRandomElement()
+		g.currLog += fmt.Sprintf("%s.", enemy.getName())
 	default:
 		g.currLog = fmt.Sprintf("ERROR: ADD USAGE %s ON ENEMY.", item.getName())
 		return
@@ -79,6 +86,14 @@ func (g *game) useItemOnItem(item, targetItem *item) {
 		g.currLog = fmt.Sprintf("You use %s on %s, making it into ", item.getName(), targetItem.getName())
 		targetItem.weaponInfo.damage++
 		g.currLog += fmt.Sprintf("%s.", targetItem.getName())
+	case ITEM_CHANGE_ELEMENT:
+		if targetItem.weaponInfo == nil {
+			g.currLog = fmt.Sprintf("But %s has no uint8!", targetItem.getName())
+			return
+		}
+		g.currLog = fmt.Sprintf("You use %s on %s, making it into ", item.getName(), targetItem.getName())
+		targetItem.weaponInfo.element = getRandomElement()
+		g.currLog += fmt.Sprintf("%s.", targetItem.getName())
 	default:
 		g.currLog = fmt.Sprintf("ERROR: ADD USAGE %s ON ITEM.", item.getName())
 		return
@@ -88,6 +103,19 @@ func (g *game) useItemOnItem(item, targetItem *item) {
 }
 
 func (g *game) pickupItemNumber(i int) {
+	if i == -1 { // pick up all
+		g.currLog = fmt.Sprintf("You pick up everything: ")
+		for i := 0; i < len(g.treasure); i++ {
+			if i > 0 {
+				g.currLog += ", "
+			}
+			g.player.items = append(g.player.items, g.treasure[i])
+			g.currLog +=  g.treasure[i].getName()
+		}
+		g.currLog += "."
+		g.treasure = []*item{}
+		return
+	}
 	if i < len(g.treasure) {
 		g.player.items = append(g.player.items, g.treasure[i])
 		g.currLog = fmt.Sprintf("You pick up the %s.", g.treasure[i].getName())

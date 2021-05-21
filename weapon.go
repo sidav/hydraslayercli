@@ -7,7 +7,7 @@ import (
 
 type weapon struct {
 	weaponType weaponType
-	element    element
+	element    uint8
 
 	damage int
 }

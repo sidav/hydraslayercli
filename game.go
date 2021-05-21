@@ -39,22 +39,6 @@ func initGame() *game {
 						damage:     2,
 					},
 				},
-				{
-					weaponInfo: &weapon{
-						weaponType: WTYPE_DIVISOR,
-						element:    getRandomElement(),
-						damage:     2,
-					},
-				},
-				{
-					itemType: ITEM_HEAL,
-				},
-				{
-					itemType: ITEM_ENCHANTER,
-				},
-				{
-					itemType: ITEM_DESTROY_HYDRA,
-				},
 			},
 		},
 	}
@@ -76,8 +60,10 @@ func (g *game) run() {
 		}
 		if g.stageFinished {
 			g.currentStageNumber++
+			g.currentTurn = 1
 			g.generateCurrentStage()
 			g.turnMade = false
+			g.stageFinished = false
 			g.currSelectedEnemy = 0
 			g.currLog = fmt.Sprintf("Welcome to stage %d! \n%s", g.currentStageNumber,
 				g.getPossibleAttackStringDescription(g.player.items[g.currSelectedItem].weaponInfo,

@@ -39,7 +39,7 @@ func (g *game) generateTreasure(depth int) *item {
 		}
 		newWeapon := &weapon{
 			weaponType: WTYPE_SUBSTRACTOR,
-			element:    0,
+			element:    getRandomElement(),
 			damage:     rnd.RandInRange(minDamage, maxDamage),
 		}
 		weaponTypePercent := rnd.RandomPercent()

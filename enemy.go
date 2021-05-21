@@ -6,9 +6,9 @@ import (
 )
 
 type enemy struct {
-	name string
-	heads int
-	element element
+	name    string
+	heads   int
+	element uint8
 }
 
 func (e *enemy) getName() string {

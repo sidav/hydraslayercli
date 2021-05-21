@@ -49,6 +49,13 @@ func (g *game) parsePlayerInput(input string) {
 		return
 	}
 
+	if splitted[0] == "cheat" {
+		for i := uint8(1); i < TOTAL_ITEM_TYPES_NUMBER; i++ {
+			g.player.items = append(g.player.items, &item{itemType: i})
+		}
+		return
+	}
+
 	if splitted[0] == "move" {
 		if len(g.enemies) == 0 {
 			g.stageFinished = true
@@ -60,6 +67,9 @@ func (g *game) parsePlayerInput(input string) {
 
 	if splitted[0] == "take" {
 		if len(splitted) == 2 {
+			if splitted[1] == "all" {
+				g.pickupItemNumber(-1)
+			}
 			takeIndex, indtype := charToIndexWithType(splitted[1][0])
 			if indtype == INDEX_ENEMY_OR_TREASURE {
 				g.pickupItemNumber(takeIndex)
@@ -87,29 +97,34 @@ func (g *game) parsePlayerInput(input string) {
 			useSI, useSType := charToIndexWithType(splitted[2][0])
 			g.performUseAction(useFI, useFType, useSI, useSType)
 		}
+		return
 	}
 
-	index, indtype := charToIndexWithType(splitted[0][0])
-	// select item
-	if indtype == INDEX_ITEM {
-		if len(g.player.items) > index {
-			// gs.currLog = g.player.weapons[itemnum].getName()
-			if g.player.items[index].isWeapon() {
-				g.currSelectedItem = index
-				g.currLog = ""
-			} else {
-				// Item description!..
+	if len(splitted[0]) == 1 {
+		index, indtype := charToIndexWithType(splitted[0][0])
+		// select item
+		if indtype == INDEX_ITEM {
+			if len(g.player.items) > index {
+				// gs.currLog = g.player.weapons[itemnum].getName()
+				if g.player.items[index].isWeapon() {
+					g.currSelectedItem = index
+					g.currLog = ""
+				} else {
+					// Item description!..
+				}
 			}
+			return
 		}
-	}
 
-	//select enemy
-	if indtype == INDEX_ENEMY_OR_TREASURE {
-		// print(splitted[0][0], '1', '0', enemynum)
-		if len(g.enemies) > index {
-			// gs.currLog = g.enemies[enemynum].getName()
-			g.currSelectedEnemy = index
-			g.currLog = ""
+		//select enemy
+		if indtype == INDEX_ENEMY_OR_TREASURE {
+			// print(splitted[0][0], '1', '0', enemynum)
+			if len(g.enemies) > index {
+				// gs.currLog = g.enemies[enemynum].getName()
+				g.currSelectedEnemy = index
+				g.currLog = ""
+			}
+			return
 		}
 	}
 	// nothing parsed
