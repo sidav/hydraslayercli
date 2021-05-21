@@ -1,17 +1,16 @@
 package main
 
-type itemType uint8
-
 const (
 	ITEM_NOTYPE = iota
 	ITEM_ENCHANTER
 	ITEM_HEAL
 	ITEM_DESTROY_HYDRA
 	ITEM_CONFUSE_HYDRA
+	TOTAL_ITEM_TYPES_NUMBER // for generators
 )
 
 type item struct {
-	itemType itemType
+	itemType   uint8
 	weaponInfo *weapon
 }
 

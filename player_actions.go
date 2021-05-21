@@ -17,8 +17,8 @@ func (g *game) performUseAction(usedIndex int, ft INDEXTYPE, targetIndex int, st
 	}
 
 	var targetEnemy *enemy
-	if st == INDEX_ENEMY && len(g.currentEnemies) > targetIndex {
-		targetEnemy = g.currentEnemies[targetIndex]
+	if st == INDEX_ENEMY && len(g.enemies) > targetIndex {
+		targetEnemy = g.enemies[targetIndex]
 	}
 	if usedItem != nil && targetEnemy != nil {
 		g.useItemOnEnemy(usedItem, targetEnemy)

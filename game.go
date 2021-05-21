@@ -3,10 +3,12 @@ package main
 import "fmt"
 
 type game struct {
-	currentTurn    int
-	currentEnemies []*enemy
-	player         *player
-	gameScreen     gameScreen
+	currentTurn        int
+	currentStageNumber int
+	enemies            []*enemy
+	treasure           []*item
+	player             *player
+	gameScreen         gameScreen
 
 	// player-related
 	exit                                bool
@@ -17,8 +19,9 @@ type game struct {
 
 func initGame() *game {
 	g := &game{
-		currentTurn:    0,
-		currentEnemies: []*enemy{},
+		currentTurn: 1,
+		currentStageNumber: 0,
+		enemies:     []*enemy{},
 		player: &player{
 			hp:    10,
 			maxhp: 10,
@@ -56,8 +59,7 @@ func initGame() *game {
 			},
 		},
 	}
-	g.currentEnemies = append(g.currentEnemies, g.generateHydra(1, 1))
-	g.currentEnemies = append(g.currentEnemies, g.generateHydra(1, 1))
+	g.generateCurrentStage()
 	return g
 }
 
@@ -65,7 +67,7 @@ func (g *game) run() {
 	for !g.exit {
 		if g.currLog == "" {
 			g.currLog = g.getPossibleAttackStringDescription(g.player.items[g.currSelectedItem].weaponInfo,
-				g.currentEnemies[g.currSelectedEnemy])
+				g.enemies[g.currSelectedEnemy])
 		}
 		g.playerTurn()
 		if g.turnMade {
@@ -77,12 +79,12 @@ func (g *game) run() {
 }
 
 func (g *game) actForEnemies() {
-	for i := len(g.currentEnemies) - 1; i >= 0; i-- {
-		if g.currentEnemies[i].heads == 0 {
-			g.currentEnemies = append(g.currentEnemies[:i], g.currentEnemies[i+1:]...)
+	for i := len(g.enemies) - 1; i >= 0; i-- {
+		if g.enemies[i].heads == 0 {
+			g.enemies = append(g.enemies[:i], g.enemies[i+1:]...)
 		} else {
-			damage := g.calculateDamageByHeads(g.currentEnemies[i].heads)
-			g.currLog += fmt.Sprintf(" %s bites you for %d damage. ", g.currentEnemies[i].getName(), damage)
+			damage := g.calculateDamageByHeads(g.enemies[i].heads)
+			g.currLog += fmt.Sprintf(" %s bites you for %d damage. ", g.enemies[i].getName(), damage)
 			g.player.hp -= damage
 		}
 	}

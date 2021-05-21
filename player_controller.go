@@ -41,9 +41,9 @@ func (g *game) parsePlayerInput(input string) {
 		return
 	}
 	if splitted[0] == "hit" {
-		if len(g.currentEnemies) > 0 {
+		if len(g.enemies) > 0 {
 			g.performPlayerHit(g.player.items[g.currSelectedItem].weaponInfo,
-				g.currentEnemies[g.currSelectedEnemy])
+				g.enemies[g.currSelectedEnemy])
 		}
 		return
 	}
@@ -77,8 +77,8 @@ func (g *game) parsePlayerInput(input string) {
 	//select enemy
 	if indtype == INDEX_ENEMY {
 		// print(splitted[0][0], '1', '0', enemynum)
-		if len(g.currentEnemies) > index {
-			// gs.currLog = g.currentEnemies[enemynum].getName()
+		if len(g.enemies) > index {
+			// gs.currLog = g.enemies[enemynum].getName()
 			g.currSelectedEnemy = index
 			g.currLog = ""
 		}
