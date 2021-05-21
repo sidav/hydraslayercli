@@ -30,7 +30,8 @@ func (g *game) addRandomTreasure(depth, difficulty int) {
 }
 
 func (g *game) generateTreasure(depth int) *item {
-	isWeapon := rnd.OneChanceFrom(2)
+	perc := rnd.RandomPercent()
+	isWeapon := perc < 33
 	if isWeapon {
 		minDamage := depth-depth/2
 		maxDamage := depth+depth/2+2
@@ -51,13 +52,24 @@ func (g *game) generateTreasure(depth int) *item {
 		}
 
 		return &item{
-			itemType:   0,
-			weaponInfo: newWeapon,
+			itemConsumableType: 0,
+			weaponInfo:         newWeapon,
+		}
+	}
+	isSpecialItem := perc < 50
+	if isSpecialItem {
+		return &item{
+			specialName:        "Ring",
+			passiveEffect:      &passiveEffect{
+				effectType:    getRandomPassiveEffect(),
+				activatesEach: 4,
+			},
+			weaponInfo:         nil,
 		}
 	}
 
 	return &item{
-		itemType:   uint8(rnd.RandInRange(1, TOTAL_ITEM_TYPES_NUMBER-1)),
-		weaponInfo: nil,
+		itemConsumableType: uint8(rnd.RandInRange(1, TOTAL_ITEM_TYPES_NUMBER-1)),
+		weaponInfo:         nil,
 	}
 }

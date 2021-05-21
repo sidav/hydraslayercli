@@ -43,13 +43,23 @@ func initGame() *game {
 			},
 		},
 	}
+	g.player.items = append(g.player.items, g.generateTreasure(0))
+	g.player.items = append(g.player.items, g.generateTreasure(0))
 	g.generateCurrentStage()
 	return g
 }
 
 func (g *game) run() {
 	for !g.abortGame {
-		if g.currLog == "" {
+		if g.turnMade || g.currentTurn == 0 {
+			for _, i := range g.player.items {
+				i.applyPassiveEffect(g)
+			}
+		}
+		if g.currentTurn == 0 {
+			g.currentTurn = 1
+		}
+		if g.currLog == "" && len(g.enemies) > 0 {
 			g.currLog = g.getPossibleAttackStringDescription(g.player.items[g.currSelectedItem].weaponInfo,
 				g.enemies[g.currSelectedEnemy])
 		}
@@ -69,7 +79,7 @@ func (g *game) run() {
 				print("You won!\n")
 				return
 			}
-			g.currentTurn = 1
+			g.currentTurn = 0
 			g.generateCurrentStage()
 			g.turnMade = false
 			g.stageFinished = false

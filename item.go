@@ -13,26 +13,49 @@ const (
 )
 
 type item struct {
-	itemType   uint8
-	weaponInfo *weapon
+	itemConsumableType uint8
+	specialName        string // for randarts and non-consumables 
+	passiveEffect      *passiveEffect
+	weaponInfo         *weapon
 }
 
 func (i *item) isWeapon() bool {
 	return i.weaponInfo != nil
 }
 
+func (i *item) hasPassiveEffect() bool {
+	return i.passiveEffect != nil
+}
+
 func (i *item) getName() string {
+	name := ""
+	if i.specialName != "" {
+		name = i.specialName
+	}
 	if i.isWeapon() {
-		return i.weaponInfo.getName()
+		name = i.weaponInfo.getName()
 	}
-	switch i.itemType {
-	case ITEM_HEAL: return "Healing powder"
-	case ITEM_ENCHANTER: return "Scroll of enchant weapon +1"
-	case ITEM_DESTROY_HYDRA: return "Scroll of destroy hydra"
-	case ITEM_CONFUSE_HYDRA: return "Scroll of confuse hydra"
-	case ITEM_INCREASE_HP: return "Potion of vitality"
-	case ITEM_STRENGTH: return "Potion of strength"
-	case ITEM_CHANGE_ELEMENT: return "Scroll of change element"
+	switch i.itemConsumableType {
+	case ITEM_HEAL:
+		name = "Healing powder"
+	case ITEM_ENCHANTER:
+		name = "Scroll of enchant weapon +1"
+	case ITEM_DESTROY_HYDRA:
+		name = "Scroll of destroy hydra"
+	case ITEM_CONFUSE_HYDRA:
+		name = "Scroll of confuse hydra"
+	case ITEM_INCREASE_HP:
+		name = "Potion of vitality"
+	case ITEM_STRENGTH:
+		name = "Potion of strength"
+	case ITEM_CHANGE_ELEMENT:
+		name = "Scroll of change element"
 	}
-	panic("No item name!")
+	if i.hasPassiveEffect() {
+		name += " of " + i.passiveEffect.getName()
+	}
+	if name == "" {
+		panic("No item name!")
+	}
+	return name
 }

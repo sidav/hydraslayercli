@@ -35,7 +35,7 @@ func (g *game) performUseAction(usedIndex int, ft INDEXTYPE, targetIndex int, st
 }
 
 func (g *game) justUseItem(item *item) {
-	switch item.itemType {
+	switch item.itemConsumableType {
 	case ITEM_HEAL:
 		g.currLog = fmt.Sprintf("You sniff %s and feel good.", item.getName())
 		g.player.hp = g.player.maxhp
@@ -55,7 +55,7 @@ func (g *game) justUseItem(item *item) {
 }
 
 func (g *game) useItemOnEnemy(item *item, enemy *enemy) {
-	switch item.itemType {
+	switch item.itemConsumableType {
 	case ITEM_HEAL:
 		g.currLog = fmt.Sprintf("Use %s on enemy? Srsly?", item.getName())
 		return
@@ -78,7 +78,7 @@ func (g *game) useItemOnEnemy(item *item, enemy *enemy) {
 }
 
 func (g *game) useItemOnItem(item, targetItem *item) {
-	switch item.itemType {
+	switch item.itemConsumableType {
 	case ITEM_HEAL:
 		g.currLog = fmt.Sprintf("Use %s on %s? But how?", item.getName(), targetItem.getName())
 	case ITEM_ENCHANTER:

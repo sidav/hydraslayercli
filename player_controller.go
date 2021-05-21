@@ -34,7 +34,7 @@ func (g *game) parsePlayerInput(input string) {
 	// println(fmt.Sprintf("%v, %d)", splitted, len(splitted)))
 
 	if splitted[0] == "" {
-		g.currLog = "Huh?"
+		g.currLog = ""
 		return
 	}
 	if splitted[0] == "exit" {
@@ -51,7 +51,7 @@ func (g *game) parsePlayerInput(input string) {
 
 	if splitted[0] == "cheat" {
 		for i := uint8(1); i < TOTAL_ITEM_TYPES_NUMBER; i++ {
-			g.player.items = append(g.player.items, &item{itemType: i})
+			g.player.items = append(g.player.items, &item{itemConsumableType: i})
 		}
 		return
 	}
