@@ -11,7 +11,7 @@ type gameScreen struct{}
 
 func (gs *gameScreen) renderScreen(g *game) {
 	fmt.Println("\033[2J") // linux only!
-	println("Turn ", g.currentTurn)
+	println(fmt.Sprintf("Stage %d: Turn %d", g.currentStageNumber, g.currentTurn))
 	println("")
 
 	if len(g.enemies) > 0 {

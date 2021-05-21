@@ -11,17 +11,16 @@ type game struct {
 	gameScreen         gameScreen
 
 	// player-related
-	exit                                bool
-	turnMade                            bool
+	abortGame, turnMade, stageFinished  bool
 	currLog                             string
 	currSelectedItem, currSelectedEnemy int
 }
 
 func initGame() *game {
 	g := &game{
-		currentTurn: 1,
+		currentTurn:        1,
 		currentStageNumber: 0,
-		enemies:     []*enemy{},
+		enemies:            []*enemy{},
 		player: &player{
 			hp:    10,
 			maxhp: 10,
@@ -64,7 +63,7 @@ func initGame() *game {
 }
 
 func (g *game) run() {
-	for !g.exit {
+	for !g.abortGame {
 		if g.currLog == "" {
 			g.currLog = g.getPossibleAttackStringDescription(g.player.items[g.currSelectedItem].weaponInfo,
 				g.enemies[g.currSelectedEnemy])
@@ -74,6 +73,15 @@ func (g *game) run() {
 			g.actForEnemies()
 			g.currentTurn++
 			g.turnMade = false
+		}
+		if g.stageFinished {
+			g.currentStageNumber++
+			g.generateCurrentStage()
+			g.turnMade = false
+			g.currSelectedEnemy = 0
+			g.currLog = fmt.Sprintf("Welcome to stage %d! \n%s", g.currentStageNumber,
+				g.getPossibleAttackStringDescription(g.player.items[g.currSelectedItem].weaponInfo,
+				g.enemies[g.currSelectedEnemy]))
 		}
 	}
 }

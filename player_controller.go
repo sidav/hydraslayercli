@@ -1,13 +1,14 @@
 package main
 
 import (
+	"fmt"
 	"strings"
 )
 
 type INDEXTYPE uint8
 
 const (
-	INDEX_ENEMY = iota
+	INDEX_ENEMY_OR_TREASURE = iota
 	INDEX_ITEM
 	INDEX_WRONG
 )
@@ -17,7 +18,7 @@ func charToIndexWithType(char byte) (int, INDEXTYPE) {
 		return int(255 - ('a' - char - 1)), INDEX_ITEM
 	}
 	if char >= '0' && char <= '9' {
-		return int(char - '1'), INDEX_ENEMY
+		return int(char - '1'), INDEX_ENEMY_OR_TREASURE
 	}
 	return 0, INDEX_WRONG
 }
@@ -37,13 +38,41 @@ func (g *game) parsePlayerInput(input string) {
 		return
 	}
 	if splitted[0] == "exit" {
-		g.exit = true
+		g.abortGame = true
 		return
 	}
 	if splitted[0] == "hit" {
 		if len(g.enemies) > 0 {
 			g.performPlayerHit(g.player.items[g.currSelectedItem].weaponInfo,
 				g.enemies[g.currSelectedEnemy])
+		}
+		return
+	}
+
+	if splitted[0] == "move" {
+		if len(g.enemies) == 0 {
+			g.stageFinished = true
+		} else {
+			g.currLog = "You can't move just yet!"
+		}
+		return
+	}
+
+	if splitted[0] == "take" {
+		if len(splitted) == 2 {
+			takeIndex, indtype := charToIndexWithType(splitted[1][0])
+			if indtype == INDEX_ENEMY_OR_TREASURE {
+				g.pickupItemNumber(takeIndex)
+			}
+		}
+		return
+	}
+	if splitted[0] == "drop" {
+		if len(splitted) == 2 {
+			dropIndex, indtype := charToIndexWithType(splitted[1][0])
+			if indtype == INDEX_ITEM {
+				g.dropItemNumber(dropIndex)
+			}
 		}
 		return
 	}
@@ -75,7 +104,7 @@ func (g *game) parsePlayerInput(input string) {
 	}
 
 	//select enemy
-	if indtype == INDEX_ENEMY {
+	if indtype == INDEX_ENEMY_OR_TREASURE {
 		// print(splitted[0][0], '1', '0', enemynum)
 		if len(g.enemies) > index {
 			// gs.currLog = g.enemies[enemynum].getName()
@@ -83,4 +112,6 @@ func (g *game) parsePlayerInput(input string) {
 			g.currLog = ""
 		}
 	}
+	// nothing parsed
+	g.currLog = fmt.Sprintf("Command \"%s\" not recognized.", splitted[0])
 }

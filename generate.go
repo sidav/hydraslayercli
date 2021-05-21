@@ -1,6 +1,8 @@
 package main
 
 func (g *game) generateCurrentStage() {
+	g.enemies = []*enemy{}
+	g.treasure = []*item{}
 	for i := 0; i < StageInfo[g.currentStageNumber].enemies; i++ {
 		g.addRandomHydra(g.currentStageNumber, 0)
 	}
