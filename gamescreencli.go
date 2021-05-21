@@ -33,8 +33,6 @@ func (gs *gameScreen) renderScreen(g *game) {
 		for len(g.currentEnemies) <= g.currSelectedEnemy {
 			g.currSelectedEnemy--
 		}
-		g.currLog = g.getPossibleAttackStringDescription(g.player.items[g.currSelectedItem].weaponInfo,
-			g.currentEnemies[g.currSelectedEnemy])
 	}
 	println(g.currLog)
 	print("Your action?\n> ")

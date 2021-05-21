@@ -24,9 +24,17 @@ func (g *game) getPossibleAttackStringDescription(w *weapon, e *enemy) string {
 }
 
 func (g *game) performPlayerHit(w *weapon, e *enemy) {
-	e.heads -= g.calculateDamageOnHeads(w, e)
+	damage := g.calculateDamageOnHeads(w, e)
+	g.currLog = fmt.Sprintf("You hit %s with %s, cutting %d heads. ",
+		e.getName(),
+		w.getName(), damage)
+	e.heads -= damage
 	if e.heads > 0 {
-		e.heads += g.calculateHeadsRegrowAfterHitBy(e, w)
+		regrow := g.calculateHeadsRegrowAfterHitBy(e, w)
+		g.currLog += fmt.Sprintf("It grows %d heads!", regrow)
+		e.heads += regrow
+	} else {
+		g.currLog += fmt.Sprintf("It drops dead!")
 	}
 	g.turnMade = true
 }

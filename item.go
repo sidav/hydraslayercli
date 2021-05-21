@@ -7,6 +7,7 @@ const (
 	ITEM_ENCHANTER
 	ITEM_HEAL
 	ITEM_DESTROY_HYDRA
+	ITEM_CONFUSE_HYDRA
 )
 
 type item struct {

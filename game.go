@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 type game struct {
 	currentTurn    int
 	currentEnemies []*enemy
@@ -61,17 +63,27 @@ func initGame() *game {
 
 func (g *game) run() {
 	for !g.exit {
+		if g.currLog == "" {
+			g.currLog = g.getPossibleAttackStringDescription(g.player.items[g.currSelectedItem].weaponInfo,
+				g.currentEnemies[g.currSelectedEnemy])
+		}
 		g.playerTurn()
 		if g.turnMade {
-			for i := len(g.currentEnemies) - 1; i >= 0; i-- {
-				if g.currentEnemies[i].heads == 0 {
-					g.currentEnemies = append(g.currentEnemies[:i], g.currentEnemies[i+1:]...)
-				} else {
-					g.player.hp -= g.calculateDamageByHeads(g.currentEnemies[i].heads)
-				}
-			}
+			g.actForEnemies()
 			g.currentTurn++
 			g.turnMade = false
+		}
+	}
+}
+
+func (g *game) actForEnemies() {
+	for i := len(g.currentEnemies) - 1; i >= 0; i-- {
+		if g.currentEnemies[i].heads == 0 {
+			g.currentEnemies = append(g.currentEnemies[:i], g.currentEnemies[i+1:]...)
+		} else {
+			damage := g.calculateDamageByHeads(g.currentEnemies[i].heads)
+			g.currLog += fmt.Sprintf(" %s bites you for %d damage. ", g.currentEnemies[i].getName(), damage)
+			g.player.hp -= damage
 		}
 	}
 }
