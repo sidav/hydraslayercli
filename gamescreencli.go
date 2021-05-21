@@ -7,11 +7,7 @@ import (
 	"strings"
 )
 
-type gameScreen struct {
-	input                               string
-	currLog                             string
-	currSelectedItem, currSelectedEnemy uint8
-}
+type gameScreen struct {}
 
 func (gs *gameScreen) renderScreen(g *game) {
 	fmt.Println("\033[2J") // linux only!
@@ -20,7 +16,7 @@ func (gs *gameScreen) renderScreen(g *game) {
 	println("You see here enemies:")
 	for i, e := range g.currentEnemies {
 		selectStr := "   "
-		if uint8(i) == gs.currSelectedEnemy {
+		if i == g.currSelectedEnemy {
 			selectStr = "-> "
 		}
 		println(fmt.Sprintf("%s%d: %s", selectStr, i+1, e.getName()))
@@ -28,67 +24,25 @@ func (gs *gameScreen) renderScreen(g *game) {
 	println(fmt.Sprintf("You have %d/%d hp and:", g.player.hp, g.player.maxhp))
 	for i, w := range g.player.items {
 		selectStr := "  "
-		if uint8(i) == gs.currSelectedItem {
+		if i == g.currSelectedItem {
 			selectStr = "->"
 		}
 		println(fmt.Sprintf("%s %c: %s", selectStr, 'A'+i, w.getName()))
 	}
 	if len(g.currentEnemies) > 0 {
-		gs.currLog = g.getPossibleAttackStringDescription(g.player.items[gs.currSelectedItem].weaponInfo,
-			g.currentEnemies[gs.currSelectedEnemy])
+		for len(g.currentEnemies) <= g.currSelectedEnemy {
+			g.currSelectedEnemy--
+		}
+		g.currLog = g.getPossibleAttackStringDescription(g.player.items[g.currSelectedItem].weaponInfo,
+			g.currentEnemies[g.currSelectedEnemy])
 	}
-	println(gs.currLog)
+	println(g.currLog)
 	print("Your action?\n> ")
-	gs.doInput(g)
 }
 
-func (gs *gameScreen) doInput(g *game) {
+func (gs *gameScreen) readPlayerInput() string {
 	reader := bufio.NewReader(os.Stdin)
-	gs.input, _ = reader.ReadString('\n')
-	gs.input = strings.Trim(gs.input, " \n")
-
-	splitted := strings.Split(gs.input, " ")
-	// println(fmt.Sprintf("%v, %d)", splitted, len(splitted)))
-
-	if len(splitted) == 1 {
-		if splitted[0] == "" {
-			gs.currLog = "Huh?"
-			return
-		}
-		if splitted[0] == "exit" {
-			g.exit = true
-			return
-		}
-		if splitted[0] == "hit" {
-			if len(g.currentEnemies) > 0 {
-				g.performPlayerHit(g.player.items[gs.currSelectedItem].weaponInfo,
-					g.currentEnemies[gs.currSelectedEnemy])
-			}
-			return
-		}
-
-		// select item
-		if splitted[0][0] >= 'a' && splitted[0][0] <= 'z' {
-			itemnum := 255 - ('a' - splitted[0][0] - 1)
-			print(splitted[0][0], " ", itemnum)
-			if uint8(len(g.player.items)) > itemnum {
-				// gs.currLog = g.player.weapons[itemnum].getName()
-				if g.player.items[itemnum].isWeapon() {
-					gs.currSelectedItem = itemnum
-				} else {
-					// Item description!..
-				}
-			}
-		}
-
-		//select enemy
-		if splitted[0][0] >= '0' && splitted[0][0] <= '9' {
-			enemynum := splitted[0][0] - '1'
-			// print(splitted[0][0], '1', '0', enemynum)
-			if uint8(len(g.currentEnemies)) > enemynum {
-				// gs.currLog = g.currentEnemies[enemynum].getName()
-				gs.currSelectedEnemy = enemynum
-			}
-		}
-	}
+	input, _ := reader.ReadString('\n')
+	input = strings.Trim(input, " \n")
+	return input
 }

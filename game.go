@@ -4,14 +4,18 @@ type game struct {
 	currentTurn    int
 	currentEnemies []*enemy
 	player         *player
+	gameScreen     gameScreen
 
-	exit     bool
-	turnMade bool
+	// player-related
+	exit                                bool
+	turnMade                            bool
+	currLog                             string
+	currSelectedItem, currSelectedEnemy int
 }
 
 func initGame() *game {
 	g := &game{
-		currentTurn: 0,
+		currentTurn:    0,
 		currentEnemies: []*enemy{},
 		player: &player{
 			hp:    10,
@@ -56,9 +60,8 @@ func initGame() *game {
 }
 
 func (g *game) run() {
-	gs := gameScreen{}
 	for !g.exit {
-		gs.renderScreen(g)
+		g.playerTurn()
 		if g.turnMade {
 			for i := len(g.currentEnemies) - 1; i >= 0; i-- {
 				if g.currentEnemies[i].heads == 0 {
