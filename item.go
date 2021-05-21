@@ -1,5 +1,7 @@
 package main
 
+import "strings"
+
 const (
 	ITEM_NOTYPE = iota
 	ITEM_HEAL
@@ -13,6 +15,7 @@ const (
 )
 
 type item struct {
+	element            uint8
 	itemConsumableType uint8
 	specialName        string // for randarts and non-consumables 
 	passiveEffect      *passiveEffect
@@ -28,28 +31,31 @@ func (i *item) hasPassiveEffect() bool {
 }
 
 func (i *item) getName() string {
-	name := ""
+	name := getElementName(i.element)
+	if len(name) > 0 {
+		name += " "
+	}
 	if i.specialName != "" {
-		name = i.specialName
+		name += i.specialName
 	}
 	if i.isWeapon() {
-		name = i.weaponInfo.getName()
+		name += i.weaponInfo.getName()
 	}
 	switch i.itemConsumableType {
 	case ITEM_HEAL:
-		name = "Healing powder"
+		name += "Healing powder"
 	case ITEM_ENCHANTER:
-		name = "Scroll of enchant weapon +1"
+		name += "Scroll of enchant weapon +1"
 	case ITEM_DESTROY_HYDRA:
-		name = "Scroll of destroy hydra"
+		name += "Scroll of destroy hydra"
 	case ITEM_CONFUSE_HYDRA:
-		name = "Scroll of confuse hydra"
+		name += "Scroll of confuse hydra"
 	case ITEM_INCREASE_HP:
-		name = "Potion of vitality"
+		name += "Potion of vitality"
 	case ITEM_STRENGTH:
-		name = "Potion of strength"
+		name += "Potion of strength"
 	case ITEM_CHANGE_ELEMENT:
-		name = "Scroll of change element"
+		name += "Scroll of change element"
 	}
 	if i.hasPassiveEffect() {
 		name += " of " + i.passiveEffect.getName()
@@ -57,5 +63,5 @@ func (i *item) getName() string {
 	if name == "" {
 		panic("No item name!")
 	}
-	return name
+	return colorizeString(getElementColorStr(i.element), strings.Title(name))
 }

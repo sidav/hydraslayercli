@@ -16,7 +16,7 @@ func (g *game) addRandomHydra(depth, difficulty int) {
 }
 
 func (g *game) generateHydra(depth, difficulty int) *enemy {
-	minHeads := depth+1
+	minHeads := depth + 1
 	maxHeads := minHeads + depth/2 + 2
 	return &enemy{
 		name:    "hydra",
@@ -33,14 +33,13 @@ func (g *game) generateTreasure(depth int) *item {
 	perc := rnd.RandomPercent()
 	isWeapon := perc < 33
 	if isWeapon {
-		minDamage := depth-depth/2
-		maxDamage := depth+depth/2+2
+		minDamage := depth - depth/2
+		maxDamage := depth + depth/2 + 2
 		if minDamage == 0 {
 			minDamage = 1
 		}
 		newWeapon := &weapon{
 			weaponType: WTYPE_SUBSTRACTOR,
-			element:    getRandomElement(),
 			damage:     rnd.RandInRange(minDamage, maxDamage),
 		}
 		weaponTypePercent := rnd.RandomPercent()
@@ -52,6 +51,7 @@ func (g *game) generateTreasure(depth int) *item {
 		}
 
 		return &item{
+			element:            getRandomElement(),
 			itemConsumableType: 0,
 			weaponInfo:         newWeapon,
 		}
@@ -59,12 +59,12 @@ func (g *game) generateTreasure(depth int) *item {
 	isSpecialItem := perc < 50
 	if isSpecialItem {
 		return &item{
-			specialName:        "Ring",
-			passiveEffect:      &passiveEffect{
+			specialName: "Ring",
+			passiveEffect: &passiveEffect{
 				effectType:    getRandomPassiveEffect(),
 				activatesEach: 4,
 			},
-			weaponInfo:         nil,
+			weaponInfo: nil,
 		}
 	}
 

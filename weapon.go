@@ -2,21 +2,15 @@ package main
 
 import (
 	"fmt"
-	"strings"
 )
 
 type weapon struct {
 	weaponType weaponType
-	element    uint8
-
 	damage int
 }
 
 func (w *weapon) getName() string {
-	name := getElementName(w.element)
-	if len(name) > 0 {
-		name += " "
-	}
+	name := ""
 	switch w.weaponType {
 	case WTYPE_SUBSTRACTOR:
 		name += fmt.Sprintf("-%d Substractor", w.damage)
@@ -34,5 +28,5 @@ func (w *weapon) getName() string {
 	default:
 		name += "SomeWeapon"
 	}
-	return colorizeString(getElementColorStr(w.element), strings.Title(name))
+	return name
 }

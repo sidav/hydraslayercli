@@ -27,16 +27,16 @@ func initGame() *game {
 			maxItems: 5,
 			items: []*item{
 				{
+					element:    getRandomElement(),
 					weaponInfo: &weapon{
 						weaponType: WTYPE_SUBSTRACTOR,
-						element:    getRandomElement(),
 						damage:     1,
 					},
 				},
 				{
+					element:    getRandomElement(),
 					weaponInfo: &weapon{
 						weaponType: WTYPE_SUBSTRACTOR,
-						element:    getRandomElement(),
 						damage:     2,
 					},
 				},
@@ -60,7 +60,7 @@ func (g *game) run() {
 			g.currentTurn = 1
 		}
 		if g.currLog == "" && len(g.enemies) > 0 {
-			g.currLog = g.getPossibleAttackStringDescription(g.player.items[g.currSelectedItem].weaponInfo,
+			g.currLog = g.getPossibleAttackStringDescription(g.player.items[g.currSelectedItem],
 				g.enemies[g.currSelectedEnemy])
 		}
 		g.playerTurn()
@@ -88,7 +88,7 @@ func (g *game) run() {
 			g.stageFinished = false
 			g.currSelectedEnemy = 0
 			g.setLogMessage("Welcome to stage %d! \n%s", g.currentStageNumber,
-				g.getPossibleAttackStringDescription(g.player.items[g.currSelectedItem].weaponInfo,
+				g.getPossibleAttackStringDescription(g.player.items[g.currSelectedItem],
 				g.enemies[g.currSelectedEnemy]))
 		}
 	}

@@ -5,8 +5,8 @@ import (
 	"math"
 )
 
-func (g *game) getPossibleAttackStringDescription(w *weapon, e *enemy) string {
-	hDmg := g.calculateDamageOnHeads(w, e)
+func (g *game) getPossibleAttackStringDescription(w *item, e *enemy) string {
+	hDmg := g.calculateDamageOnHeads(w.weaponInfo, e)
 	hRegrw := g.calculateHeadsRegrowAfterHitBy(e, w)
 	resHeads := e.heads-hDmg+hRegrw
 	as := fmt.Sprintf("If you attack %s with %s", e.getName(), w.getName())
@@ -23,8 +23,8 @@ func (g *game) getPossibleAttackStringDescription(w *weapon, e *enemy) string {
 	return as
 }
 
-func (g *game) performPlayerHit(w *weapon, e *enemy) {
-	damage := g.calculateDamageOnHeads(w, e)
+func (g *game) performPlayerHit(w *item, e *enemy) {
+	damage := g.calculateDamageOnHeads(w.weaponInfo, e)
 	g.currLog = fmt.Sprintf("You hit %s with %s, cutting %d heads. ",
 		e.getName(),
 		w.getName(), damage)
@@ -56,13 +56,13 @@ func (g *game) calculateDamageOnHeads(weapon *weapon, enemy *enemy) int {
 	return 0
 }
 
-func (g *game) calculateHeadsRegrowAfterHitBy(enemy *enemy, weapon *weapon) int {
+func (g *game) calculateHeadsRegrowAfterHitBy(enemy *enemy, weapon *item) int {
 	regrow, found := headRegrowsForElement[enemy.element][weapon.element]
 	if !found {
 		panic("ELEMENT NOT FOUND IN TABLE")
 	}
 	if regrow == -2 {
-		return enemy.heads - g.calculateDamageOnHeads(weapon, enemy)
+		return enemy.heads - g.calculateDamageOnHeads(weapon.weaponInfo, enemy)
 	}
 	return regrow
 }

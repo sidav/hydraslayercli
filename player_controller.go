@@ -43,7 +43,7 @@ func (g *game) parsePlayerInput(input string) {
 	}
 	if splitted[0] == "hit" {
 		if len(g.enemies) > 0 {
-			g.performPlayerHit(g.player.items[g.currSelectedItem].weaponInfo,
+			g.performPlayerHit(g.player.items[g.currSelectedItem],
 				g.enemies[g.currSelectedEnemy])
 		}
 		return
