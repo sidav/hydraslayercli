@@ -68,6 +68,9 @@ func (g *game) run() {
 			g.actForEnemies()
 			g.currentTurn++
 			g.turnMade = false
+			if g.player.hp < g.player.maxhp/3 {
+				g.appendToLogMessage(colorizeString(Red, "Be careful: you're almost dead!"))
+			}
 		}
 		if g.player.hp <= 0 {
 			print("You died...\n")
@@ -84,7 +87,7 @@ func (g *game) run() {
 			g.turnMade = false
 			g.stageFinished = false
 			g.currSelectedEnemy = 0
-			g.currLog = fmt.Sprintf("Welcome to stage %d! \n%s", g.currentStageNumber,
+			g.setLogMessage("Welcome to stage %d! \n%s", g.currentStageNumber,
 				g.getPossibleAttackStringDescription(g.player.items[g.currSelectedItem].weaponInfo,
 				g.enemies[g.currSelectedEnemy]))
 		}
@@ -97,8 +100,16 @@ func (g *game) actForEnemies() {
 			g.enemies = append(g.enemies[:i], g.enemies[i+1:]...)
 		} else {
 			damage := g.calculateDamageByHeads(g.enemies[i].heads)
-			g.currLog += fmt.Sprintf(" %s bites you for %d damage. ", g.enemies[i].getName(), damage)
+			g.appendToLogMessage(" %s bites you for %d damage. ", g.enemies[i].getName(), damage)
 			g.player.hp -= damage
 		}
 	}
+}
+
+func (g *game) setLogMessage(msg string, args... interface{}) {
+	g.currLog = fmt.Sprintf(msg, args...)
+}
+
+func (g *game) appendToLogMessage(msg string, args... interface{}) {
+	g.currLog += fmt.Sprintf(msg, args...)
 }

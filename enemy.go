@@ -16,5 +16,5 @@ func (e *enemy) getName() string {
 	if getElementName(e.element) != "" {
 		name = getElementName(e.element) + " " + name
 	}
-	return getElementColorStr(e.element) + strings.Title(name) + Reset
+	return colorizeString(getElementColorStr(e.element), strings.Title(name))
 }

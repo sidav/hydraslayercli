@@ -34,5 +34,5 @@ func (w *weapon) getName() string {
 	default:
 		name += "SomeWeapon"
 	}
-	return getElementColorStr(w.element) + strings.Title(name) + Reset
+	return colorizeString(getElementColorStr(w.element), strings.Title(name))
 }

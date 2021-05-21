@@ -31,8 +31,15 @@ func (gs *gameScreen) renderScreen(g *game) {
 	} else {
 		println("There is nothing to do here. Use \"move\" command to move to the next stage!")
 	}
-	println(fmt.Sprintf("You have %d/%d hp and %d/%d items:",
-		g.player.hp, g.player.maxhp, len(g.player.items), g.player.maxItems))
+
+	hpColor := Green
+	if g.player.hp < g.player.maxhp/3 {
+		hpColor = Red
+	}
+	println(fmt.Sprintf("You have %s hp and %d/%d items:",
+		colorizeString(hpColor, fmt.Sprintf("%d/%d", g.player.hp, g.player.maxhp)),
+		len(g.player.items), g.player.maxItems))
+
 	for i, w := range g.player.items {
 		selectStr := "  "
 		if i == g.currSelectedItem {
