@@ -43,6 +43,9 @@ func (g *game) justUseItem(item *item) {
 		g.currLog = fmt.Sprintf("%s makes you feel amazing!", item.getName())
 		g.player.maxhp += 1
 		g.player.hp = g.player.maxhp
+	case ITEM_STRENGTH:
+		g.currLog = fmt.Sprintf("%s makes you feel stronger!", item.getName())
+		g.player.maxItems += 1
 	default:
 		g.currLog = fmt.Sprintf("ERROR: ADD SIMPLE USAGE OF %s.", item.getName())
 		return
@@ -104,6 +107,10 @@ func (g *game) useItemOnItem(item, targetItem *item) {
 
 func (g *game) pickupItemNumber(i int) {
 	if i == -1 { // pick up all
+		if len(g.treasure) + len(g.player.items) > g.player.maxItems {
+			g.currLog = fmt.Sprintf("You can't pick up everything!")
+			return
+		}
 		g.currLog = fmt.Sprintf("You pick up everything: ")
 		for i := 0; i < len(g.treasure); i++ {
 			if i > 0 {
@@ -117,6 +124,10 @@ func (g *game) pickupItemNumber(i int) {
 		return
 	}
 	if i < len(g.treasure) {
+		if len(g.player.items) >= g.player.maxItems {
+			g.currLog = fmt.Sprintf("You are overburdened!")
+			return
+		}
 		g.player.items = append(g.player.items, g.treasure[i])
 		g.currLog = fmt.Sprintf("You pick up the %s.", g.treasure[i].getName())
 		g.treasure = append(g.treasure[:i], g.treasure[i+1:]...)

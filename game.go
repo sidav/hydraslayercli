@@ -24,6 +24,7 @@ func initGame() *game {
 		player: &player{
 			hp:    10,
 			maxhp: 10,
+			maxItems: 5,
 			items: []*item{
 				{
 					weaponInfo: &weapon{
@@ -58,8 +59,16 @@ func (g *game) run() {
 			g.currentTurn++
 			g.turnMade = false
 		}
+		if g.player.hp <= 0 {
+			print("You died...\n")
+			return
+		}
 		if g.stageFinished {
 			g.currentStageNumber++
+			if g.currentStageNumber == len(StageInfo) {
+				print("You won!\n")
+				return
+			}
 			g.currentTurn = 1
 			g.generateCurrentStage()
 			g.turnMade = false

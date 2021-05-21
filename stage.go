@@ -8,7 +8,7 @@ type stage struct {
 var StageInfo = []stage {
 	{
 		enemies:  1,
-		treasure: 2,
+		treasure: 3,
 	},
 	{
 		enemies:  2,
