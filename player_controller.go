@@ -68,8 +68,8 @@ func (g *game) parsePlayerInput(input string) {
 
 	if splitted[0] == "cheat" {
 		for i := uint8(1); i < TOTAL_ITEM_TYPES_NUMBER; i++ {
-			newItem := &item{itemConsumableType: i}
-			if newItem.itemConsumableType == ITEM_AMMO {
+			newItem := &item{asConsumable: consumablesData[i]}
+			if newItem.isAmmo() {
 				newItem.count++
 			}
 			g.player.items = append(g.player.items, newItem)

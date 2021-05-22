@@ -47,9 +47,9 @@ func (g *game) generateTreasure(depth int) *item {
 		}
 
 		return &item{
-			element:            getRandomElement(),
-			itemConsumableType: 0,
-			weaponInfo:         newWeapon,
+			element:      getRandomElement(),
+			asConsumable: nil,
+			weaponInfo:   newWeapon,
 		}
 	}
 	isSpecialItem := perc < 33
@@ -65,10 +65,10 @@ func (g *game) generateTreasure(depth int) *item {
 	}
 
 	item := &item{
-		itemConsumableType: getWeightedRandomConsumableItemType(),
-		weaponInfo:         nil,
+		asConsumable: getWeightedRandomConsumableItemType(),
+		weaponInfo:   nil,
 	}
-	if item.itemConsumableType == ITEM_AMMO {
+	if item.asConsumable.consumableType == ITEM_AMMO {
 		item.count = rnd.RandInRange(1, 3)
 	}
 	return item

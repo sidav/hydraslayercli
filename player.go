@@ -7,9 +7,9 @@ type player struct {
 }
 
 func (p *player) addItem(itemToAdd *item) {
-	if itemToAdd.itemConsumableType == ITEM_AMMO {
+	if itemToAdd.isAmmo() {
 		for i := range p.items {
-			if p.items[i].itemConsumableType == ITEM_AMMO {
+			if p.items[i].isAmmo() {
 				p.items[i].count += itemToAdd.count
 				return
 			}
@@ -46,7 +46,7 @@ func (p *player) spendItem(item *item, g *game) {
 
 func (p *player) hasAmmo() bool {
 	for i := range p.items {
-		if p.items[i].itemConsumableType == ITEM_AMMO {
+		if p.items[i].isAmmo() {
 			return true
 		}
 	}
@@ -55,7 +55,7 @@ func (p *player) hasAmmo() bool {
 
 func (p *player) spendAmmo() {
 	for i := range p.items {
-		if p.items[i].itemConsumableType == ITEM_AMMO {
+		if p.items[i].isAmmo() {
 			p.items[i].count++
 		}
 	}

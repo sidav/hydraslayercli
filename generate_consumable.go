@@ -1,34 +1,83 @@
 package main
 
-var _consumableWeights = []int{
-	ITEM_HEAL:              2,
-	ITEM_ENCHANTER:         2,
-	ITEM_DESTROY_HYDRA:     1,
-	ITEM_CONFUSE_HYDRA:     1,
-	ITEM_INCREASE_HP:       2,
-	ITEM_STRENGTH:          3,
-	ITEM_CHANGE_ELEMENT:    1,
-	ITEM_UNELEMENT_ENEMIES: 1,
-	ITEM_DECAPITATION:      1,
-	ITEM_AMMO:              1,
-	ITEM_IMPROVE_COOLDOWN:  1,
+var consumablesData = []*consumableItemInfo {
+	{
+		consumableType: ITEM_HEAL,
+		name:           "",
+		frequency:      2,
+	},
+	{
+		consumableType: ITEM_ENCHANTER,
+		name:           "",
+		frequency:      2,
+	},
+	{
+		consumableType: ITEM_DESTROY_HYDRA,
+		name:           "",
+		frequency:      1,
+	},
+	{
+		consumableType: ITEM_CONFUSE_HYDRA,
+		name:           "",
+		frequency:      1,
+	},
+	{
+		consumableType: ITEM_MASS_CONFUSION,
+		name:           "",
+		frequency:      1,
+	},
+	{
+		consumableType: ITEM_INCREASE_HP,
+		name:           "",
+		frequency:      2,
+	},
+	{
+		consumableType: ITEM_STRENGTH,
+		name:           "",
+		frequency:      2,
+	},
+	{
+		consumableType: ITEM_CHANGE_ELEMENT,
+		name:           "",
+		frequency:      1,
+	},
+	{
+		consumableType: ITEM_UNELEMENT_ENEMIES,
+		name:           "",
+		frequency:      1,
+	},
+	{
+		consumableType: ITEM_DECAPITATION,
+		name:           "",
+		frequency:      1,
+	},
+	{
+		consumableType: ITEM_IMPROVE_COOLDOWN,
+		name:           "",
+		frequency:      1,
+	},
+	{
+		consumableType: ITEM_AMMO,
+		name:           "",
+		frequency:      2,
+	},
 }
 
-func getWeightedRandomConsumableItemType() uint8 {
-	if len(_consumableWeights) < TOTAL_ITEM_TYPES_NUMBER {
+func getWeightedRandomConsumableItemType() *consumableItemInfo {
+	if len(consumablesData) < TOTAL_ITEM_TYPES_NUMBER {
 		panic("OH MY NOT ALL CONSUMABLES SET")
 	}
 	totalWeights := 0
-	for i := range _consumableWeights {
-		totalWeights += _consumableWeights[i]
+	for i := range consumablesData {
+		totalWeights += consumablesData[i].frequency
 	}
 
 	rand := rnd.Rand(totalWeights)
-	for i := range _consumableWeights {
-		if rand < _consumableWeights[i] {
-			return uint8(i)
+	for i := range consumablesData {
+		if rand < consumablesData[i].frequency {
+			return consumablesData[i]
 		}
-		rand -= _consumableWeights[i]
+		rand -= consumablesData[i].frequency
 	}
 	panic("GWRCIT")
 }

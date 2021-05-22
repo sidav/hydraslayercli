@@ -45,7 +45,7 @@ func (g *game) performUseAction(usedIndex int, usedType INDEXTYPE, targetIndex i
 }
 
 func (g *game) justUseItem(item *item, usedFromGround bool) {
-	switch item.itemConsumableType {
+	switch item.asConsumable.consumableType {
 	case ITEM_HEAL:
 		g.currLog = fmt.Sprintf("You sniff %s and feel good.", item.getName())
 		g.player.hp = g.player.maxhp
@@ -88,7 +88,7 @@ func (g *game) justUseItem(item *item, usedFromGround bool) {
 }
 
 func (g *game) useItemOnEnemy(item *item, enemy *enemy) {
-	switch item.itemConsumableType {
+	switch item.asConsumable.consumableType {
 	case ITEM_HEAL:
 		g.currLog = fmt.Sprintf("Use %s on enemy? Srsly?", item.getName())
 		return
@@ -118,7 +118,7 @@ func (g *game) useItemOnEnemy(item *item, enemy *enemy) {
 }
 
 func (g *game) useItemOnItem(item, targetItem *item, usedFromGround bool) {
-	switch item.itemConsumableType {
+	switch item.asConsumable.consumableType {
 	case ITEM_HEAL:
 		g.currLog = fmt.Sprintf("Use %s on %s? But how?", item.getName(), targetItem.getName())
 	case ITEM_ENCHANTER:
@@ -172,7 +172,7 @@ func (g *game) pickupItemNumber(i int) {
 		return
 	}
 	if i < len(g.treasure) {
-		if len(g.player.items) >= g.player.maxItems && !(g.player.hasAmmo() && g.treasure[i].itemConsumableType == ITEM_AMMO) {
+		if len(g.player.items) >= g.player.maxItems && !(g.player.hasAmmo() && g.treasure[i].isAmmo()) {
 			g.currLog = fmt.Sprintf("You are overburdened!")
 			return
 		}
