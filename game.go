@@ -10,6 +10,9 @@ type game struct {
 	player             *player
 	gameScreen         gameScreen
 
+	// conditions
+	enemiesSkipTurn bool
+
 	// player-related
 	abortGame, turnMade, stageFinished  bool
 	currLog                             string
@@ -25,19 +28,19 @@ func initGame() *game {
 		currentStageNumber: 0,
 		enemies:            []*enemy{},
 		player: &player{
-			hp:    10,
-			maxhp: 10,
+			hp:       10,
+			maxhp:    10,
 			maxItems: 5,
 			items: []*item{
 				{
-					element:    getRandomElement(),
+					element: getRandomElement(),
 					weaponInfo: &weapon{
 						weaponType: WTYPE_SUBSTRACTOR,
 						damage:     2,
 					},
 				},
 				{
-					element:    getRandomElement(),
+					element: getRandomElement(),
 					weaponInfo: &weapon{
 						weaponType: WTYPE_SUBSTRACTOR,
 						damage:     1,
@@ -91,7 +94,7 @@ func (g *game) run() {
 			g.currSelectedEnemy = 0
 			g.setLogMessage("Welcome to stage %d! \n%s", g.currentStageNumber,
 				g.getPossibleAttackStringDescription(g.player.items[g.currSelectedItem],
-				g.enemies[g.currSelectedEnemy]))
+					g.enemies[g.currSelectedEnemy]))
 		}
 	}
 }
@@ -103,6 +106,9 @@ func (g *game) actForEnemies() {
 		} else {
 			if g.enemies[i].hasStatusEffectOfType(STATUS_CONFUSED) {
 			} else {
+				if g.enemiesSkipTurn {
+					continue
+				}
 				damage := g.calculateDamageByHeads(g.enemies[i].heads)
 				g.appendToLogMessage("%s bites you for %d damage. ", g.enemies[i].getName(), damage)
 				g.player.hp -= damage
@@ -110,12 +116,15 @@ func (g *game) actForEnemies() {
 			g.enemies[i].applyStatusEffects(g)
 		}
 	}
+	if g.enemiesSkipTurn {
+		g.enemiesSkipTurn = false
+	}
 }
 
-func (g *game) setLogMessage(msg string, args... interface{}) {
+func (g *game) setLogMessage(msg string, args ...interface{}) {
 	g.currLog = fmt.Sprintf(msg, args...)
 }
 
-func (g *game) appendToLogMessage(msg string, args... interface{}) {
-	g.currLog += fmt.Sprintf(" " + msg, args...)
+func (g *game) appendToLogMessage(msg string, args ...interface{}) {
+	g.currLog += fmt.Sprintf(" "+msg, args...)
 }

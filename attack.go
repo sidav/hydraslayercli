@@ -54,6 +54,31 @@ func (g *game) performPlayerHit(w *item, e *enemy) {
 	g.turnMade = true
 }
 
+func (g *game) performPlayerShoot(w *item, e *enemy) {
+	if !w.weaponInfo.canShoot {
+		g.setLogMessage("%s can't shoot!", w.getName())
+		return
+	}
+	if !g.player.hasAmmo() {
+		g.setLogMessage("You are out of ammunition!")
+	}
+	damage := g.calculateDamageOnHeads(w.weaponInfo, e)
+	g.setLogMessage("You shoot %s with a %s, destroying %d heads. ",
+		e.getName(),
+		w.getName(), damage)
+	regrow := g.calculateHeadsRegrowAfterHitBy(e, w)
+	e.heads -= damage
+	if e.heads > 0 {
+		g.currLog += fmt.Sprintf("It grows %d heads!", regrow)
+		e.heads += regrow
+	} else {
+		g.currLog += fmt.Sprintf("It drops dead!")
+	}
+	g.player.spendAmmo()
+	g.turnMade = true
+	g.enemiesSkipTurn = true
+}
+
 func (g *game) calculateDamageOnHeads(weapon *weapon, enemy *enemy) int {
 	// TODO: consider elements
 	switch weapon.weaponType {

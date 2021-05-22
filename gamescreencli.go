@@ -56,6 +56,7 @@ func (gs *gameScreen) renderScreen(g *game) {
 			g.currSelectedEnemy--
 		}
 	}
+	println()
 	println(g.currLog)
 	print("Your action?\n> ")
 }

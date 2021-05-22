@@ -54,6 +54,14 @@ func (g *game) parsePlayerInput(input string) {
 		return
 	}
 
+	if splitted[0] == "shoot" || splitted[0] == "fire" {
+		if len(g.enemies) > 0 {
+			g.performPlayerShoot(g.player.items[g.currSelectedItem],
+				g.enemies[g.currSelectedEnemy])
+		}
+		return
+	}
+
 	if splitted[0] == "cheat" {
 		for i := uint8(1); i < TOTAL_ITEM_TYPES_NUMBER; i++ {
 			g.player.items = append(g.player.items, &item{itemConsumableType: i})
