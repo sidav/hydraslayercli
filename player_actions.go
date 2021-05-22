@@ -36,6 +36,9 @@ func (g *game) performUseAction(usedIndex int, usedType INDEXTYPE, targetIndex i
 	if targetType == INDEX_ITEM && len(g.player.items) > targetIndex {
 		targetItem = g.player.items[targetIndex]
 	}
+	if targetType == INDEX_ENEMY_OR_TREASURE && len(g.treasure) > targetIndex {
+		targetItem = g.treasure[targetIndex]
+	}
 	if usedItem != nil && targetItem != nil {
 		g.useItemOnItem(usedItem, targetItem, usedFromGround)
 	}
