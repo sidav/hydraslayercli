@@ -27,9 +27,6 @@ func (p *player) spendItem(item *item, g *game) {
 				return
 			}
 			p.items = append(p.items[:i], p.items[i+1:]...)
-			if g.currSelectedItem >= len(g.player.items) {
-				g.currSelectedItem = 0
-			}
 			return
 		}
 	}

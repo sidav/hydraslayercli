@@ -66,6 +66,9 @@ func (g *game) run() {
 		if g.currentTurn == 0 {
 			g.currentTurn = 1
 		}
+		if g.currSelectedItem >= len(g.player.items) {
+			g.currSelectedItem = 0
+		}
 		if g.currLog == "" && len(g.enemies) > 0 {
 			g.currLog = g.getPossibleAttackStringDescription(g.player.items[g.currSelectedItem],
 				g.enemies[g.currSelectedEnemy])

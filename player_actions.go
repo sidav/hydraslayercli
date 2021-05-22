@@ -188,8 +188,5 @@ func (g *game) dropItemNumber(i int) {
 		g.treasure = append(g.treasure, g.player.items[i])
 		g.currLog = fmt.Sprintf("You drop the %s.", g.player.items[i].getName())
 		g.player.items  = append(g.player.items[:i], g.player.items[i+1:]...)
-		if g.currSelectedItem >= len(g.player.items) {
-			g.currSelectedItem = 0
-		}
 	}
 }
