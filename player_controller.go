@@ -38,7 +38,8 @@ func (g *game) parsePlayerInput(input string) {
 		return
 	}
 	if splitted[0] == "wait" {
-		g.turnMade = true 
+		g.setLogMessage("You do nothing.")
+		g.turnMade = true
 		return
 	}
 	if splitted[0] == "exit" {

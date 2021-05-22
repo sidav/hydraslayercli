@@ -100,13 +100,12 @@ func (g *game) actForEnemies() {
 			g.enemies = append(g.enemies[:i], g.enemies[i+1:]...)
 		} else {
 			if g.enemies[i].hasStatusEffectOfType(STATUS_CONFUSED) {
-				g.appendToLogMessage(" Confused %s %s.", g.enemies[i].getName(), g.enemies[i].getConfusedActionDescription())
 			} else {
 				damage := g.calculateDamageByHeads(g.enemies[i].heads)
-				g.appendToLogMessage(" %s bites you for %d damage. ", g.enemies[i].getName(), damage)
+				g.appendToLogMessage("%s bites you for %d damage. ", g.enemies[i].getName(), damage)
 				g.player.hp -= damage
 			}
-			g.enemies[i].applyStatusEffects()
+			g.enemies[i].applyStatusEffects(g)
 		}
 	}
 }
@@ -116,5 +115,5 @@ func (g *game) setLogMessage(msg string, args... interface{}) {
 }
 
 func (g *game) appendToLogMessage(msg string, args... interface{}) {
-	g.currLog += fmt.Sprintf(msg, args...)
+	g.currLog += fmt.Sprintf(" " + msg, args...)
 }
