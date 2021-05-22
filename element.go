@@ -42,11 +42,11 @@ func getElementColorStr(element uint8) string {
 	case ELEMENT_STONE:
 		return Gray
 	case ELEMENT_STORM:
-		return Cyan
+		return Yellow
 	case ELEMENT_MAGMA:
-		return Red
+		return Purple
 	case ELEMENT_DISTORTION:
-		return Green
+		return Cyan
 	}
 	return "MISSING ELEMENT NAME"
 }

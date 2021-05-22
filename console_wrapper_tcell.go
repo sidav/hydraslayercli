@@ -10,7 +10,9 @@ type cwtcell struct {
 	CONSOLE_WIDTH, CONSOLE_HEIGHT int
 	currentLine                   int
 	currentChar                   int
-	commandHistory                []string
+
+	commandHistory  []string
+	currHistoryLine int
 }
 
 func (c *cwtcell) init() {
@@ -70,10 +72,13 @@ func (c *cwtcell) flush() {
 }
 
 func (c *cwtcell) read() string {
-	currLine := ""
+	currRead := ""
 	key := ""
 	for {
 		ev := c.screen.PollEvent()
+		for i := 0; i <= len(currRead); i++ {
+			c.screen.SetCell(c.currentChar+i, c.currentLine, c.style, ' ')
+		}
 		switch ev := ev.(type) {
 		case *tcell.EventKey:
 			key = eventToKeyString(ev)
@@ -82,24 +87,34 @@ func (c *cwtcell) read() string {
 			c.CONSOLE_WIDTH, c.CONSOLE_HEIGHT = c.screen.Size()
 		}
 		if key == "UP" {
-			for i:=len(c.commandHistory)-1; currLine == c.commandHistory[i] && i > 0; i-- {
-				currLine = c.commandHistory[i]
+			if c.currHistoryLine != 0 {
+				c.currHistoryLine--
+			}
+			if len(c.commandHistory) > 0 {
+				currRead = c.commandHistory[c.currHistoryLine]
+			}
+		}
+		if key == "DOWN" {
+			if c.currHistoryLine < len(c.commandHistory)-1 {
+				c.currHistoryLine++
+			}
+			if len(c.commandHistory) > 0 {
+				currRead = c.commandHistory[c.currHistoryLine]
 			}
 		}
 		if key == "ENTER" {
-			c.commandHistory = append(c.commandHistory, currLine)
-			return currLine
+			c.commandHistory = append(c.commandHistory, currRead)
+			return currRead
 		}
 		if key == "BACKSPACE" {
-			if len(currLine) > 0 {
-				c.screen.SetCell(c.currentChar+len(currLine)-1, c.currentLine, c.style, ' ')
-				currLine = currLine[:len(currLine)-1]
+			if len(currRead) > 0 {
+				currRead = currRead[:len(currRead)-1]
 			}
 		}
 		if len(key) == 1 {
-			currLine += key
+			currRead += key
 		}
-		c.putString(currLine, c.currentChar, c.currentLine)
+		c.putString(currRead+"_", c.currentChar, c.currentLine)
 		c.flush()
 	}
 }
@@ -152,15 +167,19 @@ func (c *cwtcell) considerColorInStringAtPosition(s string, pos int) int {
 		}
 		switch s[pos : pos+5] {
 		case White:
-			c.style.Foreground(tcell.ColorWhite + tcell.ColorValid)
+			c.style.Foreground(tcell.ColorWhite)
 		case Red:
 			c.style = c.style.Foreground(tcell.ColorRed)
 		case Blue:
-			c.style = c.style.Foreground(tcell.ColorDarkBlue)
+			c.style = c.style.Foreground(tcell.ColorBlue)
 		case Green:
 			c.style = c.style.Foreground(tcell.ColorGreen)
 		case Gray:
 			c.style = c.style.Foreground(tcell.ColorGray)
+		case Yellow:
+			c.style = c.style.Foreground(tcell.ColorYellow)
+		case Purple:
+			c.style = c.style.Foreground(tcell.ColorDarkMagenta)
 		case Cyan:
 			c.style = c.style.Foreground(tcell.ColorDarkCyan)
 		default:

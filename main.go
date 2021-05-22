@@ -12,6 +12,7 @@ func main() {
 	defer func() {
 		if r := recover(); r != nil {
 			game.gameScreen.cw.closeConsole()
+			panic(r)
 		}
 	}()
 }
