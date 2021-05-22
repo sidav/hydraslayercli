@@ -164,7 +164,7 @@ func (g *game) pickupItemNumber(i int) {
 		return
 	}
 	if i < len(g.treasure) {
-		if len(g.player.items) >= g.player.maxItems {
+		if len(g.player.items) >= g.player.maxItems && !(g.player.hasAmmo() && g.treasure[i].itemConsumableType == ITEM_AMMO) {
 			g.currLog = fmt.Sprintf("You are overburdened!")
 			return
 		}

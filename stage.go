@@ -1,33 +1,53 @@
 package main
 
 type stage struct {
-	enemies int
+	enemies  []stageEnemyData
 	treasure int
 }
 
-var StageInfo = []stage {
-	{
-		enemies:  1,
+type stageEnemyData struct {
+	minHeads, maxHeads int
+}
+
+var StageInfo = []stage{
+	0: {
+		enemies: []stageEnemyData{
+			{minHeads: 1, maxHeads: 3},
+		},
 		treasure: 3,
 	},
-	{
-		enemies:  2,
+	1: {
+		enemies: []stageEnemyData{
+			{minHeads: 1, maxHeads: 3},
+			{minHeads: 1, maxHeads: 3},
+		},
 		treasure: 3,
 	},
-	{
-		enemies:  2,
+	2: {
+		enemies: []stageEnemyData{
+			{minHeads: 3, maxHeads: 5},
+		},
 		treasure: 3,
 	},
-	{
-		enemies:  3,
+	3: {
+		enemies: []stageEnemyData{
+			{minHeads: 1, maxHeads: 3},
+			{minHeads: 3, maxHeads: 5},
+
+		},
 		treasure: 4,
 	},
-	{
-		enemies:  3,
+	4: {
+		enemies: []stageEnemyData{
+			{minHeads: 1, maxHeads: 4},
+			{minHeads: 2, maxHeads: 4},
+			{minHeads: 3, maxHeads: 4},
+		},
 		treasure: 5,
 	},
-	{
-		enemies:  1,
-		treasure: 5,
+	5: {
+		enemies: []stageEnemyData{
+			{minHeads: 7, maxHeads: 10},
+		},
 	},
 }

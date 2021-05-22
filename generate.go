@@ -3,26 +3,21 @@ package main
 func (g *game) generateCurrentStage() {
 	g.enemies = []*enemy{}
 	g.treasure = []*item{}
-	for i := 0; i < StageInfo[g.currentStageNumber].enemies; i++ {
-		g.addRandomHydra(g.currentStageNumber, 0)
+	for _, ed := range StageInfo[g.currentStageNumber].enemies {
+		g.addRandomHydra(ed.minHeads, ed.maxHeads)
 	}
 	for i := 0; i < StageInfo[g.currentStageNumber].treasure; i++ {
 		g.addRandomTreasure(g.currentStageNumber, 0)
 	}
 }
 
-func (g *game) addRandomHydra(depth, difficulty int) {
-	g.enemies = append(g.enemies, g.generateHydra(depth, 1))
-}
-
-func (g *game) generateHydra(depth, difficulty int) *enemy {
-	minHeads := depth + 1
-	maxHeads := minHeads + depth/2 + 2
-	return &enemy{
+func (g *game) addRandomHydra(minHeads, maxHeads int) {
+	hydra := &enemy{
 		name:    "hydra",
 		heads:   rnd.RandInRange(minHeads, maxHeads),
 		element: getRandomElement(),
 	}
+	g.enemies = append(g.enemies, hydra)
 }
 
 func (g *game) addRandomTreasure(depth, difficulty int) {
