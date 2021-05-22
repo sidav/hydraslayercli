@@ -112,7 +112,11 @@ func (c *cwtcell) read() string {
 			}
 		}
 		if len(key) == 1 {
-			currRead += key
+			if key == " " && len(currRead) == 0 {
+
+			} else {
+				currRead += key
+			}
 		}
 		c.putString(currRead+"_", c.currentChar, c.currentLine)
 		c.flush()
