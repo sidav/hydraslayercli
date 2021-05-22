@@ -68,8 +68,12 @@ func (g *game) generateTreasure(depth int) *item {
 		}
 	}
 
-	return &item{
+	item := &item{
 		itemConsumableType: getWeightedRandomConsumableItemType(),
 		weaponInfo:         nil,
 	}
+	if item.itemConsumableType == ITEM_AMMO {
+		item.count = rnd.RandInRange(1, 3)
+	}
+	return item
 }

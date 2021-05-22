@@ -1,6 +1,9 @@
 package main
 
-import "strings"
+import (
+	"fmt"
+	"strings"
+)
 
 const (
 	ITEM_NOTYPE = iota
@@ -11,6 +14,7 @@ const (
 	ITEM_INCREASE_HP
 	ITEM_STRENGTH
 	ITEM_CHANGE_ELEMENT
+	ITEM_AMMO
 	TOTAL_ITEM_TYPES_NUMBER // for generators
 )
 
@@ -20,6 +24,7 @@ type item struct {
 	specialName        string // for randarts and non-consumables 
 	passiveEffect      *passiveEffect
 	weaponInfo         *weapon
+	count              int
 }
 
 func (i *item) isWeapon() bool {
@@ -56,6 +61,8 @@ func (i *item) getName() string {
 		name += "Potion of strength"
 	case ITEM_CHANGE_ELEMENT:
 		name += "Scroll of change element"
+	case ITEM_AMMO:
+		name += fmt.Sprintf("%d arbalest bolts", i.count)
 	}
 	if i.hasPassiveEffect() {
 		name += " of " + i.passiveEffect.getName()
