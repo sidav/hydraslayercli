@@ -46,6 +46,10 @@ func (g *game) parsePlayerInput(input string) {
 		abortGame = true
 		return
 	}
+	if splitted[0] == "show" {
+		g.showShortCombatDescription = !g.showShortCombatDescription
+		return
+	}
 	if splitted[0] == "hit" {
 		if len(g.enemies) > 0 {
 			g.performPlayerHit(g.player.items[g.currSelectedItem],

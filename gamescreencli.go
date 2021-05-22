@@ -34,11 +34,11 @@ func (gs *gameScreen) renderScreen(g *game) {
 		for i, e := range g.enemies {
 			selectStr := "   "
 			attDescrStr := ""
+			attDescrStr = g.getShortPossibleAttackStringDescription(
+				g.player.items[g.currSelectedItem],
+				e)
 			if i == g.currSelectedEnemy {
 				selectStr = "-> "
-				attDescrStr = g.getShortPossibleAttackStringDescription(
-					g.player.items[g.currSelectedItem],
-					e)
 			}
 			gs.cw.println(fmt.Sprintf("%s%d: %s%s", selectStr, i+1, e.getNameWithStatus(), attDescrStr))
 		}
