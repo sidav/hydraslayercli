@@ -89,6 +89,9 @@ func (g *game) performPlayerShoot(w *item, e *enemy) {
 }
 
 func (g *game) calculateDamageOnHeads(weapon *weapon, enemy *enemy) int {
+	if weapon == nil {
+		return 0
+	}
 	// TODO: consider elements
 	switch weapon.weaponType {
 	case WTYPE_SUBSTRACTOR:

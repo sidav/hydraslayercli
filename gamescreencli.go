@@ -26,7 +26,11 @@ func(gs *gameScreen) init() {
 
 func (gs *gameScreen) renderScreen(g *game) {
 	gs.cw.clear()
-	gs.cw.println(fmt.Sprintf("Stage %d: Turn %d", g.currentStageNumber, g.currentTurn))
+	stageString := fmt.Sprintf("Stage %d/%d", g.currentStageNumber+1, len(StageInfo))
+	if g.currentStageNumber == len(StageInfo) - 1 {
+		stageString = fmt.Sprintf("FINAL STAGE", g.currentStageNumber)
+	}
+	gs.cw.println(fmt.Sprintf("%s: Turn %d", stageString, g.currentTurn))
 	gs.cw.println("")
 
 	if len(g.enemies) > 0 {
