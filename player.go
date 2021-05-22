@@ -6,16 +6,27 @@ type player struct {
 	items []*item
 }
 
-func (p *player) addItem(item *item) {
-	if item.itemConsumableType == ITEM_AMMO {
+func (p *player) addItem(itemToAdd *item) {
+	if itemToAdd.itemConsumableType == ITEM_AMMO {
 		for i := range p.items {
 			if p.items[i].itemConsumableType == ITEM_AMMO {
-				p.items[i].count += item.count
+				p.items[i].count += itemToAdd.count
 				return
 			}
 		}
 	}
-	p.items = append(p.items, item)
+	if itemToAdd.isWeapon() && len(p.items) > 0 {
+		for i := range p.items {
+			if !p.items[i].isWeapon() {
+				// insert into slice
+				temp := append([]*item{}, p.items[i:]...)
+				p.items = append(p.items[0:i], itemToAdd)
+				p.items = append(p.items, temp...)
+				return
+			}
+		}
+	}
+	p.items = append(p.items, itemToAdd)
 }
 
 
