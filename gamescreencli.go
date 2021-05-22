@@ -28,7 +28,7 @@ func (gs *gameScreen) renderScreen(g *game) {
 	gs.cw.clear()
 	stageString := fmt.Sprintf("Stage %d/%d", g.currentStageNumber+1, len(StageInfo))
 	if g.currentStageNumber == len(StageInfo) - 1 {
-		stageString = fmt.Sprintf("FINAL STAGE", g.currentStageNumber)
+		stageString = fmt.Sprintf("FINAL STAGE")
 	}
 	gs.cw.println(fmt.Sprintf("%s: Turn %d", stageString, g.currentTurn))
 	gs.cw.println("")
