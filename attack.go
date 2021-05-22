@@ -6,6 +6,15 @@ import (
 )
 
 func (g *game) getPossibleAttackStringDescription(w *item, e *enemy) string {
+	if w == nil {
+		return "ERROR: nil item in attack.go. Report this please. "
+	}
+	if w.weaponInfo == nil {
+		return "ERROR: item is not a weapon in attack.go. Report this please. ."
+	}
+	if e == nil {
+		return "ERROR: nil enemy in attack.go. Report this please. "
+	}
 	hDmg := g.calculateDamageOnHeads(w.weaponInfo, e)
 	hRegrw := g.calculateHeadsRegrowAfterHitBy(e, w)
 	resHeads := e.heads-hDmg+hRegrw

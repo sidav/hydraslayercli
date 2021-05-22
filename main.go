@@ -2,6 +2,7 @@ package main
 
 var rnd FibRandom
 var auxrnd FibRandom
+var abortGame bool
 
 func main() {
 	rnd.InitDefault()

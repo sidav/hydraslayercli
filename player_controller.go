@@ -43,7 +43,7 @@ func (g *game) parsePlayerInput(input string) {
 		return
 	}
 	if splitted[0] == "exit" {
-		g.abortGame = true
+		abortGame = true
 		return
 	}
 	if splitted[0] == "hit" {

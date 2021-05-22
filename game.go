@@ -14,7 +14,7 @@ type game struct {
 	enemiesSkipTurn bool
 
 	// player-related
-	abortGame, turnMade, stageFinished  bool
+	turnMade, stageFinished  bool
 	currLog                             string
 	currSelectedItem, currSelectedEnemy int
 
@@ -57,7 +57,7 @@ func initGame() *game {
 }
 
 func (g *game) run() {
-	for !g.abortGame {
+	for !abortGame {
 		if g.turnMade || g.currentTurn == 0 {
 			g.turnMade = false
 			for _, i := range g.player.items {

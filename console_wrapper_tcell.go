@@ -81,10 +81,17 @@ func (c *cwtcell) read() string {
 		}
 		switch ev := ev.(type) {
 		case *tcell.EventKey:
+			if ev.Key() == tcell.KeyCtrlC {
+				return "exit"
+			}
+			if ev.Modifiers() != 0 {
+				continue
+			}
 			key = eventToKeyString(ev)
 		case *tcell.EventResize:
 			c.screen.Sync()
 			c.CONSOLE_WIDTH, c.CONSOLE_HEIGHT = c.screen.Size()
+			continue
 		}
 		if key == "UP" {
 			if c.currHistoryLine != 0 {
