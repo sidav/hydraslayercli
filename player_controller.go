@@ -64,7 +64,11 @@ func (g *game) parsePlayerInput(input string) {
 
 	if splitted[0] == "cheat" {
 		for i := uint8(1); i < TOTAL_ITEM_TYPES_NUMBER; i++ {
-			g.player.items = append(g.player.items, &item{itemConsumableType: i})
+			newItem := &item{itemConsumableType: i}
+			if newItem.itemConsumableType == ITEM_AMMO {
+				newItem.count++
+			}
+			g.player.items = append(g.player.items, newItem)
 		}
 		return
 	}
@@ -79,22 +83,23 @@ func (g *game) parsePlayerInput(input string) {
 	}
 
 	if splitted[0] == "take" {
-		if len(splitted) == 2 {
-			if splitted[1] == "all" {
-				g.pickupItemNumber(-1)
-			}
-			takeIndex, indtype := charToIndexWithType(splitted[1][0])
+		if len(splitted) == 1 || splitted[1] == "all" {
+			g.pickupItemNumber(-1)
+			return
+		}
+		for i := 1; i < len(splitted); i++ {
+			takeIndex, indtype := charToIndexWithType(splitted[i][0])
 			if indtype == INDEX_ENEMY_OR_TREASURE {
-				g.pickupItemNumber(takeIndex)
+				g.pickupItemNumber(takeIndex-i+1)
 			}
 		}
 		return
 	}
 	if splitted[0] == "drop" {
-		if len(splitted) == 2 {
-			dropIndex, indtype := charToIndexWithType(splitted[1][0])
+		for i := 1; i < len(splitted); i++ {
+			dropIndex, indtype := charToIndexWithType(splitted[i][0])
 			if indtype == INDEX_ITEM {
-				g.dropItemNumber(dropIndex)
+				g.dropItemNumber(dropIndex-i+1)
 			}
 		}
 		return
