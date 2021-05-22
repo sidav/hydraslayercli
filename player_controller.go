@@ -31,7 +31,12 @@ func (g *game) playerTurn() {
 
 func (g *game) parsePlayerInput(input string) {
 	splitted := strings.Split(input, " ")
-	// println(fmt.Sprintf("%v, %d)", splitted, len(splitted)))
+	// remove all trailing spaces
+	for i := len(splitted)-1; i > 0; i-- {
+		if splitted[i] == "" {
+			splitted = append(splitted[:i], splitted[i+1:]...)
+		}
+	}
 
 	if splitted[0] == "" {
 		g.currLog = ""
