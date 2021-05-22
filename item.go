@@ -14,6 +14,8 @@ const (
 	ITEM_INCREASE_HP
 	ITEM_STRENGTH
 	ITEM_CHANGE_ELEMENT
+	ITEM_UNELEMENT_ENEMIES
+	ITEM_DECAPITATION
 	ITEM_AMMO
 	TOTAL_ITEM_TYPES_NUMBER // for generators
 )
@@ -61,6 +63,10 @@ func (i *item) getName() string {
 		name += "Potion of strength"
 	case ITEM_CHANGE_ELEMENT:
 		name += "Scroll of change element"
+	case ITEM_UNELEMENT_ENEMIES:
+		name += "Scroll of nullify"
+	case ITEM_DECAPITATION:
+		name += "Scroll of mass decapitation"
 	case ITEM_AMMO:
 		name += fmt.Sprintf("%d arbalest bolts", i.count)
 	}

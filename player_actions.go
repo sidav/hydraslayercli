@@ -53,6 +53,16 @@ func (g *game) justUseItem(item *item, usedFromGround bool) {
 		g.currLog = fmt.Sprintf("%s makes you feel amazing!", item.getName())
 		g.player.maxhp += 1
 		g.player.hp = g.player.maxhp
+	case ITEM_DECAPITATION:
+		for _, e := range g.enemies {
+			e.heads -= e.heads/2
+		}
+		g.setLogMessage("Wave of unholy power cuts all enemies in half!")
+	case ITEM_UNELEMENT_ENEMIES:
+		for _, e := range g.enemies {
+			e.element = ELEMENT_NONE
+		}
+		g.setLogMessage("All enemies lose their magic!")
 	case ITEM_STRENGTH:
 		g.currLog = fmt.Sprintf("%s makes you feel stronger!", item.getName())
 		g.player.maxItems += 1

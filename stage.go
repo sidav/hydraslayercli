@@ -12,19 +12,19 @@ var StageInfo = []stage {
 	},
 	{
 		enemies:  2,
-		treasure: 2,
+		treasure: 3,
 	},
 	{
 		enemies:  2,
-		treasure: 2,
-	},
-	{
-		enemies:  3,
-		treasure: 2,
-	},
-	{
-		enemies:  3,
 		treasure: 3,
+	},
+	{
+		enemies:  3,
+		treasure: 4,
+	},
+	{
+		enemies:  3,
+		treasure: 5,
 	},
 	{
 		enemies:  1,
