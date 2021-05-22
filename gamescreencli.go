@@ -21,7 +21,7 @@ func (gs *gameScreen) renderScreen(g *game) {
 			if i == g.currSelectedEnemy {
 				selectStr = "-> "
 			}
-			println(fmt.Sprintf("%s%d: %s", selectStr, i+1, e.getName()))
+			println(fmt.Sprintf("%s%d: %s", selectStr, i+1, e.getNameWithStatus()))
 		}
 	} else if len(g.treasure) > 0 {
 		println("You see here treasure:")

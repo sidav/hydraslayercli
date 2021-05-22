@@ -13,11 +13,25 @@ type enemy struct {
 }
 
 func (e *enemy) getName() string {
-	name := fmt.Sprintf("%s (%d heads)", e.name, e.heads)
+	name := fmt.Sprintf("%d-headed %s",e.heads,  e.name)
 	if getElementName(e.element) != "" {
 		name = getElementName(e.element) + " " + name
 	}
 	return colorizeString(getElementColorStr(e.element), strings.Title(name))
+}
+
+func (e *enemy) getNameWithStatus() string {
+	statusLine := ""
+	for i, se := range e.statuses {
+		if i > 0 {
+			statusLine += ", "
+		}
+		statusLine += se.getName()
+	}
+	if statusLine != "" {
+		statusLine = " (" + statusLine + ")"
+	}
+	return e.getName() + statusLine
 }
 
 var confusedThings = []string{
