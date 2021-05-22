@@ -19,7 +19,7 @@ func (p *player) addItem(item *item) {
 }
 
 
-func (p *player) spendItem(item *item) {
+func (p *player) spendItem(item *item, g *game) {
 	for i := range p.items {
 		if p.items[i] == item {
 			if p.items[i].count > 1 {
@@ -27,6 +27,9 @@ func (p *player) spendItem(item *item) {
 				return
 			}
 			p.items = append(p.items[:i], p.items[i+1:]...)
+			if g.currSelectedItem >= len(g.player.items) {
+				g.currSelectedItem = 0
+			}
 			return
 		}
 	}

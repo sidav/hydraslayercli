@@ -63,7 +63,7 @@ func (g *game) justUseItem(item *item, usedFromGround bool) {
 	if usedFromGround {
 		g.removeTreasure(item)
 	} else {
-		g.player.spendItem(item)
+		g.player.spendItem(item, g)
 	}
 	g.turnMade = true
 }
@@ -93,7 +93,7 @@ func (g *game) useItemOnEnemy(item *item, enemy *enemy) {
 		g.currLog = fmt.Sprintf("ERROR: ADD USAGE %s ON ENEMY.", item.getName())
 		return
 	}
-	g.player.spendItem(item)
+	g.player.spendItem(item, g)
 	g.turnMade = true
 }
 
@@ -120,7 +120,7 @@ func (g *game) useItemOnItem(item, targetItem *item, usedFromGround bool) {
 	if usedFromGround {
 		g.removeTreasure(item)
 	} else {
-		g.player.spendItem(item)
+		g.player.spendItem(item, g)
 	}
 	g.turnMade = true
 }
@@ -168,5 +168,8 @@ func (g *game) dropItemNumber(i int) {
 		g.treasure = append(g.treasure, g.player.items[i])
 		g.currLog = fmt.Sprintf("You drop the %s.", g.player.items[i].getName())
 		g.player.items  = append(g.player.items[:i], g.player.items[i+1:]...)
+		if g.currSelectedItem >= len(g.player.items) {
+			g.currSelectedItem = 0
+		}
 	}
 }
