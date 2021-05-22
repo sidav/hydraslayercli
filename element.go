@@ -8,63 +8,136 @@ const (
 	ELEMENT_STORM
 	ELEMENT_MAGMA
 	ELEMENT_DISTORTION
+	ELEMENT_VAMPIRIC
 	ELEMENTS_TOTAL // for random
 )
 
-func getElementName(element uint8) string {
-	switch element {
-	case ELEMENT_NONE:
-		return ""
-	case ELEMENT_FIRE:
-		return "blazing"
-	case ELEMENT_ICE:
-		return "ice"
-	case ELEMENT_STONE:
-		return "stone"
-	case ELEMENT_STORM:
-		return "storm"
-	case ELEMENT_MAGMA:
-		return "magma"
-	case ELEMENT_DISTORTION:
-		return "distorted"
+type element struct {
+	elementCode uint8
+	name        string
+	isNonBasic  bool
+	isSpecial   bool
+	colorString string
+}
+
+var elementsData = []*element{
+	{
+		elementCode: ELEMENT_NONE,
+		name:        "",
+		colorString: White,
+		isNonBasic:  false,
+	},
+	{
+		elementCode: ELEMENT_FIRE,
+		name:        "Blazing",
+		colorString: Red,
+		isNonBasic:  false,
+	},
+	{
+		elementCode: ELEMENT_ICE,
+		name:        "Frozen",
+		colorString: Blue,
+		isNonBasic:  false,
+	},
+	{
+		elementCode: ELEMENT_STONE,
+		name:        "Stone",
+		colorString: Gray,
+	},
+	{
+		elementCode: ELEMENT_STORM,
+		name:        "Storm",
+		colorString: Yellow,
+	},
+	{
+		elementCode: ELEMENT_MAGMA,
+		name:        "Magmatic",
+		colorString: Red,
+		isNonBasic:  true,
+	},
+	{
+		elementCode: ELEMENT_DISTORTION,
+		name:        "Distorted",
+		colorString: Cyan,
+		isNonBasic:  true,
+	},
+	{
+		elementCode: ELEMENT_VAMPIRIC,
+		name:        "Vampiric",
+		colorString: Red,
+		isSpecial: true,
+	},
+}
+
+func (e *element) getElementColorStr(element uint8) string {
+	if e.colorString != "" {
+		return e.colorString
+	} else {
+		return "MISSING ELEMENT COLOR"
 	}
-	return "MISSING ELEMENT NAME"
 }
 
-func getElementColorStr(element uint8) string {
-	switch element {
-	case ELEMENT_NONE:
-		return White
-	case ELEMENT_FIRE:
-		return Red
-	case ELEMENT_ICE:
-		return Blue
-	case ELEMENT_STONE:
-		return Gray
-	case ELEMENT_STORM:
-		return Yellow
-	case ELEMENT_MAGMA:
-		return Purple
-	case ELEMENT_DISTORTION:
-		return Cyan
+func getRandomElement(allowNonBasic, allowSpecial bool) *element {
+	var element *element
+	conditionsSatisfied := false
+	for !conditionsSatisfied {
+		element = elementsData[rnd.Rand(len(elementsData))]
+		conditionsSatisfied = (allowNonBasic || !element.isNonBasic) && (allowSpecial || !element.isSpecial)
 	}
-	return "MISSING ELEMENT NAME"
+	return element
 }
 
-func getRandomElement() uint8 {
-	return uint8(rnd.Rand(int(ELEMENTS_TOTAL)))
+func getRandomNonBasicElement() *element {
+	var element *element
+	conditionsSatisfied := false
+	counter := 0
+	for !conditionsSatisfied {
+		element = elementsData[rnd.Rand(len(elementsData))]
+		conditionsSatisfied = element.isNonBasic
+		counter++
+		if counter == 100 {
+			panic("randomSpecialElement")
+		}
+	}
+	return element
 }
 
-var headRegrowsForElement = map[uint8]map[uint8]int{
+func getRandomSpecialElement() *element {
+	var element *element
+	conditionsSatisfied := false
+	counter := 0
+	for !conditionsSatisfied {
+		element = elementsData[rnd.Rand(len(elementsData))]
+		conditionsSatisfied = element.isSpecial
+		counter++
+		if counter == 100 {
+			panic("randomSpecialElement")
+		}
+	}
+	return element
+}
+
+func getHeadRegrowForElement(headsElement, weaponElement *element) int {
+	regrow, found := headRegrowsForElementsTable[headsElement.elementCode][weaponElement.elementCode]
+	if !found {
+		// print("ELEMENT NOT FOUND IN TABLE")
+		return 0
+	}
+	return regrow
+}
+
+var headRegrowsForElementsTable = map[uint8]map[uint8]int{
 	// HEADS_ELEM: {WEAPON_ELEM: REGROW}
 	// -2 regrow means duplicate remaining heads
-	ELEMENT_NONE:  {ELEMENT_NONE: 1, ELEMENT_FIRE: 0, ELEMENT_ICE: 0, ELEMENT_STONE: 0, ELEMENT_STORM: 0},
+	ELEMENT_NONE: {ELEMENT_NONE: 1, ELEMENT_FIRE: 0, ELEMENT_ICE: 0, ELEMENT_STONE: 0, ELEMENT_STORM: 0},
 
 	ELEMENT_FIRE:  {ELEMENT_NONE: 1, ELEMENT_FIRE: -2, ELEMENT_STONE: 1, ELEMENT_STORM: 1, ELEMENT_MAGMA: 2},
 	ELEMENT_ICE:   {ELEMENT_NONE: 1, ELEMENT_ICE: -2, ELEMENT_STONE: 1, ELEMENT_STORM: 1},
 	ELEMENT_STONE: {ELEMENT_NONE: 1, ELEMENT_FIRE: 1, ELEMENT_ICE: 1, ELEMENT_STONE: -2, ELEMENT_MAGMA: 2},
-	ELEMENT_STORM: {ELEMENT_NONE: 1, ELEMENT_FIRE: 1, ELEMENT_ICE: 1,ELEMENT_STORM: -2, ELEMENT_MAGMA: 1},
+	ELEMENT_STORM: {ELEMENT_NONE: 1, ELEMENT_FIRE: 1, ELEMENT_ICE: 1, ELEMENT_STORM: -2, ELEMENT_MAGMA: 1},
 
-	ELEMENT_MAGMA: {ELEMENT_MAGMA: -2, ELEMENT_FIRE: 2, ELEMENT_STONE: 2},
+	ELEMENT_MAGMA:      {ELEMENT_MAGMA: -2, ELEMENT_FIRE: 2, ELEMENT_STONE: 2},
 	ELEMENT_DISTORTION: {ELEMENT_DISTORTION: -2, ELEMENT_FIRE: 2, ELEMENT_ICE: 2, ELEMENT_STONE: 2, ELEMENT_STORM: 2},
+
+	ELEMENT_VAMPIRIC: {},
 }

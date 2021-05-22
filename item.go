@@ -6,7 +6,7 @@ import (
 )
 
 type item struct {
-	element       uint8
+	element       *element
 	asConsumable  *consumableItemInfo
 	specialName   string // for randarts and non-consumables
 	passiveEffect *passiveEffect
@@ -31,7 +31,10 @@ func (i *item) hasPassiveEffect() bool {
 }
 
 func (i *item) getName() string {
-	name := getElementName(i.element)
+	name := ""
+	if i.element != nil {
+		name += i.element.name
+	}
 	if len(name) > 0 {
 		name += " "
 	}
@@ -53,5 +56,8 @@ func (i *item) getName() string {
 	if name == "" {
 		panic("No item name!")
 	}
-	return colorizeString(getElementColorStr(i.element), strings.Title(name))
+	if i.element != nil {
+		return colorizeString(i.element.colorString, strings.Title(name))
+	}
+	return strings.Title(name)
 }

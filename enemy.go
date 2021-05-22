@@ -8,16 +8,16 @@ import (
 type enemy struct {
 	name     string
 	heads    int
-	element  uint8
+	element  *element
 	statuses []*statusEffect
 }
 
 func (e *enemy) getName() string {
 	name := fmt.Sprintf("%d-headed %s",e.heads,  e.name)
-	if getElementName(e.element) != "" {
-		name = getElementName(e.element) + " " + name
+	if e.element.name != "" {
+		name = e.element.name + " " + name
 	}
-	return colorizeString(getElementColorStr(e.element), strings.Title(name))
+	return colorizeString(e.element.colorString, strings.Title(name))
 }
 
 func (e *enemy) getNameWithStatus() string {

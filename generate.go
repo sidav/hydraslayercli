@@ -4,18 +4,25 @@ func (g *game) generateCurrentStage() {
 	g.enemies = []*enemy{}
 	g.treasure = []*item{}
 	for _, ed := range StageInfo[g.currentStageNumber].enemies {
-		g.addRandomHydra(ed.minHeads, ed.maxHeads)
+		g.addRandomHydra(ed)
 	}
 	for i := 0; i < StageInfo[g.currentStageNumber].treasure; i++ {
 		g.addRandomTreasure(g.currentStageNumber, 0)
 	}
 }
 
-func (g *game) addRandomHydra(minHeads, maxHeads int) {
+func (g *game) addRandomHydra(data stageEnemyData) {
+	element := getRandomElement(data.allowComplexElement, data.allowSpecialElement)
+	if data.forceComplexElement {
+		element = getRandomNonBasicElement()
+	}
+	if data.forceSpecialElement {
+		element = getRandomSpecialElement()
+	}
 	hydra := &enemy{
 		name:    "hydra",
-		heads:   rnd.RandInRange(minHeads, maxHeads),
-		element: getRandomElement(),
+		heads:   rnd.RandInRange(data.minHeads, data.maxHeads),
+		element: element,
 	}
 	g.enemies = append(g.enemies, hydra)
 }
@@ -47,7 +54,7 @@ func (g *game) generateTreasure(depth int) *item {
 		}
 
 		return &item{
-			element:      getRandomElement(),
+			element:      getRandomElement(true, false),
 			asConsumable: nil,
 			weaponInfo:   newWeapon,
 		}
