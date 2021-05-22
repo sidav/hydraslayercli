@@ -8,7 +8,6 @@ type game struct {
 	enemies            []*enemy
 	treasure           []*item
 	player             *player
-	gameScreen         gameScreen
 
 	// conditions
 	enemiesSkipTurn bool
@@ -49,7 +48,7 @@ func initGame() *game {
 			},
 		},
 	}
-	g.gameScreen.init()
+	screen.init()
 	g.player.items = append(g.player.items, g.generateTreasure(0))
 	g.player.items = append(g.player.items, g.generateTreasure(0))
 	g.generateCurrentStage()
@@ -80,13 +79,17 @@ func (g *game) run() {
 			}
 		}
 		if g.player.hp <= 0 {
-			print("You died...\n")
+			g.appendToLogMessage(" You died... Press ENTER to exit.\n")
+			screen.renderScreen(g)
+			screen.readPlayerInput()
 			return
 		}
 		if g.stageFinished {
 			g.currentStageNumber++
 			if g.currentStageNumber == len(StageInfo) {
-				print("You won!\n")
+				g.appendToLogMessage(" You won! Press ENTER to exit.\n")
+				screen.renderScreen(g)
+				screen.readPlayerInput()
 				return
 			}
 			g.currentTurn = 0

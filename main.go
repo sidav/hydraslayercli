@@ -3,16 +3,17 @@ package main
 var rnd FibRandom
 var auxrnd FibRandom
 var abortGame bool
+var screen gameScreen
 
 func main() {
 	rnd.InitDefault()
 	auxrnd.InitDefault()
 	game := initGame()
 	game.run()
-	game.gameScreen.cw.closeConsole()
+	screen.cw.closeConsole()
 	defer func() {
 		if r := recover(); r != nil {
-			game.gameScreen.cw.closeConsole()
+			screen.cw.closeConsole()
 			panic(r)
 		}
 	}()
