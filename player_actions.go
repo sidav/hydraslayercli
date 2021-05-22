@@ -2,22 +2,29 @@ package main
 
 import "fmt"
 
-func (g *game) performUseAction(usedIndex int, ft INDEXTYPE, targetIndex int, st INDEXTYPE) {
-	if ft != INDEX_ITEM {
-		g.currLog = "Wat?"
-		return
-	}
+func (g *game) performUseAction(usedIndex int, usedType INDEXTYPE, targetIndex int, targetType INDEXTYPE) {
 	var usedItem *item
-	if len(g.player.items) > usedIndex {
-		usedItem = g.player.items[usedIndex]
+	var usedFromGround bool
+	if usedType != INDEX_ITEM {
+		if usedIndex < len(g.treasure) && len(g.enemies) == 0 {
+			usedItem = g.treasure[usedIndex]
+			usedFromGround = true
+		} else {
+			g.setLogMessage("Wat?")
+			return
+		}
+	} else {
+		if len(g.player.items) > usedIndex {
+			usedItem = g.player.items[usedIndex]
+		}
 	}
 	if targetIndex == -1 {
-		g.justUseItem(usedItem)
+		g.justUseItem(usedItem, usedFromGround)
 		return
 	}
 
 	var targetEnemy *enemy
-	if st == INDEX_ENEMY_OR_TREASURE && len(g.enemies) > targetIndex {
+	if targetType == INDEX_ENEMY_OR_TREASURE && len(g.enemies) > targetIndex {
 		targetEnemy = g.enemies[targetIndex]
 	}
 	if usedItem != nil && targetEnemy != nil {
@@ -26,15 +33,15 @@ func (g *game) performUseAction(usedIndex int, ft INDEXTYPE, targetIndex int, st
 	}
 
 	var targetItem *item
-	if st == INDEX_ITEM && len(g.player.items) > targetIndex {
+	if targetType == INDEX_ITEM && len(g.player.items) > targetIndex {
 		targetItem = g.player.items[targetIndex]
 	}
 	if usedItem != nil && targetItem != nil {
-		g.useItemOnItem(usedItem, targetItem)
+		g.useItemOnItem(usedItem, targetItem, usedFromGround)
 	}
 }
 
-func (g *game) justUseItem(item *item) {
+func (g *game) justUseItem(item *item, usedFromGround bool) {
 	switch item.itemConsumableType {
 	case ITEM_HEAL:
 		g.currLog = fmt.Sprintf("You sniff %s and feel good.", item.getName())
@@ -50,7 +57,11 @@ func (g *game) justUseItem(item *item) {
 		g.currLog = fmt.Sprintf("ERROR: ADD SIMPLE USAGE OF %s.", item.getName())
 		return
 	}
-	g.player.spendItem(item)
+	if usedFromGround {
+		g.removeTreasure(item)
+	} else {
+		g.player.spendItem(item)
+	}
 	g.turnMade = true
 }
 
@@ -83,7 +94,7 @@ func (g *game) useItemOnEnemy(item *item, enemy *enemy) {
 	g.turnMade = true
 }
 
-func (g *game) useItemOnItem(item, targetItem *item) {
+func (g *game) useItemOnItem(item, targetItem *item, usedFromGround bool) {
 	switch item.itemConsumableType {
 	case ITEM_HEAL:
 		g.currLog = fmt.Sprintf("Use %s on %s? But how?", item.getName(), targetItem.getName())
@@ -103,7 +114,11 @@ func (g *game) useItemOnItem(item, targetItem *item) {
 		g.currLog = fmt.Sprintf("ERROR: ADD USAGE %s ON ITEM.", item.getName())
 		return
 	}
-	g.player.spendItem(item)
+	if usedFromGround {
+		g.removeTreasure(item)
+	} else {
+		g.player.spendItem(item)
+	}
 	g.turnMade = true
 }
 
@@ -132,7 +147,16 @@ func (g *game) pickupItemNumber(i int) {
 		}
 		g.player.items = append(g.player.items, g.treasure[i])
 		g.currLog = fmt.Sprintf("You pick up the %s.", g.treasure[i].getName())
-		g.treasure = append(g.treasure[:i], g.treasure[i+1:]...)
+		g.removeTreasure(g.treasure[i])
+	}
+}
+
+func (g *game) removeTreasure(t *item) {
+	for i, tt := range g.treasure {
+		if tt == t {
+			g.treasure = append(g.treasure[:i], g.treasure[i+1:]...)
+			return
+		}
 	}
 }
 
