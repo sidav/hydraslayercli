@@ -31,7 +31,7 @@ func (g *game) addRandomTreasure(depth, difficulty int) {
 
 func (g *game) generateTreasure(depth int) *item {
 	perc := rnd.RandomPercent()
-	isWeapon := perc < 33
+	isWeapon := perc < 25
 	if isWeapon {
 		minDamage := depth - depth/2
 		maxDamage := depth + depth/2 + 2
@@ -41,6 +41,7 @@ func (g *game) generateTreasure(depth int) *item {
 		newWeapon := &weapon{
 			weaponType: WTYPE_SUBSTRACTOR,
 			damage:     rnd.RandInRange(minDamage, maxDamage),
+			canShoot: rnd.OneChanceFrom(5),
 		}
 		weaponTypePercent := rnd.RandomPercent()
 		if weaponTypePercent < 25 {
@@ -56,7 +57,7 @@ func (g *game) generateTreasure(depth int) *item {
 			weaponInfo:         newWeapon,
 		}
 	}
-	isSpecialItem := perc < 50
+	isSpecialItem := perc < 33
 	if isSpecialItem {
 		return &item{
 			specialName: "Ring",

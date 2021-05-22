@@ -40,3 +40,11 @@ func (p *player) hasAmmo() bool {
 	}
 	return false
 }
+
+func (p *player) spendAmmo() {
+	for i := range p.items {
+		if p.items[i].itemConsumableType == ITEM_AMMO {
+			p.items[i].count++
+		}
+	}
+}

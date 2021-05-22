@@ -6,7 +6,8 @@ import (
 
 type weapon struct {
 	weaponType weaponType
-	damage int
+	canShoot   bool
+	damage     int
 }
 
 func (w *weapon) getName() string {
@@ -26,7 +27,10 @@ func (w *weapon) getName() string {
 			name += fmt.Sprintf("/%d Divisor", w.damage)
 		}
 	default:
-		name += "SomeWeapon"
+		panic("No weapon name")
+	}
+	if w.canShoot {
+		name += " arbalest"
 	}
 	return name
 }

@@ -30,14 +30,14 @@ func initGame() *game {
 					element:    getRandomElement(),
 					weaponInfo: &weapon{
 						weaponType: WTYPE_SUBSTRACTOR,
-						damage:     1,
+						damage:     2,
 					},
 				},
 				{
 					element:    getRandomElement(),
 					weaponInfo: &weapon{
 						weaponType: WTYPE_SUBSTRACTOR,
-						damage:     2,
+						damage:     1,
 					},
 				},
 			},
