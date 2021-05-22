@@ -18,10 +18,14 @@ func (gs *gameScreen) renderScreen(g *game) {
 		println("You see here enemies:")
 		for i, e := range g.enemies {
 			selectStr := "   "
+			attDescrStr := ""
 			if i == g.currSelectedEnemy {
 				selectStr = "-> "
+				attDescrStr = g.getShortPossibleAttackStringDescription(
+					g.player.items[g.currSelectedItem],
+					e)
 			}
-			println(fmt.Sprintf("%s%d: %s", selectStr, i+1, e.getNameWithStatus()))
+			println(fmt.Sprintf("%s%d: %s%s", selectStr, i+1, e.getNameWithStatus(), attDescrStr))
 		}
 	} else if len(g.treasure) > 0 {
 		println("You see here treasure:")

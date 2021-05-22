@@ -23,6 +23,21 @@ func (g *game) getPossibleAttackStringDescription(w *item, e *enemy) string {
 	return as
 }
 
+func (g *game) getShortPossibleAttackStringDescription(w *item, e *enemy) string {
+	if !g.showShortCombatDescription {
+		return ""
+	}
+	hDmg := g.calculateDamageOnHeads(w.weaponInfo, e)
+	hRegrw := g.calculateHeadsRegrowAfterHitBy(e, w)
+	resHeads := e.heads-hDmg+hRegrw
+	if hDmg < e.heads {
+		return fmt.Sprintf(" (-%d+%d=%d)", hDmg, hRegrw, resHeads)
+	} else {
+		return fmt.Sprintf(" (-%d)", hDmg)
+	}
+}
+
+
 func (g *game) performPlayerHit(w *item, e *enemy) {
 	damage := g.calculateDamageOnHeads(w.weaponInfo, e)
 	g.currLog = fmt.Sprintf("You hit %s with %s, cutting %d heads. ",

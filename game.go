@@ -14,6 +14,9 @@ type game struct {
 	abortGame, turnMade, stageFinished  bool
 	currLog                             string
 	currSelectedItem, currSelectedEnemy int
+
+	// settings-related
+	showShortCombatDescription bool
 }
 
 func initGame() *game {
