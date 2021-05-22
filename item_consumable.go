@@ -1,66 +1,88 @@
 package main
 
+const (
+	ITEM_HEAL = iota
+	ITEM_ENCHANTER
+	ITEM_DESTROY_HYDRA
+	ITEM_CONFUSE_HYDRA
+	ITEM_MASS_CONFUSION
+	ITEM_INCREASE_HP
+	ITEM_STRENGTH
+	ITEM_CHANGE_ELEMENT
+	ITEM_UNELEMENT_ENEMIES
+	ITEM_DECAPITATION
+	ITEM_IMPROVE_COOLDOWN
+	ITEM_AMMO
+	TOTAL_ITEM_TYPES_NUMBER // for generators
+)
+
 var consumablesData = []*consumableItemInfo {
 	{
 		consumableType: ITEM_HEAL,
-		name:           "",
+		name:           "Healing powder",
 		frequency:      2,
 	},
 	{
 		consumableType: ITEM_ENCHANTER,
-		name:           "",
+		name:           "Scroll of enchant weapon",
 		frequency:      2,
 	},
 	{
 		consumableType: ITEM_DESTROY_HYDRA,
-		name:           "",
+		name:           "Scroll of destroy hydra",
 		frequency:      1,
 	},
 	{
 		consumableType: ITEM_CONFUSE_HYDRA,
-		name:           "",
+		name:           "Scroll of confuse hydra",
 		frequency:      1,
 	},
 	{
 		consumableType: ITEM_MASS_CONFUSION,
-		name:           "",
+		name:           "Scroll of confused party",
 		frequency:      1,
 	},
 	{
 		consumableType: ITEM_INCREASE_HP,
-		name:           "",
+		name:           "Potion of vitality",
 		frequency:      2,
 	},
 	{
 		consumableType: ITEM_STRENGTH,
-		name:           "",
+		name:           "Potion of strength",
 		frequency:      2,
 	},
 	{
 		consumableType: ITEM_CHANGE_ELEMENT,
-		name:           "",
+		name:           "Scroll of change element",
 		frequency:      1,
 	},
 	{
 		consumableType: ITEM_UNELEMENT_ENEMIES,
-		name:           "",
+		name:           "Scroll of nullification",
 		frequency:      1,
 	},
 	{
 		consumableType: ITEM_DECAPITATION,
-		name:           "",
+		name:           "Scroll of bisection",
 		frequency:      1,
 	},
 	{
 		consumableType: ITEM_IMPROVE_COOLDOWN,
-		name:           "",
+		name:           "Scroll of improve cooldown",
 		frequency:      1,
 	},
 	{
 		consumableType: ITEM_AMMO,
-		name:           "",
+		name:           "Arbalest bolts",
 		frequency:      2,
 	},
+}
+
+type consumableItemInfo struct {
+	consumableType uint8
+	name           string
+	frequency      int
 }
 
 func getWeightedRandomConsumableItemType() *consumableItemInfo {
