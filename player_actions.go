@@ -51,7 +51,7 @@ func (g *game) justUseItem(item *item, usedFromGround bool) {
 		g.player.hp = g.player.maxhp
 	case ITEM_INCREASE_HP:
 		g.currLog = fmt.Sprintf("%s makes you feel amazing!", item.getName())
-		g.player.maxhp += 1
+		g.player.maxhp += 2
 		g.player.hp = g.player.maxhp
 	case ITEM_DECAPITATION:
 		for _, e := range g.enemies {
@@ -66,6 +66,14 @@ func (g *game) justUseItem(item *item, usedFromGround bool) {
 	case ITEM_STRENGTH:
 		g.currLog = fmt.Sprintf("%s makes you feel stronger!", item.getName())
 		g.player.maxItems += 1
+	case ITEM_MASS_CONFUSION:
+		g.currLog = fmt.Sprintf("Enemies freeze in confusion!")
+		for _, enemy := range g.enemies {
+			enemy.statuses = append(enemy.statuses, &statusEffect{
+				statusType:     STATUS_CONFUSED,
+				turnsRemaining: 3,
+			})
+		}
 	default:
 		g.currLog = fmt.Sprintf("ERROR: ADD SIMPLE USAGE OF %s.", item.getName())
 		return
@@ -76,6 +84,7 @@ func (g *game) justUseItem(item *item, usedFromGround bool) {
 		g.player.spendItem(item, g)
 	}
 	g.turnMade = true
+	g.enemiesSkipTurn = true
 }
 
 func (g *game) useItemOnEnemy(item *item, enemy *enemy) {
@@ -93,7 +102,7 @@ func (g *game) useItemOnEnemy(item *item, enemy *enemy) {
 		g.currLog = fmt.Sprintf("The %s starts behaving like crazy.", enemy.getName())
 		enemy.statuses = append(enemy.statuses, &statusEffect{
 			statusType:     STATUS_CONFUSED,
-			turnsRemaining: 3,
+			turnsRemaining: 4,
 		})
 	case ITEM_CHANGE_ELEMENT:
 		g.currLog = fmt.Sprintf("You use %s on %s, making it into ", item.getName(), enemy.getName())
@@ -104,6 +113,7 @@ func (g *game) useItemOnEnemy(item *item, enemy *enemy) {
 		return
 	}
 	g.player.spendItem(item, g)
+	g.enemiesSkipTurn = true
 	g.turnMade = true
 }
 

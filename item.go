@@ -11,6 +11,7 @@ const (
 	ITEM_ENCHANTER
 	ITEM_DESTROY_HYDRA
 	ITEM_CONFUSE_HYDRA
+	ITEM_MASS_CONFUSION
 	ITEM_INCREASE_HP
 	ITEM_STRENGTH
 	ITEM_CHANGE_ELEMENT
@@ -67,6 +68,8 @@ func (i *item) getName() string {
 		name += "Scroll of nullify"
 	case ITEM_DECAPITATION:
 		name += "Scroll of mass decapitation"
+	case ITEM_MASS_CONFUSION:
+		name += "Scroll of mass confusion"
 	case ITEM_AMMO:
 		name += fmt.Sprintf("%d arbalest bolts", i.count)
 	}
