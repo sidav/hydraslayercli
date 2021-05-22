@@ -69,7 +69,7 @@ func (g *game) generateTreasure(depth int) *item {
 	}
 
 	return &item{
-		itemConsumableType: uint8(rnd.RandInRange(1, TOTAL_ITEM_TYPES_NUMBER-1)),
+		itemConsumableType: getWeightedRandomConsumableItemType(),
 		weaponInfo:         nil,
 	}
 }
