@@ -11,6 +11,7 @@ var _consumableWeights = []int{
 	ITEM_UNELEMENT_ENEMIES: 1,
 	ITEM_DECAPITATION:      1,
 	ITEM_AMMO:              1,
+	ITEM_IMPROVE_COOLDOWN:  1,
 }
 
 func getWeightedRandomConsumableItemType() uint8 {

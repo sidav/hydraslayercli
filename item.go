@@ -17,6 +17,7 @@ const (
 	ITEM_CHANGE_ELEMENT
 	ITEM_UNELEMENT_ENEMIES
 	ITEM_DECAPITATION
+	ITEM_IMPROVE_COOLDOWN
 	ITEM_AMMO
 	TOTAL_ITEM_TYPES_NUMBER // for generators
 )
@@ -68,6 +69,8 @@ func (i *item) getName() string {
 		name += "Scroll of nullify"
 	case ITEM_DECAPITATION:
 		name += "Scroll of mass decapitation"
+	case ITEM_IMPROVE_COOLDOWN:
+		name += "Scroll of faster cooldown"
 	case ITEM_MASS_CONFUSION:
 		name += "Scroll of mass confusion"
 	case ITEM_AMMO:
