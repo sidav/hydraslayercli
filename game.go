@@ -99,9 +99,14 @@ func (g *game) actForEnemies() {
 		if g.enemies[i].heads == 0 {
 			g.enemies = append(g.enemies[:i], g.enemies[i+1:]...)
 		} else {
-			damage := g.calculateDamageByHeads(g.enemies[i].heads)
-			g.appendToLogMessage(" %s bites you for %d damage. ", g.enemies[i].getName(), damage)
-			g.player.hp -= damage
+			if g.enemies[i].hasStatusEffectOfType(STATUS_CONFUSED) {
+				g.appendToLogMessage(" Confused %s %s.", g.enemies[i].getName(), g.enemies[i].getConfusedActionDescription())
+			} else {
+				damage := g.calculateDamageByHeads(g.enemies[i].heads)
+				g.appendToLogMessage(" %s bites you for %d damage. ", g.enemies[i].getName(), damage)
+				g.player.hp -= damage
+			}
+			g.enemies[i].applyStatusEffects()
 		}
 	}
 }

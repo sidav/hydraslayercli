@@ -37,6 +37,10 @@ func (g *game) parsePlayerInput(input string) {
 		g.currLog = ""
 		return
 	}
+	if splitted[0] == "wait" {
+		g.turnMade = true 
+		return
+	}
 	if splitted[0] == "exit" {
 		g.abortGame = true
 		return

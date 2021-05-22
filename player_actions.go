@@ -65,6 +65,12 @@ func (g *game) useItemOnEnemy(item *item, enemy *enemy) {
 	case ITEM_DESTROY_HYDRA:
 		g.currLog = fmt.Sprintf("The magic obliterates poor %s!", enemy.getName())
 		enemy.heads = 0
+	case ITEM_CONFUSE_HYDRA:
+		g.currLog = fmt.Sprintf("The %s starts behaving like crazy.", enemy.getName())
+		enemy.statuses = append(enemy.statuses, &statusEffect{
+			statusType:     STATUS_CONFUSED,
+			turnsRemaining: 3,
+		})
 	case ITEM_CHANGE_ELEMENT:
 		g.currLog = fmt.Sprintf("You use %s on %s, making it into ", item.getName(), enemy.getName())
 		enemy.element = getRandomElement()
