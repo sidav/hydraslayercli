@@ -1,21 +1,36 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
-	"os"
-	"strings"
 )
 
-type gameScreen struct{}
+type consoleWrapper interface {
+	init()
+	print(string)
+	println(string)
+	clear()
+	flush()
+	read() string
+	closeConsole()
+}
+
+type gameScreen struct{
+	cw consoleWrapper
+}
+
+func(gs *gameScreen) init() {
+	gs.cw = &consoleWrapperStdout{}
+	// gs.cw = &cwtcell{}
+	gs.cw.init()
+}
 
 func (gs *gameScreen) renderScreen(g *game) {
-	fmt.Println("\033[2J") // linux only!
-	println(fmt.Sprintf("Stage %d: Turn %d", g.currentStageNumber, g.currentTurn))
-	println("")
+	gs.cw.clear()
+	gs.cw.println(fmt.Sprintf("Stage %d: Turn %d", g.currentStageNumber, g.currentTurn))
+	gs.cw.println("")
 
 	if len(g.enemies) > 0 {
-		println("You see here enemies:")
+		gs.cw.println("You see here enemies:")
 		for i, e := range g.enemies {
 			selectStr := "   "
 			attDescrStr := ""
@@ -25,22 +40,22 @@ func (gs *gameScreen) renderScreen(g *game) {
 					g.player.items[g.currSelectedItem],
 					e)
 			}
-			println(fmt.Sprintf("%s%d: %s%s", selectStr, i+1, e.getNameWithStatus(), attDescrStr))
+			gs.cw.println(fmt.Sprintf("%s%d: %s%s", selectStr, i+1, e.getNameWithStatus(), attDescrStr))
 		}
 	} else if len(g.treasure) > 0 {
-		println("You see here treasure:")
+		gs.cw.println("You see here treasure:")
 		for i, t := range g.treasure {
-			println(fmt.Sprintf("%d: %s", i+1, t.getName()))
+			gs.cw.println(fmt.Sprintf("%d: %s", i+1, t.getName()))
 		}
 	} else {
-		println("There is nothing to do here. Use \"move\" command to move to the next stage!")
+		gs.cw.println("There is nothing to do here. Use \"move\" command to move to the next stage!")
 	}
 
 	hpColor := Green
 	if g.player.hp < g.player.maxhp/3 {
 		hpColor = Red
 	}
-	println(fmt.Sprintf("You have %s hp and %d/%d items:",
+	gs.cw.println(fmt.Sprintf("You have %s hp and %d/%d items:",
 		colorizeString(hpColor, fmt.Sprintf("%d/%d", g.player.hp, g.player.maxhp)),
 		len(g.player.items), g.player.maxItems))
 
@@ -49,21 +64,19 @@ func (gs *gameScreen) renderScreen(g *game) {
 		if i == g.currSelectedItem {
 			selectStr = "->"
 		}
-		println(fmt.Sprintf("%s %c: %s", selectStr, 'A'+i, w.getName()))
+		gs.cw.println(fmt.Sprintf("%s %c: %s", selectStr, 'A'+i, w.getName()))
 	}
 	if len(g.enemies) > 0 {
 		for len(g.enemies) <= g.currSelectedEnemy {
 			g.currSelectedEnemy--
 		}
 	}
-	println()
-	println(g.currLog)
-	print("Your action?\n> ")
+	gs.cw.println("")
+	gs.cw.println(g.currLog)
+	gs.cw.print("Your action?\n> ")
+	gs.cw.flush()
 }
 
 func (gs *gameScreen) readPlayerInput() string {
-	reader := bufio.NewReader(os.Stdin)
-	input, _ := reader.ReadString('\n')
-	input = strings.Trim(input, " \n")
-	return input
+	return gs.cw.read()
 }

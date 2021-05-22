@@ -49,6 +49,7 @@ func initGame() *game {
 			},
 		},
 	}
+	g.gameScreen.init()
 	g.player.items = append(g.player.items, g.generateTreasure(0))
 	g.player.items = append(g.player.items, g.generateTreasure(0))
 	g.generateCurrentStage()

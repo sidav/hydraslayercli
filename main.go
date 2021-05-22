@@ -6,5 +6,7 @@ var auxrnd FibRandom
 func main() {
 	rnd.InitDefault()
 	auxrnd.InitDefault()
-	initGame().run()
+	game := initGame()
+	game.run()
+	game.gameScreen.cw.closeConsole()
 }
