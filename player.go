@@ -16,8 +16,9 @@ func (p *player) addItem(itemToAdd *item) {
 		}
 	}
 	if itemToAdd.isWeapon() && len(p.items) > 0 {
-		for i := range p.items {
-			if !p.items[i].isWeapon() {
+		for i, ii := range p.items {
+			if !ii.isWeapon() || (ii.weaponInfo.weaponType == itemToAdd.weaponInfo.weaponType &&
+			ii.weaponInfo.damage < itemToAdd.weaponInfo.damage) {
 				// insert into slice
 				temp := append([]*item{}, p.items[i:]...)
 				p.items = append(p.items[0:i], itemToAdd)
