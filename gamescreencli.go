@@ -20,7 +20,7 @@ type gameScreen struct{
 
 func(gs *gameScreen) init() {
 	gs.cw = &consoleWrapperStdout{}
-	// gs.cw = &cwtcell{}
+	gs.cw = &cwtcell{}
 	gs.cw.init()
 }
 

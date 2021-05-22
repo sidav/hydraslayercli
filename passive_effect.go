@@ -23,7 +23,6 @@ func (i *item) applyPassiveEffect(g *game) {
 	}
 	activatable := i.passiveEffect.activatesEach == 0 || (g.currentTurn % i.passiveEffect.activatesEach == 0)
 	if !activatable {
-		print("WTF")
 		return
 	}
 	switch i.passiveEffect.effectType {

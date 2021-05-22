@@ -9,4 +9,9 @@ func main() {
 	game := initGame()
 	game.run()
 	game.gameScreen.cw.closeConsole()
+	defer func() {
+		if r := recover(); r != nil {
+			game.gameScreen.cw.closeConsole()
+		}
+	}()
 }

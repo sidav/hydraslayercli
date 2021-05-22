@@ -20,11 +20,11 @@ func (c *consoleWrapperStdout) clear() {
 }
 
 func (c *consoleWrapperStdout) print(s string) {
-	print(s) // linux only!
+	print(s)
 }
 
 func (c *consoleWrapperStdout) println(s string) {
-	println(s) // linux only!
+	println(s)
 }
 
 func (c *consoleWrapperStdout) read() string {
