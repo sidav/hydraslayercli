@@ -28,9 +28,9 @@ func (g *game) performPlayerHit(w *item, e *enemy) {
 	g.currLog = fmt.Sprintf("You hit %s with %s, cutting %d heads. ",
 		e.getName(),
 		w.getName(), damage)
+	regrow := g.calculateHeadsRegrowAfterHitBy(e, w)
 	e.heads -= damage
 	if e.heads > 0 {
-		regrow := g.calculateHeadsRegrowAfterHitBy(e, w)
 		g.currLog += fmt.Sprintf("It grows %d heads!", regrow)
 		e.heads += regrow
 	} else {

@@ -21,18 +21,21 @@ func (i *item) applyPassiveEffect(g *game) {
 	if i.passiveEffect == nil {
 		return
 	}
-	activatable := i.passiveEffect.activatesEach == 0 || g.currentTurn % i.passiveEffect.activatesEach == 0
+	activatable := i.passiveEffect.activatesEach == 0 || (g.currentTurn % i.passiveEffect.activatesEach == 0)
 	if !activatable {
+		print("WTF")
 		return
 	}
 	switch i.passiveEffect.effectType {
 	case PASSIVE_EFFECT_HEALER:
 		if g.currentTurn == 0 {
 			g.player.hp = g.player.maxhp
+			g.appendToLogMessage("You are healed.")
 		}
 	case PASSIVE_EFFECT_REGENERATOR:
 		if g.player.hp < g.player.maxhp {
 			g.player.hp++
+			g.appendToLogMessage("You regenerate.")
 		}
 	}
 }

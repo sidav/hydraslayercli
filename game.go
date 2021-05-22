@@ -52,6 +52,7 @@ func initGame() *game {
 func (g *game) run() {
 	for !g.abortGame {
 		if g.turnMade || g.currentTurn == 0 {
+			g.turnMade = false
 			for _, i := range g.player.items {
 				i.applyPassiveEffect(g)
 			}
@@ -67,7 +68,6 @@ func (g *game) run() {
 		if g.turnMade {
 			g.actForEnemies()
 			g.currentTurn++
-			g.turnMade = false
 			if g.player.hp < g.player.maxhp/3 {
 				g.appendToLogMessage(colorizeString(Red, "Be careful: you're almost dead!"))
 			}
@@ -84,7 +84,6 @@ func (g *game) run() {
 			}
 			g.currentTurn = 0
 			g.generateCurrentStage()
-			g.turnMade = false
 			g.stageFinished = false
 			g.currSelectedEnemy = 0
 			g.setLogMessage("Welcome to stage %d! \n%s", g.currentStageNumber,
