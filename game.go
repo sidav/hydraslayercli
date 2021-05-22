@@ -49,8 +49,8 @@ func initGame() *game {
 		},
 	}
 	screen.init()
-	g.player.items = append(g.player.items, g.generateTreasure(0))
-	g.player.items = append(g.player.items, g.generateTreasure(0))
+	g.player.addItem(g.generateTreasure(0))
+	g.player.addItem(g.generateTreasure(0))
 	g.generateCurrentStage()
 	return g
 }

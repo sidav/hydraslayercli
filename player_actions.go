@@ -156,7 +156,7 @@ func (g *game) pickupItemNumber(i int) {
 			if i > 0 {
 				g.currLog += ", "
 			}
-			g.player.items = append(g.player.items, g.treasure[i])
+			g.player.addItem(g.treasure[i])
 			g.currLog +=  g.treasure[i].getName()
 		}
 		g.currLog += "."
@@ -168,7 +168,7 @@ func (g *game) pickupItemNumber(i int) {
 			g.currLog = fmt.Sprintf("You are overburdened!")
 			return
 		}
-		g.player.items = append(g.player.items, g.treasure[i])
+		g.player.addItem(g.treasure[i])
 		g.currLog = fmt.Sprintf("You pick up the %s.", g.treasure[i].getName())
 		g.removeTreasure(g.treasure[i])
 	}
