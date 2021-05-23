@@ -52,6 +52,10 @@ func (g *game) justUseItem(item *item, usedFromGround bool) {
 		item.applyActiveEffect(g)
 		return
 	}
+	if item.asConsumable == nil {
+		g.setLogMessage("And what? How did you want to use %s?", item.getName())
+		return
+	}
 	switch item.asConsumable.consumableType {
 	case ITEM_HEAL:
 		g.currLog = fmt.Sprintf("You sniff %s and feel good.", item.getName())
@@ -95,6 +99,10 @@ func (g *game) justUseItem(item *item, usedFromGround bool) {
 }
 
 func (g *game) useItemOnEnemy(item *item, enemy *enemy) {
+	if item.asConsumable == nil {
+		g.setLogMessage("And what? How did you want to use %s?", item.getName())
+		return
+	}
 	switch item.asConsumable.consumableType {
 	case ITEM_HEAL:
 		g.currLog = fmt.Sprintf("Use %s on enemy? Srsly?", item.getName())
@@ -125,6 +133,10 @@ func (g *game) useItemOnEnemy(item *item, enemy *enemy) {
 }
 
 func (g *game) useItemOnItem(item, targetItem *item, usedFromGround bool) {
+	if item.asConsumable == nil {
+		g.setLogMessage("And what? How did you want to use %s?", item.getName())
+		return
+	}
 	switch item.asConsumable.consumableType {
 	case ITEM_HEAL:
 		g.currLog = fmt.Sprintf("Use %s on %s? But how?", item.getName(), targetItem.getName())

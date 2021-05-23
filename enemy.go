@@ -35,7 +35,7 @@ func (e *enemy) getNameWithStatus() string {
 }
 
 func (e *enemy) getInfo() string {
-	return fmt.Sprintf("%s. %s", e.name, e.element.description)
+	return fmt.Sprintf("%s. %s", e.getName(), e.element.description)
 }
 
 var confusedThings = []string{
@@ -47,6 +47,10 @@ var confusedThings = []string{
 	"yowls",
 	"sneezes",
 	"looks at you in awe",
+	"imagines attacking you for 8 damage",
+	"thinks that it wants to have more heads",
+	"twerks",
+	"thinks of laying eggs",
 }
 
 func (e *enemy) getConfusedActionDescription() string {
