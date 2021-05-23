@@ -49,7 +49,7 @@ func (gs *gameScreen) renderScreen(g *game) {
 	} else if len(g.treasure) > 0 {
 		gs.cw.println("You see here treasure:")
 		for i, t := range g.treasure {
-			gs.cw.println(fmt.Sprintf("%d: %s", i+1, t.getName()))
+			gs.cw.println(fmt.Sprintf("   %d: %s", i+1, t.getName()))
 		}
 	} else {
 		gs.cw.println("There is nothing to do here. Use \"move\" command to move to the next stage!")

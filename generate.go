@@ -52,21 +52,23 @@ func (g *game) generateTreasure(depth int) *item {
 		} else {
 
 		}
-
+		hasEffect := rnd.OneChanceFrom(4)
+		var eff *effect
+		if hasEffect {
+			eff = getRandomEffect(true, false)
+		}
 		return &item{
 			element:      getRandomElement(true, false),
 			asConsumable: nil,
 			weaponInfo:   newWeapon,
+			effect: eff,
 		}
 	}
 	isSpecialItem := perc < 33
 	if isSpecialItem {
 		return &item{
 			specialName: "Ring",
-			effect: &effect{
-				effectType:    getRandomPassiveEffect(),
-				activatesEach: 4,
-			},
+			effect: getRandomEffect(false, true),
 			weaponInfo: nil,
 		}
 	}

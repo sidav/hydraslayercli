@@ -33,7 +33,11 @@ func (c *cwtcell) init() {
 
 func (c *cwtcell) print(s string) {
 	for i := 0; i < len(s); i++ {
-		i += c.considerColorInStringAtPosition(s, i)
+		shift := c.considerColorInStringAtPosition(s, i)
+		if shift > 0 {
+			i += shift - 1
+			continue
+		}
 		if i >= len(s) {
 			return
 		}
