@@ -16,30 +16,35 @@ const (
 	TOTAL_ITEM_TYPES_NUMBER // for generators
 )
 
-var consumablesData = []*consumableItemInfo {
+var consumablesData = []*consumableItemInfo{
 	{
 		consumableType: ITEM_HEAL,
 		name:           "Healing powder",
 		frequency:      2,
+		info:           "Can be used to recover HP.",
 	},
 	{
 		consumableType: ITEM_ENCHANTER,
 		name:           "Scroll of enchant weapon",
 		frequency:      2,
+		info:           "Can be used to increase weapon damage.",
 	},
 	{
 		consumableType: ITEM_DESTROY_HYDRA,
 		name:           "Scroll of destroy hydra",
 		frequency:      1,
+		info:           "Can be used to destroy hydra.",
 	},
 	{
 		consumableType: ITEM_CONFUSE_HYDRA,
 		name:           "Scroll of confuse hydra",
 		frequency:      1,
+		info:           "Can be used to confuse hydra.",
 	},
 	{
 		consumableType: ITEM_MASS_CONFUSION,
 		name:           "Scroll of confused party",
+		info:           "Can be used to confuse all enemies.",
 		frequency:      1,
 	},
 	{
@@ -50,38 +55,43 @@ var consumablesData = []*consumableItemInfo {
 	{
 		consumableType: ITEM_STRENGTH,
 		name:           "Potion of strength",
+		info:           "Permanently increases your inventory size.",
 		frequency:      2,
 	},
 	{
 		consumableType: ITEM_CHANGE_ELEMENT,
 		name:           "Scroll of change element",
+		info:           "Changes hydra's or item's element.",
 		frequency:      1,
 	},
 	{
 		consumableType: ITEM_UNELEMENT_ENEMIES,
 		name:           "Scroll of nullification",
+		info:           "Permanently makes all present enemies non-elemental.",
 		frequency:      1,
 	},
 	{
 		consumableType: ITEM_DECAPITATION,
-		name:           "Scroll of bisection",
+		name:           "Scroll of mass bisection",
+		info:           "Divides all heads of presen hydras by 2.",
 		frequency:      1,
 	},
 	{
 		consumableType: ITEM_IMPROVE_COOLDOWN,
-		name:           "Scroll of improve cooldown",
+		name:           "Can be used to improve cooldown-having items",
 		frequency:      1,
 	},
 	{
 		consumableType: ITEM_AMMO,
 		name:           "Arbalest bolts",
+		info:           "Used with arbalests.",
 		frequency:      2,
 	},
 }
 
 type consumableItemInfo struct {
 	consumableType uint8
-	name           string
+	name, info     string
 	frequency      int
 }
 

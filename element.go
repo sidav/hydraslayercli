@@ -18,6 +18,7 @@ type element struct {
 	isNonBasic  bool
 	isSpecial   bool
 	colorString string
+	description string
 }
 
 var elementsData = []*element{
@@ -26,46 +27,54 @@ var elementsData = []*element{
 		name:        "",
 		colorString: White,
 		isNonBasic:  false,
+		description: "It regenerates no heads from elemental damage. ",
 	},
 	{
 		elementCode: ELEMENT_FIRE,
 		name:        "Blazing",
 		colorString: Red,
 		isNonBasic:  false,
+		description: "It fears ice.",
 	},
 	{
 		elementCode: ELEMENT_ICE,
 		name:        "Frozen",
 		colorString: Blue,
 		isNonBasic:  false,
+		description: "It fears fire.",
 	},
 	{
 		elementCode: ELEMENT_STONE,
 		name:        "Stone",
 		colorString: Gray,
+		description: "It fears storms.",
 	},
 	{
 		elementCode: ELEMENT_STORM,
 		name:        "Storm",
 		colorString: Yellow,
+		description: "It fears stone.",
 	},
 	{
 		elementCode: ELEMENT_MAGMA,
 		name:        "Magmatic",
 		colorString: Red,
 		isNonBasic:  true,
+		description: "It fears no fire and stone. ",
 	},
 	{
 		elementCode: ELEMENT_DISTORTION,
 		name:        "Distorted",
 		colorString: Cyan,
 		isNonBasic:  true,
+		description: "It regenerates no heads after non-elemental damage. ",
 	},
 	{
 		elementCode: ELEMENT_VAMPIRIC,
 		name:        "Vampiric",
 		colorString: Red,
 		isSpecial: true,
+		description: "It regenerates no heads after damage, but grows heads after damaging someone.",
 	},
 }
 

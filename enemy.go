@@ -34,6 +34,10 @@ func (e *enemy) getNameWithStatus() string {
 	return e.getName() + statusLine
 }
 
+func (e *enemy) getInfo() string {
+	return fmt.Sprintf("%s. %s", e.name, e.element.description)
+}
+
 var confusedThings = []string{
 	"sniffs ground",
 	"talks gibberish",
@@ -46,10 +50,5 @@ var confusedThings = []string{
 }
 
 func (e *enemy) getConfusedActionDescription() string {
-	//randomHead1 := auxrnd.Rand(e.heads)
-	//randomHead2 := -1
-	//if e.heads > 1 {
-	//	randomHead2 = rnd.Rand(e.heads)
-	//}
 	return fmt.Sprintf(confusedThings[auxrnd.Rand(len(confusedThings))]) // , randomHead1, randomHead2)
 }

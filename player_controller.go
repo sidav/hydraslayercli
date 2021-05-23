@@ -63,6 +63,31 @@ func (g *game) parsePlayerInput(input string) {
 		return
 	}
 
+	if splitted[0] == "info" || splitted[0] == "help" {
+		if len(splitted) == 1 {
+			g.setLogMessage("HELP!")
+		} else {
+			ind, itype := charToIndexWithType(splitted[1][0])
+			if itype == INDEX_ITEM {
+				if ind < len(g.player.items) {
+					g.setLogMessage(g.player.items[ind].getInfo())
+					return
+				}
+			}
+			if itype == INDEX_ENEMY_OR_TREASURE {
+				if len(g.enemies) > 0 && ind < len(g.enemies) {
+					g.setLogMessage(g.enemies[ind].getInfo())
+					return
+				}
+				if len(g.treasure) > 0 && ind < len(g.treasure) {
+					g.setLogMessage(g.treasure[ind].getInfo())
+					return
+				}
+			}
+		}
+		return
+	}
+
 	if splitted[0] == "shoot" || splitted[0] == "fire" {
 		if len(g.enemies) > 0 {
 			g.performPlayerShoot(g.player.items[g.currSelectedItem],

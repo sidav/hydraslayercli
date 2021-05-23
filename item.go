@@ -30,6 +30,19 @@ func (i *item) hasEffect() bool {
 	return i.effect != nil
 }
 
+func (i *item) getInfo() string {
+	info := i.getName()
+	if i.hasEffect() {
+		info += ": "
+		info += i.effect.getInfo()
+	}
+	if i.isConsumable() {
+		info += ": "
+		info += i.asConsumable.info
+	}
+	return info
+}
+
 func (i *item) getName() string {
 	name := ""
 	if i.element != nil {

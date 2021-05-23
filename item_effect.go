@@ -14,7 +14,7 @@ type effectData struct {
 	canBeOnWeapon        bool
 	canBeOnRing          bool
 	isActivatable        bool
-	name                 string
+	name, info           string
 	defaultActivatesEach int
 }
 
@@ -24,21 +24,25 @@ var effectsStaticData = map[uint8]*effectData{
 		canBeOnRing:   true,
 		isActivatable: true,
 		name:          "healing",
+		info:          "Can be activated to heal you.",
 	},
 	ITEM_EFFECT_REGENERATOR: {
-		canBeOnRing:   true,
-		canBeOnWeapon: true,
+		canBeOnRing:          true,
+		canBeOnWeapon:        true,
 		defaultActivatesEach: 4,
+		info:                 "Heals 1 hp once in a few turns. Also fully heals you between rooms.",
 	},
 	ITEM_EFFECT_ACTIVE_ELEMENT_SHIFTING: {
 		canBeOnWeapon: true,
 		isActivatable: true,
 		name:          "shifting elements",
+		info:          "Can be activated to change element.",
 	},
 	ITEM_EFFECT_PASSIVE_ELEMENT_SHIFTING: {
 		canBeOnWeapon:        true,
 		name:                 "instability",
 		defaultActivatesEach: 1,
+		info:                 "Changes its element each turn randomly.",
 	},
 }
 
@@ -46,6 +50,10 @@ type effect struct {
 	effectCode    uint8
 	canBeUsed     bool
 	activatesEach int
+}
+
+func (e *effect) getInfo() string {
+	return effectsStaticData[e.effectCode].info
 }
 
 func getRandomEffect(forWeapon, forRing bool) *effect {
