@@ -7,7 +7,7 @@ const (
 	ELEMENT_STONE
 	ELEMENT_STORM
 	ELEMENT_MAGMA
-	ELEMENT_DISTORTION
+	ELEMENT_ENERGY
 	ELEMENT_VAMPIRIC
 	ELEMENTS_TOTAL // for random
 )
@@ -63,8 +63,8 @@ var elementsData = []*element{
 		description: "It fears no fire and stone. ",
 	},
 	{
-		elementCode: ELEMENT_DISTORTION,
-		name:        "Distorted",
+		elementCode: ELEMENT_ENERGY,
+		name:        "Energy",
 		colorString: Cyan,
 		isNonBasic:  true,
 		description: "It regenerates no heads after non-elemental damage. ",
@@ -145,8 +145,8 @@ var headRegrowsForElementsTable = map[uint8]map[uint8]int{
 	ELEMENT_STONE: {ELEMENT_NONE: 1, ELEMENT_FIRE: 1, ELEMENT_ICE: 1, ELEMENT_STONE: -2, ELEMENT_MAGMA: 2},
 	ELEMENT_STORM: {ELEMENT_NONE: 1, ELEMENT_FIRE: 1, ELEMENT_ICE: 1, ELEMENT_STORM: -2, ELEMENT_MAGMA: 1},
 
-	ELEMENT_MAGMA:      {ELEMENT_MAGMA: -2, ELEMENT_FIRE: 2, ELEMENT_STONE: 2},
-	ELEMENT_DISTORTION: {ELEMENT_DISTORTION: -2, ELEMENT_FIRE: 2, ELEMENT_ICE: 2, ELEMENT_STONE: 2, ELEMENT_STORM: 2},
+	ELEMENT_MAGMA:  {ELEMENT_MAGMA: -2, ELEMENT_FIRE: 2, ELEMENT_STONE: 2},
+	ELEMENT_ENERGY: {ELEMENT_ENERGY: -2, ELEMENT_FIRE: 2, ELEMENT_ICE: 2, ELEMENT_STONE: 2, ELEMENT_STORM: 2},
 
 	ELEMENT_VAMPIRIC: {},
 }

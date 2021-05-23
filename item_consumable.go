@@ -12,6 +12,7 @@ const (
 	ITEM_UNELEMENT_ENEMIES
 	ITEM_DECAPITATION
 	ITEM_IMPROVE_COOLDOWN
+	ITEM_GAIN_EFFECT
 	ITEM_AMMO
 	TOTAL_ITEM_TYPES_NUMBER // for generators
 )
@@ -78,7 +79,14 @@ var consumablesData = []*consumableItemInfo{
 	},
 	{
 		consumableType: ITEM_IMPROVE_COOLDOWN,
-		name:           "Can be used to improve cooldown-having items",
+		name:           "Scroll of improve cooldown",
+		info:           "Can be used to improve cooldown-having items",
+		frequency:      1,
+	},
+	{
+		consumableType: ITEM_GAIN_EFFECT,
+		name:           "Scroll of imbuing",
+		info:           "Used to imbue a random effect onto item.",
 		frequency:      1,
 	},
 	{

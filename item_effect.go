@@ -7,6 +7,7 @@ const (
 	ITEM_EFFECT_REGENERATOR
 	ITEM_EFFECT_ACTIVE_ELEMENT_SHIFTING
 	ITEM_EFFECT_PASSIVE_ELEMENT_SHIFTING
+	ITEM_EFFECT_PASSIVE_DISTORTION
 	TOTAL_PASSIVE_PASSIVE_EFFECTTYPES_NUMBER // for generators
 )
 
@@ -43,6 +44,12 @@ var effectsStaticData = map[uint8]*effectData{
 		name:                 "instability",
 		defaultActivatesEach: 1,
 		info:                 "Changes its element each turn randomly.",
+	},
+	ITEM_EFFECT_PASSIVE_DISTORTION: {
+		canBeOnWeapon:        true,
+		name:                 "distortion",
+		defaultActivatesEach: 1,
+		info:                 "Changes its damage each turn randomly.",
 	},
 }
 
@@ -114,6 +121,15 @@ func (i *item) applyPassiveEffect(g *game) {
 		}
 	case ITEM_EFFECT_PASSIVE_ELEMENT_SHIFTING:
 		i.element = getRandomElement(true, false)
+	case ITEM_EFFECT_PASSIVE_DISTORTION:
+		change := auxrnd.RandInRange(-3, 3)
+		i.weaponInfo.damage += change
+		if i.weaponInfo.damage <= 0 {
+			i.weaponInfo.damage = 1
+		}
+		if i.weaponInfo.damage > g.currentStageNumber {
+			i.weaponInfo.damage -= auxrnd.Rand(1)
+		}
 	}
 }
 
