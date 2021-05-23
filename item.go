@@ -6,12 +6,12 @@ import (
 )
 
 type item struct {
-	element       *element
-	asConsumable  *consumableItemInfo
-	specialName   string // for randarts and non-consumables
-	passiveEffect *passiveEffect
-	weaponInfo    *weapon
-	count         int
+	element      *element
+	asConsumable *consumableItemInfo
+	specialName  string // for randarts and non-consumables
+	effect       *effect
+	weaponInfo   *weapon
+	count        int
 }
 
 func (i *item) isWeapon() bool {
@@ -26,8 +26,8 @@ func (i *item) isConsumable() bool {
 	return i.asConsumable != nil
 }
 
-func (i *item) hasPassiveEffect() bool {
-	return i.passiveEffect != nil
+func (i *item) hasEffect() bool {
+	return i.effect != nil
 }
 
 func (i *item) getName() string {
@@ -50,8 +50,11 @@ func (i *item) getName() string {
 		}
 		name += i.asConsumable.name
 	}
-	if i.hasPassiveEffect() {
-		name += " of " + i.passiveEffect.getName()
+	if i.hasEffect() {
+		name += " of " + i.effect.getName()
+		if !i.effect.canBeUsed && i.effect.isActivatable() {
+			name += colorizeString(Gray, " (inactive)")
+		}
 	}
 	if name == "" {
 		panic("No item name!")

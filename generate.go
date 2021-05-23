@@ -63,7 +63,7 @@ func (g *game) generateTreasure(depth int) *item {
 	if isSpecialItem {
 		return &item{
 			specialName: "Ring",
-			passiveEffect: &passiveEffect{
+			effect: &effect{
 				effectType:    getRandomPassiveEffect(),
 				activatesEach: 4,
 			},

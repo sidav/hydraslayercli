@@ -45,6 +45,13 @@ func (g *game) performUseAction(usedIndex int, usedType INDEXTYPE, targetIndex i
 }
 
 func (g *game) justUseItem(item *item, usedFromGround bool) {
+	if item.effect != nil {
+		if !item.effect.canBeUsed {
+			g.appendToLogMessage("%s can't be used yet.", item.getName())
+		}
+		item.applyActiveEffect(g)
+		return
+	}
 	switch item.asConsumable.consumableType {
 	case ITEM_HEAL:
 		g.currLog = fmt.Sprintf("You sniff %s and feel good.", item.getName())
@@ -134,12 +141,12 @@ func (g *game) useItemOnItem(item, targetItem *item, usedFromGround bool) {
 		targetItem.element = getRandomElement(true, false)
 		g.currLog += fmt.Sprintf("%s.", targetItem.getName())
 	case ITEM_IMPROVE_COOLDOWN:
-		if targetItem.passiveEffect == nil {
+		if targetItem.effect == nil {
 			g.setLogMessage("But %s can't be improved!", targetItem.getName())
 			return
 		}
 		g.currLog = fmt.Sprintf("You use %s on %s, making it into ", item.getName(), targetItem.getName())
-		targetItem.passiveEffect.activatesEach--
+		targetItem.effect.activatesEach--
 		g.currLog += fmt.Sprintf("%s.", targetItem.getName())
 	default:
 		g.currLog = fmt.Sprintf("ERROR: ADD USAGE %s ON ITEM.", item.getName())
