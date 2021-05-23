@@ -77,7 +77,7 @@ func (g *game) run() {
 		if g.turnMade {
 			g.actForEnemies()
 			g.currentTurn++
-			if g.player.hp < g.player.maxhp/3 {
+			if g.player.hp <= g.player.maxhp/3 {
 				g.appendToLogMessage(colorizeString(Red, "\nBe careful: you're almost dead!"))
 			}
 		}
@@ -88,13 +88,13 @@ func (g *game) run() {
 			return
 		}
 		if g.stageFinished {
-			g.currentStageNumber++
-			if g.currentStageNumber == len(StageInfo) {
+			if g.currentStageNumber == len(StageInfo)-1 {
 				g.appendToLogMessage(colorizeString(Yellow,"\nYou won! Press ENTER to exit.\n"))
 				screen.renderScreen(g)
 				screen.readPlayerInput()
 				return
 			}
+			g.currentStageNumber++
 			g.currentTurn = 0
 			g.generateCurrentStage()
 			g.stageFinished = false
@@ -104,6 +104,17 @@ func (g *game) run() {
 					g.enemies[g.currSelectedEnemy]))
 		}
 	}
+}
+
+func (g *game) getTotalExpectedEnemyDamage() int {
+	totaldmg := 0
+	for _, e := range g.enemies {
+		if e.hasStatusEffectOfType(STATUS_CONFUSED) {
+			continue
+		}
+		totaldmg += g.calculateDamageByHeads(e.heads)
+	}
+	return totaldmg
 }
 
 func (g *game) actForEnemies() {

@@ -39,10 +39,11 @@ func (g *game) getShortPossibleAttackStringDescription(w *item, e *enemy) string
 	hDmg := g.calculateDamageOnHeads(w.weaponInfo, e)
 	hRegrw := g.calculateHeadsRegrowAfterHitBy(e, w)
 	resHeads := e.heads-hDmg+hRegrw
+	enemyDmgStr := fmt.Sprintf("; bite %d", g.calculateDamageByHeads(resHeads))
 	if hDmg < e.heads {
-		return fmt.Sprintf(" (-%d+%d=%d)", hDmg, hRegrw, resHeads)
+		return fmt.Sprintf(" (%d-%d+%d=%d%s)", e.heads, hDmg, hRegrw, resHeads, enemyDmgStr)
 	} else {
-		return fmt.Sprintf(" (-%d)", hDmg)
+		return fmt.Sprintf(" (-> kill)")
 	}
 }
 
@@ -70,6 +71,7 @@ func (g *game) performPlayerShoot(w *item, e *enemy) {
 	}
 	if !g.player.hasAmmo() {
 		g.setLogMessage("You are out of ammunition!")
+		return 
 	}
 	damage := g.calculateDamageOnHeads(w.weaponInfo, e)
 	g.setLogMessage("You shoot %s with a %s, destroying %d heads. ",

@@ -106,15 +106,23 @@ func (c *cwtcell) read() string {
 			}
 		}
 		if key == "DOWN" {
-			if c.currHistoryLine < len(c.commandHistory)-1 {
+			if c.currHistoryLine < len(c.commandHistory) {
 				c.currHistoryLine++
 			}
 			if len(c.commandHistory) > 0 {
-				currRead = c.commandHistory[c.currHistoryLine]
+				if c.currHistoryLine < len(c.commandHistory) {
+					currRead = c.commandHistory[c.currHistoryLine]
+				} else {
+					currRead = ""
+				}
 			}
 		}
 		if key == "ENTER" {
-			c.commandHistory = append(c.commandHistory, currRead)
+			if len(c.commandHistory) > 0 && currRead != c.commandHistory[len(c.commandHistory)-1] ||
+					len(c.commandHistory) == 0 {
+					c.commandHistory = append(c.commandHistory, currRead)
+					c.currHistoryLine = len(c.commandHistory)
+				}
 			return currRead
 		}
 		if key == "BACKSPACE" {
@@ -196,7 +204,7 @@ func (c *cwtcell) considerColorInStringAtPosition(s string, pos int) int {
 		case Purple:
 			c.style = c.style.Foreground(tcell.ColorDarkMagenta)
 		case Cyan:
-			c.style = c.style.Foreground(tcell.ColorDarkCyan)
+			c.style = c.style.Foreground(tcell.ColorLightCyan)
 		default:
 			panic("no color")
 		}

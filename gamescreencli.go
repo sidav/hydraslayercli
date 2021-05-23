@@ -77,7 +77,12 @@ func (gs *gameScreen) renderScreen(g *game) {
 	}
 	gs.cw.println("")
 	gs.cw.println(g.currLog)
-	gs.cw.print("Your action?\n> ")
+	expectedDamage := g.getTotalExpectedEnemyDamage()
+	expectedDamageStr := ""
+	if expectedDamage > 0 {
+		expectedDamageStr = fmt.Sprintf("%d damage expected (%d hp). ", expectedDamage, g.player.hp - expectedDamage)
+	}
+	gs.cw.print(fmt.Sprintf("%sYour action?\n> ", expectedDamageStr))
 	gs.cw.flush()
 }
 
