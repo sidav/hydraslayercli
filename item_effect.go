@@ -90,7 +90,10 @@ func (i *item) applyActiveEffect(g *game) {
 	}
 	switch i.effect.effectCode {
 	case ITEM_EFFECT_HEALER:
-		g.player.hp = g.player.maxhp
+		g.player.hp += g.player.maxhp / 2
+		if g.player.hp > g.player.maxhp {
+			g.player.hp = g.player.maxhp
+		}
 	case ITEM_EFFECT_ACTIVE_ELEMENT_SHIFTING:
 		i.element = getRandomElement(true, false)
 	}

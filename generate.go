@@ -3,7 +3,8 @@ package main
 func (g *game) generateCurrentStage() {
 	g.enemies = []*enemy{}
 	g.treasure = []*item{}
-	for _, ed := range StageInfo[g.currentStageNumber].enemies {
+	enemyCompositionVariant := rnd.Rand(len(StageInfo[g.currentStageNumber].enemiesVariants))
+	for _, ed := range StageInfo[g.currentStageNumber].enemiesVariants[enemyCompositionVariant] {
 		g.addRandomHydra(ed)
 	}
 	for i := 0; i < StageInfo[g.currentStageNumber].treasure; i++ {
