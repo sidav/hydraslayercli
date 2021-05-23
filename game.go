@@ -78,11 +78,11 @@ func (g *game) run() {
 			g.actForEnemies()
 			g.currentTurn++
 			if g.player.hp < g.player.maxhp/3 {
-				g.appendToLogMessage(colorizeString(Red, "Be careful: you're almost dead!"))
+				g.appendToLogMessage(colorizeString(Red, "\nBe careful: you're almost dead!"))
 			}
 		}
 		if g.player.hp <= 0 {
-			g.appendToLogMessage(" You died... Press ENTER to exit.\n")
+			g.appendToLogMessage(colorizeString(Red, "\nYou died... Press ENTER to exit.\n"))
 			screen.renderScreen(g)
 			screen.readPlayerInput()
 			return
@@ -90,7 +90,7 @@ func (g *game) run() {
 		if g.stageFinished {
 			g.currentStageNumber++
 			if g.currentStageNumber == len(StageInfo) {
-				g.appendToLogMessage(" You won! Press ENTER to exit.\n")
+				g.appendToLogMessage(colorizeString(Yellow,"\nYou won! Press ENTER to exit.\n"))
 				screen.renderScreen(g)
 				screen.readPlayerInput()
 				return

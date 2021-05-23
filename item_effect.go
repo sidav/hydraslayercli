@@ -101,15 +101,14 @@ func (i *item) applyPassiveEffect(g *game) {
 	if i.effect == nil {
 		return
 	}
-	activatable := i.effect.activatesEach == 0 || (g.currentTurn%i.effect.activatesEach == 0)
-	if !activatable {
+	if g.currentTurn == 0 {
+		i.effect.canBeUsed = true
+	}
+	isActiveCurrentTurn := i.effect.activatesEach == 0 || (g.currentTurn%i.effect.activatesEach == 0)
+	if !isActiveCurrentTurn {
 		return
 	}
 	switch i.effect.effectCode {
-	case ITEM_EFFECT_HEALER:
-		if g.currentTurn == 0 {
-			i.effect.canBeUsed = true
-		}
 	case ITEM_EFFECT_REGENERATOR:
 		if g.currentTurn == 0 {
 			g.player.hp = g.player.maxhp
@@ -128,7 +127,7 @@ func (i *item) applyPassiveEffect(g *game) {
 			i.weaponInfo.damage = 1
 		}
 		if i.weaponInfo.damage > g.currentStageNumber {
-			i.weaponInfo.damage -= auxrnd.Rand(1)
+			i.weaponInfo.damage = auxrnd.Rand(g.currentStageNumber)
 		}
 	}
 }

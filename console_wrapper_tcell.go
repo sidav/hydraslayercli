@@ -43,7 +43,7 @@ func (c *cwtcell) print(s string) {
 		}
 		c.screen.SetCell(c.currentChar, c.currentLine, c.style, rune(s[i]))
 		c.currentChar++
-		if c.currentChar == c.CONSOLE_WIDTH {
+		if c.currentChar == c.CONSOLE_WIDTH || rune(s[i]) == '\n' {
 			c.currentChar = 0
 			c.currentLine++
 		}
