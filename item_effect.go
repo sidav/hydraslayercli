@@ -8,15 +8,17 @@ const (
 	ITEM_EFFECT_ACTIVE_ELEMENT_SHIFTING
 	ITEM_EFFECT_PASSIVE_ELEMENT_SHIFTING
 	ITEM_EFFECT_PASSIVE_DISTORTION
-	TOTAL_PASSIVE_PASSIVE_EFFECTTYPES_NUMBER // for generators
+	ITEM_EFFECT_ONHIT_ADDDAMAGE
+	TOTAL_ITEM_EFFECTTYPES_NUMBER // for generators
 )
 
 type effectData struct {
-	canBeOnWeapon        bool
-	canBeOnRing          bool
-	isActivatable        bool
-	name, info           string
-	defaultActivatesEach int
+	canBeOnWeapon           bool
+	canBeOnRing             bool
+	isActivatable           bool
+	name, info              string
+	defaultActivatesEach    int
+	defaultAdditionalDamage int
 }
 
 var effectsStaticData = map[uint8]*effectData{
@@ -51,32 +53,44 @@ var effectsStaticData = map[uint8]*effectData{
 		defaultActivatesEach: 1,
 		info:                 "Changes its damage each turn randomly.",
 	},
+	ITEM_EFFECT_ONHIT_ADDDAMAGE: {
+		canBeOnWeapon:           true,
+		defaultAdditionalDamage: 1,
+		name:                    "",
+		info:                    "Deals additional damage after initial hit with no regrow.",
+	},
 }
 
 type effect struct {
-	effectCode    uint8
-	canBeUsed     bool
-	activatesEach int
+	effectCode       uint8
+	canBeUsed        bool
+	activatesEach    int
+	additionalDamage int
 }
 
-func (e *effect) getInfo() string {
+func (e *effect) getHelpText() string {
 	return effectsStaticData[e.effectCode].info
 }
 
+func (e *effect) getStaticData() *effectData {
+	return effectsStaticData[e.effectCode]
+}
+
 func getRandomEffect(forWeapon, forRing bool) *effect {
-	rndEffCode := uint8(rnd.Rand(TOTAL_PASSIVE_PASSIVE_EFFECTTYPES_NUMBER))
+	rndEffCode := uint8(rnd.Rand(TOTAL_ITEM_EFFECTTYPES_NUMBER))
 	var data *effectData
 	for {
 		data = effectsStaticData[rndEffCode]
 		if (!forWeapon || data.canBeOnWeapon) && (!forRing || data.canBeOnRing) {
 			break
 		}
-		rndEffCode = uint8(rnd.Rand(TOTAL_PASSIVE_PASSIVE_EFFECTTYPES_NUMBER))
+		rndEffCode = uint8(rnd.Rand(TOTAL_ITEM_EFFECTTYPES_NUMBER))
 	}
 	return &effect{
-		effectCode:    rndEffCode,
-		canBeUsed:     false,
-		activatesEach: data.defaultActivatesEach,
+		effectCode:       rndEffCode,
+		canBeUsed:        false,
+		activatesEach:    data.defaultActivatesEach,
+		additionalDamage: data.defaultAdditionalDamage,
 	}
 }
 
@@ -135,10 +149,25 @@ func (i *item) applyPassiveEffect(g *game) {
 	}
 }
 
+func (i *item) applyOnHitEffect(g *game, target *enemy) {
+	if i.effect == nil {
+		return
+	}
+	switch i.effect.effectCode {
+	case ITEM_EFFECT_ONHIT_ADDDAMAGE:
+		if target.heads > i.effect.additionalDamage {
+			target.heads -= i.effect.additionalDamage
+			g.appendToLogMessage("%s discharges its magic on %s for %d damage!", i.getName(), target.getName(), i.effect.additionalDamage)
+		}
+	}
+}
+
 func (pe *effect) getName() string {
 	switch pe.effectCode {
 	case ITEM_EFFECT_REGENERATOR:
 		return fmt.Sprintf("%d-turn regen", pe.activatesEach)
+	case ITEM_EFFECT_ONHIT_ADDDAMAGE:
+		return fmt.Sprintf("+%d damage", pe.additionalDamage)
 	}
 	data, found := effectsStaticData[pe.effectCode]
 	if !found || data.name == "" {

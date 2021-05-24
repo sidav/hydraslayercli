@@ -34,7 +34,7 @@ func (i *item) getInfo() string {
 	info := i.getName()
 	if i.hasEffect() {
 		info += ": "
-		info += i.effect.getInfo()
+		info += i.effect.getHelpText()
 	}
 	if i.isConsumable() {
 		info += ": "

@@ -1,5 +1,7 @@
 package main
 
+import "os"
+
 var rnd FibRandom
 var auxrnd FibRandom
 var abortGame bool
@@ -11,7 +13,15 @@ func main() {
 	cw.init()
 	rnd.InitDefault()
 	auxrnd.InitDefault()
-	game := initGame(selectDifficulty())
+
+	var initialDiff string
+	if len(os.Args) > 1 {
+		initialDiff = os.Args[1]
+	} else {
+		initialDiff = selectDifficulty()
+	}
+
+	game := initGame(initialDiff)
 	game.run()
 	cw.closeConsole()
 	defer func() {

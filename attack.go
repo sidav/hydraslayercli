@@ -58,6 +58,7 @@ func (g *game) performPlayerHit(w *item, e *enemy) {
 	if e.heads > 0 {
 		g.currLog += fmt.Sprintf("It grows %d heads!", regrow)
 		e.heads += regrow
+		w.applyOnHitEffect(g, e)
 	} else {
 		g.currLog += fmt.Sprintf("It drops dead!")
 	}

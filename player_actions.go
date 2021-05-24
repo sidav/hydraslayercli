@@ -156,13 +156,18 @@ func (g *game) useItemOnItem(item, targetItem *item, usedFromGround bool) {
 		g.currLog = fmt.Sprintf("You use %s on %s, making it into ", item.getName(), targetItem.getName())
 		targetItem.effect = getRandomEffect(targetItem.isWeapon(), !targetItem.isWeapon())
 		g.currLog += fmt.Sprintf("%s.", targetItem.getName())
-	case ITEM_IMPROVE_COOLDOWN:
+	case ITEM_IMPROVE_MAGIC:
 		if targetItem.effect == nil {
 			g.setLogMessage("But %s can't be improved!", targetItem.getName())
 			return
 		}
 		g.currLog = fmt.Sprintf("You use %s on %s, making it into ", item.getName(), targetItem.getName())
-		targetItem.effect.activatesEach--
+		if targetItem.effect.activatesEach > 1 && targetItem.effect.getStaticData().defaultActivatesEach > 0 {
+			targetItem.effect.activatesEach--
+		}
+		if targetItem.effect.getStaticData().defaultAdditionalDamage > 0 {
+			targetItem.effect.additionalDamage++
+		}
 		g.currLog += fmt.Sprintf("%s.", targetItem.getName())
 	default:
 		g.currLog = fmt.Sprintf("ERROR: ADD USAGE %s ON ITEM.", item.getName())

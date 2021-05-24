@@ -11,7 +11,7 @@ const (
 	ITEM_CHANGE_ELEMENT
 	ITEM_UNELEMENT_ENEMIES
 	ITEM_DECAPITATION
-	ITEM_IMPROVE_COOLDOWN
+	ITEM_IMPROVE_MAGIC
 	ITEM_GAIN_EFFECT
 	ITEM_AMMO
 	TOTAL_ITEM_TYPES_NUMBER // for generators
@@ -78,9 +78,9 @@ var consumablesData = []*consumableItemInfo{
 		frequency:      1,
 	},
 	{
-		consumableType: ITEM_IMPROVE_COOLDOWN,
-		name:           "Scroll of improve cooldown",
-		info:           "Can be used to improve cooldown-having items",
+		consumableType: ITEM_IMPROVE_MAGIC,
+		name:           "Scroll of improve brand",
+		info:           "Can be used to improve branded (magic) items",
 		frequency:      1,
 	},
 	{
