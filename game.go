@@ -4,13 +4,12 @@ import "fmt"
 
 type game struct {
 	currentStageNumber int
-	difficulty         string
+	dungeon            *dungeon
 
 	currentTurn int
 	enemies     []*enemy
 	treasure    []*item
 	player      *player
-	stages      *[]stage
 
 	// conditions
 	enemiesSkipTurn bool
@@ -22,6 +21,10 @@ type game struct {
 
 	// settings-related
 	showShortCombatDescription bool
+}
+
+func (g *game) getCurrentStage() *stage {
+	return g.dungeon.getStageNumber(g.currentStageNumber)
 }
 
 func initGame(difficulty string) *game {
@@ -51,8 +54,7 @@ func initGame(difficulty string) *game {
 			},
 		},
 	}
-	g.difficulty = difficulty
-	g.stages = DifficultyStageData[difficulty]
+	g.dungeon = dungeons[difficulty]
 	return g
 }
 
@@ -93,7 +95,7 @@ func (g *game) run() {
 			return
 		}
 		if g.stageFinished {
-			if g.currentStageNumber == len(*g.stages)-1 {
+			if g.currentStageNumber == g.dungeon.getTotalStages()-1 {
 				g.appendToLogMessage(colorizeString(Yellow, "\nYou won! Press ENTER to exit.\n"))
 				screen.renderScreen(g)
 				screen.readPlayerInput()

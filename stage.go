@@ -1,8 +1,15 @@
 package main
 
+type dungeon struct {
+	name           string
+	stagesVariants [][]*stage
+	totalStages    int
+}
+
 type stage struct {
-	enemiesVariants [][]*stageEnemyData
-	treasure        int
+	name     string
+	enemies  []*stageEnemyData
+	treasure int
 }
 
 type stageEnemyData struct {
@@ -11,291 +18,270 @@ type stageEnemyData struct {
 	allowSpecialElement, forceSpecialElement bool
 }
 
-var DifficultyStageData = map[string]*[]stage{
+func (d *dungeon) getTotalStages() int {
+	if d.totalStages != 0 {
+		return d.totalStages
+	}
+	return len(d.stagesVariants)
+}
+
+func (d *dungeon) getStageNumber(num int) *stage {
+	var s *stage
+	if num < len(d.stagesVariants) {
+		s = d.stagesVariants[num][rnd.Rand(len(d.stagesVariants[num]))]
+	}
+	if s != nil {
+		return s
+	}
+	// generate random enemies data
+	var sed []*stageEnemyData
+	numEnemies := rnd.RandInRange(1, num)
+	for i := 0; i < numEnemies; i++ {
+		sed = append(sed, &stageEnemyData{
+			minHeads:            num + 1,
+			maxHeads:            num + 1 + rnd.Rand(num/2+1),
+			allowComplexElement: num > 3,
+			allowSpecialElement: num > 5,
+		})
+	}
+	return &stage{
+		name:     "Random stage",
+		enemies:  sed,
+		treasure: numEnemies + 1,
+	}
+}
+
+var dungeons = map[string]*dungeon{
 	"easy": {
-		0: {
-			enemiesVariants: [][]*stageEnemyData{
-				// variant 1
+		name: "easy",
+		stagesVariants: [][]*stage{
+			0: {
 				{
-					{minHeads: 3, maxHeads: 3},
-				},
-				// variant 2
-				{
-					{minHeads: 1, maxHeads: 2},
-					{minHeads: 1, maxHeads: 2},
-				},
-			},
-			treasure: 3,
-		},
-		1: {
-			enemiesVariants: [][]*stageEnemyData{
-				{
-					{minHeads: 1, maxHeads: 3},
-					{minHeads: 1, maxHeads: 3},
+					enemies: []*stageEnemyData{
+						{minHeads: 3, maxHeads: 4},
+					},
+					treasure: 3,
 				},
 				{
-					{minHeads: 2, maxHeads: 4},
-					{minHeads: 1, maxHeads: 2},
+					enemies: []*stageEnemyData{
+						{minHeads: 1, maxHeads: 2},
+						{minHeads: 1, maxHeads: 2},
+					},
+					treasure: 3,
 				},
 			},
-			treasure: 3,
-		},
-		2: {
-			enemiesVariants: [][]*stageEnemyData{
+			1: {
 				{
-					{minHeads: 3, maxHeads: 5, allowComplexElement: true},
+					enemies: []*stageEnemyData{
+						{minHeads: 1, maxHeads: 3},
+						{minHeads: 1, maxHeads: 3},
+					},
+					treasure: 3,
+				},
+				{
+					enemies: []*stageEnemyData{
+						{minHeads: 2, maxHeads: 4},
+						{minHeads: 1, maxHeads: 2},
+					},
+					treasure: 3,
 				},
 			},
-			treasure: 3,
-		},
-		3: {
-			enemiesVariants: [][]*stageEnemyData{
+			2: {
 				{
-					{minHeads: 1, maxHeads: 3, allowComplexElement: true},
-					{minHeads: 3, maxHeads: 5, allowComplexElement: true},
+					enemies: []*stageEnemyData{
+						{minHeads: 3, maxHeads: 7, allowComplexElement: true},
+					},
+					treasure: 4,
 				},
 			},
-			treasure: 4,
-		},
-		4: {
-			enemiesVariants: [][]*stageEnemyData{
+			3: {
 				{
-					{minHeads: 1, maxHeads: 5, allowComplexElement: true},
-					{minHeads: 2, maxHeads: 5, allowComplexElement: true},
-					{minHeads: 3, maxHeads: 5, forceComplexElement: true},
+					enemies: []*stageEnemyData{
+						{minHeads: 3, maxHeads: 6, allowComplexElement: true},
+						{minHeads: 3, maxHeads: 6, allowComplexElement: true},
+					},
+					treasure: 5,
 				},
 			},
-			treasure: 5,
-		},
-		5: {
-			enemiesVariants: [][]*stageEnemyData{
+			4: {
 				{
-					{minHeads: 9, maxHeads: 16, forceComplexElement: true},
-				},
-				{
-					{minHeads: 12, maxHeads: 16},
-				},
-			},
-			treasure: 5,
-		},
-		6: {
-			enemiesVariants: [][]*stageEnemyData{
-				{
-					{minHeads: 2, maxHeads: 5, allowComplexElement: true},
-					{minHeads: 3, maxHeads: 6, forceComplexElement: true},
-					{minHeads: 4, maxHeads: 7, forceComplexElement: true},
+					enemies: []*stageEnemyData{
+						{minHeads: 3, maxHeads: 6, allowComplexElement: true},
+						{minHeads: 2, maxHeads: 6, allowComplexElement: true},
+						{minHeads: 1, maxHeads: 6, allowComplexElement: true},
+					},
+					treasure: 5,
 				},
 			},
-			treasure: 5,
-		},
-		7: {
-			enemiesVariants: [][]*stageEnemyData{
+			5: {
 				{
-					{minHeads: 12, maxHeads: 30, forceSpecialElement: true},
-				},
-				{
-					{minHeads: 8, maxHeads: 12, forceSpecialElement: true},
-					{minHeads: 8, maxHeads: 12, forceSpecialElement: true},
+					enemies: []*stageEnemyData{
+						{minHeads: 17, maxHeads: 25, forceSpecialElement: true},
+					},
 				},
 			},
 		},
 	},
 
 	"medium": {
-		0: {
-			enemiesVariants: [][]*stageEnemyData{
-				// variant 1
+		name: "medium",
+		stagesVariants: [][]*stage{
+			0: {
 				{
-					{minHeads: 3, maxHeads: 3},
-				},
-				// variant 2
-				{
-					{minHeads: 2, maxHeads: 3},
-					{minHeads: 2, maxHeads: 3},
-				},
-			},
-			treasure: 3,
-		},
-		1: {
-			enemiesVariants: [][]*stageEnemyData{
-				{
-					{minHeads: 1, maxHeads: 3},
-					{minHeads: 1, maxHeads: 3},
+					enemies: []*stageEnemyData{
+						{minHeads: 3, maxHeads: 4},
+					},
+					treasure: 3,
 				},
 				{
-					{minHeads: 2, maxHeads: 4},
-					{minHeads: 1, maxHeads: 2},
+					enemies: []*stageEnemyData{
+						{minHeads: 1, maxHeads: 2},
+						{minHeads: 1, maxHeads: 2},
+					},
+					treasure: 3,
 				},
 			},
-			treasure: 3,
-		},
-		2: {
-			enemiesVariants: [][]*stageEnemyData{
+			1: {
 				{
-					{minHeads: 3, maxHeads: 5, allowComplexElement: true},
+					enemies: []*stageEnemyData{
+						{minHeads: 1, maxHeads: 3},
+						{minHeads: 1, maxHeads: 3},
+					},
+					treasure: 3,
+				},
+				{
+					enemies: []*stageEnemyData{
+						{minHeads: 2, maxHeads: 4},
+						{minHeads: 1, maxHeads: 2},
+					},
+					treasure: 3,
 				},
 			},
-			treasure: 3,
-		},
-		3: {
-			enemiesVariants: [][]*stageEnemyData{
+			2: {
 				{
-					{minHeads: 1, maxHeads: 3, allowComplexElement: true},
-					{minHeads: 3, maxHeads: 5, allowComplexElement: true},
+					enemies: []*stageEnemyData{
+						{minHeads: 3, maxHeads: 7, allowComplexElement: true},
+					},
+					treasure: 4,
 				},
 			},
-			treasure: 4,
-		},
-		4: {
-			enemiesVariants: [][]*stageEnemyData{
+			3: {
 				{
-					{minHeads: 1, maxHeads: 5, allowComplexElement: true},
-					{minHeads: 2, maxHeads: 5, allowComplexElement: true},
-					{minHeads: 3, maxHeads: 5, forceComplexElement: true},
+					enemies: []*stageEnemyData{
+						{minHeads: 3, maxHeads: 6, allowComplexElement: true},
+						{minHeads: 3, maxHeads: 6, allowComplexElement: true},
+					},
+					treasure: 4,
 				},
 			},
-			treasure: 5,
-		},
-		5: {
-			enemiesVariants: [][]*stageEnemyData{
+			4: {
 				{
-					{minHeads: 9, maxHeads: 16, forceComplexElement: true},
-				},
-				{
-					{minHeads: 12, maxHeads: 16},
-				},
-			},
-			treasure: 5,
-		},
-		6: {
-			enemiesVariants: [][]*stageEnemyData{
-				{
-					{minHeads: 2, maxHeads: 5, allowComplexElement: true},
-					{minHeads: 3, maxHeads: 6, forceComplexElement: true},
-					{minHeads: 4, maxHeads: 7, forceComplexElement: true},
+					enemies: []*stageEnemyData{
+						{minHeads: 3, maxHeads: 6, allowComplexElement: true},
+						{minHeads: 2, maxHeads: 6, allowComplexElement: true},
+						{minHeads: 1, maxHeads: 6, allowComplexElement: true},
+					},
+					treasure: 4,
 				},
 			},
-			treasure: 5,
-		},
-		7: {
-			enemiesVariants: [][]*stageEnemyData{
+			5: nil,
+			6: nil,
+			7: {
 				{
-					{minHeads: 12, maxHeads: 30, forceSpecialElement: true},
+					enemies: []*stageEnemyData{
+						{minHeads: 17, maxHeads: 25, forceSpecialElement: true},
+					},
+					treasure: 5,
 				},
+			},
+			8: {
 				{
-					{minHeads: 8, maxHeads: 12, forceSpecialElement: true},
-					{minHeads: 8, maxHeads: 12, forceSpecialElement: true},
+					enemies: []*stageEnemyData{
+						{minHeads: 17, maxHeads: 25, forceSpecialElement: true},
+						{minHeads: 17, maxHeads: 25, forceSpecialElement: true},
+					},
 				},
 			},
 		},
 	},
 
 	"hard": {
-		{
-			enemiesVariants: [][]*stageEnemyData{
-				// variant 1
+		name: "hard",
+		totalStages: 15,
+		stagesVariants: [][]*stage{
+			0: {
 				{
-					{minHeads: 3, maxHeads: 5, allowComplexElement: true},
+					enemies: []*stageEnemyData{
+						{minHeads: 3, maxHeads: 4},
+					},
+					treasure: 2,
 				},
-				// variant 2
 				{
-					{minHeads: 1, maxHeads: 5, allowComplexElement: true},
-					{minHeads: 1, maxHeads: 5, allowComplexElement: true},
+					enemies: []*stageEnemyData{
+						{minHeads: 1, maxHeads: 2},
+						{minHeads: 1, maxHeads: 2},
+					},
+					treasure: 2,
 				},
 			},
-			treasure: 2,
+			1: {
+				{
+					enemies: []*stageEnemyData{
+						{minHeads: 1, maxHeads: 3},
+						{minHeads: 1, maxHeads: 3},
+					},
+					treasure: 3,
+				},
+				{
+					enemies: []*stageEnemyData{
+						{minHeads: 2, maxHeads: 4},
+						{minHeads: 1, maxHeads: 2},
+					},
+					treasure: 3,
+				},
+			},
+			2: {
+				{
+					enemies: []*stageEnemyData{
+						{minHeads: 3, maxHeads: 7, allowComplexElement: true},
+					},
+					treasure: 4,
+				},
+			},
+			3: {
+				{
+					enemies: []*stageEnemyData{
+						{minHeads: 3, maxHeads: 6, allowComplexElement: true},
+						{minHeads: 3, maxHeads: 6, allowComplexElement: true},
+					},
+					treasure: 4,
+				},
+			},
+			4: {
+				{
+					enemies: []*stageEnemyData{
+						{minHeads: 3, maxHeads: 6, allowComplexElement: true},
+						{minHeads: 2, maxHeads: 6, allowComplexElement: true},
+						{minHeads: 1, maxHeads: 6, allowComplexElement: true},
+					},
+					treasure: 4,
+				},
+			},
+			5: {
+				{
+					enemies: []*stageEnemyData{
+						{minHeads: 17, maxHeads: 25, forceSpecialElement: true},
+					},
+					treasure: 5,
+				},
+			},
 		},
-		{
-			enemiesVariants: [][]*stageEnemyData{
-				{
-					{minHeads: 2, maxHeads: 5, allowComplexElement: true},
-					{minHeads: 2, maxHeads: 5, allowComplexElement: true},
-				},
-				{
-					{minHeads: 2, maxHeads: 7, allowComplexElement: true},
-					{minHeads: 1, maxHeads: 5, allowComplexElement: true},
-				},
-			},
-			treasure: 3,
-		},
-		{
-			enemiesVariants: [][]*stageEnemyData{
-				{
-					{minHeads: 3, maxHeads: 5, allowComplexElement: true},
-					{minHeads: 3, maxHeads: 5, allowComplexElement: true},
-				},
-			},
-			treasure: 3,
-		},
-		{
-			enemiesVariants: [][]*stageEnemyData{
-				{
-					{minHeads: 1, maxHeads: 3, allowComplexElement: true},
-					{minHeads: 3, maxHeads: 5, allowComplexElement: true},
-				},
-			},
-			treasure: 4,
-		},
-		{
-			enemiesVariants: [][]*stageEnemyData{
-				{
-					{minHeads: 1, maxHeads: 5, allowComplexElement: true},
-					{minHeads: 2, maxHeads: 5, allowComplexElement: true},
-					{minHeads: 3, maxHeads: 5, forceComplexElement: true},
-				},
-			},
-			treasure: 4,
-		},
-		{
-			enemiesVariants: [][]*stageEnemyData{
-				{
-					{minHeads: 9, maxHeads: 16, forceComplexElement: true},
-				},
-				{
-					{minHeads: 12, maxHeads: 16},
-				},
-			},
-			treasure: 4,
-		},
-		{
-			enemiesVariants: [][]*stageEnemyData{
-				{
-					{minHeads: 2, maxHeads: 5, allowComplexElement: true},
-					{minHeads: 3, maxHeads: 6, forceComplexElement: true},
-					{minHeads: 4, maxHeads: 7, forceComplexElement: true},
-				},
-			},
-			treasure: 4,
-		},
-		{
-			enemiesVariants: [][]*stageEnemyData{
-				{
-					{minHeads: 3, maxHeads: 6, allowComplexElement: true},
-					{minHeads: 4, maxHeads: 7, forceComplexElement: true},
-					{minHeads: 5, maxHeads: 8, forceComplexElement: true},
-				},
-			},
-			treasure: 4,
-		},
-		{
-			enemiesVariants: [][]*stageEnemyData{
-				{
-					{minHeads: 8, maxHeads: 16, allowComplexElement: true},
-					{minHeads: 8, maxHeads: 16, forceComplexElement: true},
-				},
-			},
-			treasure: 4,
-		},
-		{
-			enemiesVariants: [][]*stageEnemyData{
-				{
-					{minHeads: 16, maxHeads: 32, forceSpecialElement: true},
-				},
-				{
-					{minHeads: 12, maxHeads: 20, forceSpecialElement: true},
-					{minHeads: 12, maxHeads: 20, forceSpecialElement: true},
-				},
-			},
+	},
+
+	"chaotic": {
+		name: "chaotic",
+		totalStages: 15,
+		stagesVariants: [][]*stage{
 		},
 	},
 }

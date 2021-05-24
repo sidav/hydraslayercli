@@ -22,12 +22,12 @@ func(gs *gameScreen) init() {
 
 func (gs *gameScreen) renderScreen(g *game) {
 	cw.clear()
-	stageString := fmt.Sprintf("Stage %d/%d", g.currentStageNumber+1, len(*g.stages))
-	if g.currentStageNumber == len(*g.stages) - 1 {
+	stageString := fmt.Sprintf("Stage %d/%d", g.currentStageNumber+1, g.dungeon.getTotalStages())
+	if g.currentStageNumber == g.dungeon.getTotalStages() - 1 {
 		stageString = fmt.Sprintf("FINAL STAGE")
 	}
-	cw.println(fmt.Sprintf("%s: Turn %d (%s)", stageString, g.currentTurn, g.difficulty))
-	cw.println("")
+	cw.println(fmt.Sprintf("%s: Turn %d (%s)", stageString, g.currentTurn, g.dungeon.name))
+	cw.println(fmt.Sprintf("  %s", g.getCurrentStage().name))
 
 	if len(g.enemies) > 0 {
 		cw.println("You see here enemies:")
