@@ -6,14 +6,15 @@ import (
 )
 
 type enemy struct {
-	name     string
-	heads    int
-	element  *element
-	statuses []*statusEffect
+	name          string
+	heads         int
+	element       *element
+	statuses      []*statusEffect
+	skipsThisTurn bool
 }
 
 func (e *enemy) getName() string {
-	name := fmt.Sprintf("%d-headed %s",e.heads,  e.name)
+	name := fmt.Sprintf("%d-headed %s", e.heads, e.name)
 	if e.element.name != "" {
 		name = e.element.name + " " + name
 	}

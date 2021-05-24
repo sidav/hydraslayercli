@@ -9,16 +9,18 @@ const (
 	ELEMENT_MAGMA
 	ELEMENT_ENERGY
 	ELEMENT_VAMPIRIC
+	ELEMENT_GROWING
 	ELEMENTS_TOTAL // for random
 )
 
 type element struct {
-	elementCode uint8
-	name        string
-	isNonBasic  bool
-	isSpecial   bool
-	colorString string
-	description string
+	elementCode                  uint8
+	name                         string
+	defaultRegrowForMissingValue int
+	isNonBasic                   bool
+	isSpecial                    bool
+	colorString                  string
+	description                  string
 }
 
 var elementsData = []*element{
@@ -73,8 +75,16 @@ var elementsData = []*element{
 		elementCode: ELEMENT_VAMPIRIC,
 		name:        "Vampiric",
 		colorString: Red,
-		isSpecial: true,
+		isSpecial:   true,
 		description: "It regenerates no heads after damage, but grows heads after damaging someone.",
+	},
+	{
+		elementCode: ELEMENT_GROWING,
+		name:        "Growing",
+		colorString: Green,
+		isSpecial:   true,
+		description: "It regenerates 3 heads each time.",
+		defaultRegrowForMissingValue: 3,
 	},
 }
 
@@ -130,7 +140,7 @@ func getHeadRegrowForElement(headsElement, weaponElement *element) int {
 	regrow, found := headRegrowsForElementsTable[headsElement.elementCode][weaponElement.elementCode]
 	if !found {
 		// print("ELEMENT NOT FOUND IN TABLE")
-		return 0
+		return headsElement.defaultRegrowForMissingValue
 	}
 	return regrow
 }
@@ -149,4 +159,5 @@ var headRegrowsForElementsTable = map[uint8]map[uint8]int{
 	ELEMENT_ENERGY: {ELEMENT_ENERGY: -2, ELEMENT_FIRE: 2, ELEMENT_ICE: 2, ELEMENT_STONE: 2, ELEMENT_STORM: 2},
 
 	ELEMENT_VAMPIRIC: {},
+	ELEMENT_GROWING:  {},
 }

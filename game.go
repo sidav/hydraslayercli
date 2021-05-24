@@ -116,7 +116,7 @@ func (g *game) run() {
 func (g *game) getTotalExpectedEnemyDamage() int {
 	totaldmg := 0
 	for _, e := range g.enemies {
-		if e.hasStatusEffectOfType(STATUS_CONFUSED) {
+		if e.skipsThisTurn {
 			continue
 		}
 		totaldmg += g.calculateDamageByHeads(e.heads)
@@ -129,7 +129,8 @@ func (g *game) actForEnemies() {
 		if g.enemies[i].heads == 0 {
 			g.enemies = append(g.enemies[:i], g.enemies[i+1:]...)
 		} else {
-			if g.enemies[i].hasStatusEffectOfType(STATUS_CONFUSED) {
+			if g.enemies[i].skipsThisTurn {
+				g.enemies[i].skipsThisTurn = false
 			} else {
 				if g.enemiesSkipTurn {
 					continue

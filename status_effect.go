@@ -21,6 +21,7 @@ func (e *enemy) applyStatusEffects(g *game) {
 		switch e.statuses[i].statusType {
 		case STATUS_CONFUSED:
 			g.appendToLogMessage("Confused %s %s.", e.getName(), e.getConfusedActionDescription())
+			e.skipsThisTurn = true
 		}
 
 		e.statuses[i].turnsRemaining--
