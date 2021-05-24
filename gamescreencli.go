@@ -15,26 +15,22 @@ type consoleWrapper interface {
 }
 
 type gameScreen struct{
-	cw consoleWrapper
 }
 
 func(gs *gameScreen) init() {
-	gs.cw = &consoleWrapperStdout{}
-	gs.cw = &cwtcell{}
-	gs.cw.init()
 }
 
 func (gs *gameScreen) renderScreen(g *game) {
-	gs.cw.clear()
-	stageString := fmt.Sprintf("Stage %d/%d", g.currentStageNumber+1, len(StageInfo))
-	if g.currentStageNumber == len(StageInfo) - 1 {
+	cw.clear()
+	stageString := fmt.Sprintf("Stage %d/%d", g.currentStageNumber+1, len(*g.stages))
+	if g.currentStageNumber == len(*g.stages) - 1 {
 		stageString = fmt.Sprintf("FINAL STAGE")
 	}
-	gs.cw.println(fmt.Sprintf("%s: Turn %d", stageString, g.currentTurn))
-	gs.cw.println("")
+	cw.println(fmt.Sprintf("%s: Turn %d (%s)", stageString, g.currentTurn, g.difficulty))
+	cw.println("")
 
 	if len(g.enemies) > 0 {
-		gs.cw.println("You see here enemies:")
+		cw.println("You see here enemies:")
 		for i, e := range g.enemies {
 			selectStr := "   "
 			attDescrStr := ""
@@ -44,22 +40,22 @@ func (gs *gameScreen) renderScreen(g *game) {
 			if i == g.currSelectedEnemy {
 				selectStr = "-> "
 			}
-			gs.cw.println(fmt.Sprintf("%s%d: %s%s", selectStr, i+1, e.getNameWithStatus(), attDescrStr))
+			cw.println(fmt.Sprintf("%s%d: %s%s", selectStr, i+1, e.getNameWithStatus(), attDescrStr))
 		}
 	} else if len(g.treasure) > 0 {
-		gs.cw.println("You see here treasure:")
+		cw.println("You see here treasure:")
 		for i, t := range g.treasure {
-			gs.cw.println(fmt.Sprintf("   %d: %s", i+1, t.getName()))
+			cw.println(fmt.Sprintf("   %d: %s", i+1, t.getName()))
 		}
 	} else {
-		gs.cw.println("There is nothing to do here. Use \"move\" command to move to the next stage!")
+		cw.println("There is nothing to do here. Use \"move\" command to move to the next stage!")
 	}
 
 	hpColor := Green
 	if g.player.hp < g.player.maxhp/3 {
 		hpColor = Red
 	}
-	gs.cw.println(fmt.Sprintf("You have %s hp and %d/%d items:",
+	cw.println(fmt.Sprintf("You have %s hp and %d/%d items:",
 		colorizeString(hpColor, fmt.Sprintf("%d/%d", g.player.hp, g.player.maxhp)),
 		len(g.player.items), g.player.maxItems))
 
@@ -68,24 +64,24 @@ func (gs *gameScreen) renderScreen(g *game) {
 		if i == g.currSelectedItem {
 			selectStr = "->"
 		}
-		gs.cw.println(fmt.Sprintf("%s %c: %s", selectStr, 'A'+i, w.getName()))
+		cw.println(fmt.Sprintf("%s %c: %s", selectStr, 'A'+i, w.getName()))
 	}
 	if len(g.enemies) > 0 {
 		for len(g.enemies) <= g.currSelectedEnemy {
 			g.currSelectedEnemy--
 		}
 	}
-	gs.cw.println("")
-	gs.cw.println(g.currLog)
+	cw.println("")
+	cw.println(g.currLog)
 	expectedDamage := g.getTotalExpectedEnemyDamage()
 	expectedDamageStr := ""
 	if expectedDamage > 0 {
 		expectedDamageStr = fmt.Sprintf("%d damage expected (%d hp). ", expectedDamage, g.player.hp - expectedDamage)
 	}
-	gs.cw.print(fmt.Sprintf("%sYour action?\n> ", expectedDamageStr))
-	gs.cw.flush()
+	cw.print(fmt.Sprintf("%sYour action?\n> ", expectedDamageStr))
+	cw.flush()
 }
 
 func (gs *gameScreen) readPlayerInput() string {
-	return gs.cw.read()
+	return cw.read()
 }

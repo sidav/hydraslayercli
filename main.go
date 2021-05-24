@@ -4,16 +4,19 @@ var rnd FibRandom
 var auxrnd FibRandom
 var abortGame bool
 var screen gameScreen
+var cw consoleWrapper
 
 func main() {
+	cw = &cwtcell{}
+	cw.init()
 	rnd.InitDefault()
 	auxrnd.InitDefault()
-	game := initGame()
+	game := initGame(selectDifficulty())
 	game.run()
-	screen.cw.closeConsole()
+	cw.closeConsole()
 	defer func() {
 		if r := recover(); r != nil {
-			screen.cw.closeConsole()
+			cw.closeConsole()
 			panic(r)
 		}
 	}()

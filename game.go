@@ -3,17 +3,20 @@ package main
 import "fmt"
 
 type game struct {
-	currentTurn        int
 	currentStageNumber int
-	enemies            []*enemy
-	treasure           []*item
-	player             *player
+	difficulty         string
+
+	currentTurn int
+	enemies     []*enemy
+	treasure    []*item
+	player      *player
+	stages      *[]stage
 
 	// conditions
 	enemiesSkipTurn bool
 
 	// player-related
-	turnMade, stageFinished  bool
+	turnMade, stageFinished             bool
 	currLog                             string
 	currSelectedItem, currSelectedEnemy int
 
@@ -21,7 +24,7 @@ type game struct {
 	showShortCombatDescription bool
 }
 
-func initGame() *game {
+func initGame(difficulty string) *game {
 	g := &game{
 		currentTurn:        1,
 		currentStageNumber: 0,
@@ -48,14 +51,16 @@ func initGame() *game {
 			},
 		},
 	}
-	screen.init()
-	g.player.addItem(g.generateTreasure(0))
-	g.player.addItem(g.generateTreasure(0))
-	g.generateCurrentStage()
+	g.difficulty = difficulty
+	g.stages = DifficultyStageData[difficulty]
 	return g
 }
 
 func (g *game) run() {
+	screen.init()
+	g.player.addItem(g.generateTreasure(0))
+	g.player.addItem(g.generateTreasure(0))
+	g.generateCurrentStage()
 	for !abortGame {
 		if g.turnMade || g.currentTurn == 0 {
 			g.turnMade = false
@@ -88,8 +93,8 @@ func (g *game) run() {
 			return
 		}
 		if g.stageFinished {
-			if g.currentStageNumber == len(StageInfo)-1 {
-				g.appendToLogMessage(colorizeString(Yellow,"\nYou won! Press ENTER to exit.\n"))
+			if g.currentStageNumber == len(*g.stages)-1 {
+				g.appendToLogMessage(colorizeString(Yellow, "\nYou won! Press ENTER to exit.\n"))
 				screen.renderScreen(g)
 				screen.readPlayerInput()
 				return
