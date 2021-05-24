@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 const (
 	STATUS_CONFUSED uint8 = iota
 )
@@ -11,7 +13,7 @@ type statusEffect struct {
 
 func (se *statusEffect) getName() string {
 	switch se.statusType {
-	case STATUS_CONFUSED: return "confused"
+	case STATUS_CONFUSED: return fmt.Sprintf("confused %d", se.turnsRemaining)
 	}
 	panic("No status effect name!")
 }

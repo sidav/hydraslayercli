@@ -30,6 +30,11 @@ func (gs *gameScreen) renderScreen(g *game) {
 	cw.println(fmt.Sprintf("  %s", g.getCurrentStage().name))
 
 	if len(g.enemies) > 0 {
+		if len(g.enemies) > 0 {
+			for len(g.enemies) <= g.currSelectedEnemy {
+				g.currSelectedEnemy--
+			}
+		}
 		cw.println("You see here enemies:")
 		for i, e := range g.enemies {
 			selectStr := "   "
@@ -66,11 +71,7 @@ func (gs *gameScreen) renderScreen(g *game) {
 		}
 		cw.println(fmt.Sprintf("%s %c: %s", selectStr, 'A'+i, w.getName()))
 	}
-	if len(g.enemies) > 0 {
-		for len(g.enemies) <= g.currSelectedEnemy {
-			g.currSelectedEnemy--
-		}
-	}
+
 	cw.println("")
 	cw.println(g.currLog)
 	expectedDamage := g.getTotalExpectedEnemyDamage()

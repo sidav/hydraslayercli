@@ -35,14 +35,18 @@ func (d *dungeon) getStageNumber(num int) *stage {
 	}
 	// generate random enemies data
 	var sed []*stageEnemyData
-	numEnemies := rnd.RandInRange(1, num)
-	for i := 0; i < numEnemies; i++ {
+	numHeads := rnd.RandInRange(num+1, 2*(num+1))
+	numEnemies := 0
+	for numHeads > 0 {
+		numEnemies++
+		currHeads := rnd.RandInRange(1, numHeads)
 		sed = append(sed, &stageEnemyData{
-			minHeads:            num + 1,
-			maxHeads:            num + 1 + rnd.Rand(num/2+1),
+			minHeads:            currHeads,
+			maxHeads:            currHeads + 2,
 			allowComplexElement: num > 3,
 			allowSpecialElement: num > 5,
 		})
+		numHeads -= currHeads
 	}
 	return &stage{
 		name:     "Random stage",

@@ -12,7 +12,7 @@ type game struct {
 	player      *player
 
 	// conditions
-	enemiesSkipTurn bool
+	allEnemiesSkipTurn bool
 
 	// player-related
 	turnMade, stageFinished             bool
@@ -129,10 +129,11 @@ func (g *game) actForEnemies() {
 		if g.enemies[i].heads == 0 {
 			g.enemies = append(g.enemies[:i], g.enemies[i+1:]...)
 		} else {
+			g.enemies[i].applyStatusEffects(g)
 			if g.enemies[i].skipsThisTurn {
 				g.enemies[i].skipsThisTurn = false
 			} else {
-				if g.enemiesSkipTurn {
+				if g.allEnemiesSkipTurn {
 					continue
 				}
 				damage := g.calculateDamageByHeads(g.enemies[i].heads)
@@ -143,11 +144,10 @@ func (g *game) actForEnemies() {
 					g.enemies[i].heads += damage
 				}
 			}
-			g.enemies[i].applyStatusEffects(g)
 		}
 	}
-	if g.enemiesSkipTurn {
-		g.enemiesSkipTurn = false
+	if g.allEnemiesSkipTurn {
+		g.allEnemiesSkipTurn = false
 	}
 }
 

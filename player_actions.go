@@ -18,7 +18,7 @@ func (g *game) performUseAction(usedIndex int, usedType INDEXTYPE, targetIndex i
 			usedItem = g.player.items[usedIndex]
 		}
 	}
-	if targetIndex == -1 {
+	if targetIndex == -1 && usedItem != nil {
 		g.justUseItem(usedItem, usedFromGround)
 		return
 	}
@@ -82,7 +82,7 @@ func (g *game) justUseItem(item *item, usedFromGround bool) {
 		for _, enemy := range g.enemies {
 			enemy.statuses = append(enemy.statuses, &statusEffect{
 				statusType:     STATUS_CONFUSED,
-				turnsRemaining: 3,
+				turnsRemaining: 4,
 			})
 		}
 	default:
@@ -95,7 +95,7 @@ func (g *game) justUseItem(item *item, usedFromGround bool) {
 		g.player.spendItem(item, g)
 	}
 	g.turnMade = true
-	g.enemiesSkipTurn = true
+	g.allEnemiesSkipTurn = true
 }
 
 func (g *game) useItemOnEnemy(item *item, enemy *enemy) {
@@ -117,7 +117,7 @@ func (g *game) useItemOnEnemy(item *item, enemy *enemy) {
 		g.currLog = fmt.Sprintf("The %s starts behaving like crazy.", enemy.getName())
 		enemy.statuses = append(enemy.statuses, &statusEffect{
 			statusType:     STATUS_CONFUSED,
-			turnsRemaining: 4,
+			turnsRemaining: 6,
 		})
 	case ITEM_CHANGE_ELEMENT:
 		g.currLog = fmt.Sprintf("You use %s on %s, making it into ", item.getName(), enemy.getName())
@@ -128,7 +128,7 @@ func (g *game) useItemOnEnemy(item *item, enemy *enemy) {
 		return
 	}
 	g.player.spendItem(item, g)
-	g.enemiesSkipTurn = true
+	g.allEnemiesSkipTurn = true
 	g.turnMade = true
 }
 

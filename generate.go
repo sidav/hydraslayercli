@@ -55,7 +55,7 @@ func (g *game) generateTreasure(depth int) *item {
 		} else {
 
 		}
-		hasEffect := rnd.OneChanceFrom(4)
+		hasEffect := rnd.OneChanceFrom(1)
 		var eff *effect
 		if hasEffect {
 			eff = getRandomEffect(true, false)

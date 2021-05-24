@@ -138,14 +138,7 @@ func (i *item) applyPassiveEffect(g *game) {
 	case ITEM_EFFECT_PASSIVE_ELEMENT_SHIFTING:
 		i.element = getRandomElement(true, false)
 	case ITEM_EFFECT_PASSIVE_DISTORTION:
-		change := auxrnd.RandInRange(-3, 3)
-		i.weaponInfo.damage += change
-		if i.weaponInfo.damage <= 0 {
-			i.weaponInfo.damage = 1
-		}
-		if i.weaponInfo.damage > g.currentStageNumber {
-			i.weaponInfo.damage = auxrnd.Rand(g.currentStageNumber)
-		}
+		i.weaponInfo.damage = auxrnd.RandInRange(1, g.currentStageNumber+2)
 	}
 }
 

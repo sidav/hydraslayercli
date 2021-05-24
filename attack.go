@@ -88,7 +88,7 @@ func (g *game) performPlayerShoot(w *item, e *enemy) {
 	}
 	g.player.spendAmmo()
 	g.turnMade = true
-	g.enemiesSkipTurn = true
+	g.allEnemiesSkipTurn = true
 }
 
 func (g *game) calculateDamageOnHeads(weapon *weapon, enemy *enemy) int {
