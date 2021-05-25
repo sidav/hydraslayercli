@@ -136,6 +136,11 @@ func getRandomSpecialElement() *element {
 	return element
 }
 
+const (
+	REGROW_SIMPLE = ""
+	REGROW_DUPLICATE = "duplicate"
+)
+
 func getHeadRegrowForElement(headsElement, weaponElement *element) int {
 	regrow, found := headRegrowsForElementsTable[headsElement.elementCode][weaponElement.elementCode]
 	if !found {

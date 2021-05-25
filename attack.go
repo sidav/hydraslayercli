@@ -16,18 +16,37 @@ func (g *game) getPossibleAttackStringDescription(w *item, e *enemy) string {
 		return "ERROR: nil enemy in attack.go. Report this please. "
 	}
 	hDmg := g.calculateDamageOnHeads(w.weaponInfo, e)
-	hRegrw := g.calculateHeadsRegrowAfterHitBy(e, w)
-	resHeads := e.heads-hDmg+hRegrw
+	hRegrw, rType := g.calculateHeadsRegrowAfterHitBy(e, w)
+	resHeads := e.heads - hDmg + hRegrw
 	as := fmt.Sprintf("If you attack %s with %s", e.getName(), w.getName())
 	if hDmg == 0 {
 		as += ", it will lose no heads"
 	} else {
 		as += fmt.Sprintf(", it will lose %d heads", hDmg)
 	}
-	if e.heads - hDmg == 0 {
+	if e.heads-hDmg == 0 {
 		as += " and die."
 	} else {
-		as += fmt.Sprintf(" and regrow %d, resulting in %d heads. It will bite you for %d damage.", hRegrw, resHeads, g.calculateDamageByHeads(resHeads))
+		if hRegrw != 0 {
+			switch rType {
+			case REGROW_SIMPLE:	as += fmt.Sprintf(" and regrow %d, resulting in %d heads. ", hRegrw, resHeads)
+			case REGROW_DUPLICATE: as += fmt.Sprintf(" and duplicate remaining,resulting in %d heads. ", resHeads)
+			}
+		} else {
+			as += fmt.Sprintf(" with no regrow, resulting in %d heads. ", resHeads)
+		}
+		afterDmg := 0
+		if w.hasEffect() && w.effect.effectCode == ITEM_EFFECT_ONHIT_ADDDAMAGE && w.effect.additionalDamage <= resHeads {
+			afterDmg = w.effect.additionalDamage
+		}
+		if afterDmg > 0 {
+			as += fmt.Sprintf("It will then suffer additional %d damage", afterDmg)
+		}
+		if resHeads - afterDmg <= 0 {
+			as += " and die."
+		} else {
+			as += fmt.Sprintf(". It will bite you for %d damage.", g.calculateDamageByHeads(resHeads-afterDmg))
+		}
 	}
 	return as
 }
@@ -37,26 +56,63 @@ func (g *game) getShortPossibleAttackStringDescription(w *item, e *enemy) string
 		return ""
 	}
 	hDmg := g.calculateDamageOnHeads(w.weaponInfo, e)
-	hRegrw := g.calculateHeadsRegrowAfterHitBy(e, w)
-	resHeads := e.heads-hDmg+hRegrw
-	enemyDmgStr := fmt.Sprintf("; bite %d", g.calculateDamageByHeads(resHeads))
-	if hDmg < e.heads {
-		return fmt.Sprintf(" (%d-%d+%d=%d%s)", e.heads, hDmg, hRegrw, resHeads, enemyDmgStr)
-	} else {
+	hRegrw, rType := g.calculateHeadsRegrowAfterHitBy(e, w)
+	descriptionString := " "
+	resHeads := e.heads - hDmg + hRegrw
+	afterDmg := 0
+	if w.hasEffect() && w.effect.effectCode == ITEM_EFFECT_ONHIT_ADDDAMAGE && w.effect.additionalDamage <= resHeads {
+		afterDmg = w.effect.additionalDamage
+	}
+	if hDmg+afterDmg-hRegrw >= e.heads {
 		return fmt.Sprintf(" (-> kill)")
 	}
-}
+	enemyDmgStr := fmt.Sprintf("; bite %d", g.calculateDamageByHeads(resHeads))
+	damStr := ""
+	switch w.weaponInfo.weaponType {
+	case WTYPE_SUBSTRACTOR:
+		damStr = fmt.Sprintf("-%d", w.weaponInfo.damage)
+	case WTYPE_DIVISOR:
+		if hDmg > 0 {
+			damStr = fmt.Sprintf("/%d", w.weaponInfo.damage)
+		}
+	}
+	regrowStr := ""
+	switch rType {
+	case REGROW_SIMPLE:
+		if hRegrw > 0 {
+			regrowStr = fmt.Sprintf("+%d", hRegrw)
+		}
+	case REGROW_DUPLICATE:
+		descriptionString += "("
+		regrowStr = ")*2"
+	}
+	additionalDamStr := ""
+	if afterDmg > 0 {
+		additionalDamStr = fmt.Sprintf("-%d", afterDmg)
+		resHeads -= afterDmg
+	}
 
+	descriptionString += fmt.Sprintf("(%d%s%s%s=%d%s)",
+		e.heads, damStr, regrowStr, additionalDamStr, resHeads, enemyDmgStr)
+	return descriptionString
+}
 
 func (g *game) performPlayerHit(w *item, e *enemy) {
 	damage := g.calculateDamageOnHeads(w.weaponInfo, e)
 	g.currLog = fmt.Sprintf("You hit %s with %s, cutting %d heads. ",
 		e.getName(),
 		w.getName(), damage)
-	regrow := g.calculateHeadsRegrowAfterHitBy(e, w)
+	regrow, regrowType := g.calculateHeadsRegrowAfterHitBy(e, w)
 	e.heads -= damage
 	if e.heads > 0 {
-		g.currLog += fmt.Sprintf("It grows %d heads!", regrow)
+		switch regrowType {
+		case REGROW_SIMPLE:
+			g.currLog += fmt.Sprintf("It grows %d heads!", regrow)
+		case REGROW_DUPLICATE:
+			g.currLog += fmt.Sprintf("It duplicates its %d heads!", e.heads)
+		default:
+			panic("No text for " + regrowType)
+		}
 		e.heads += regrow
 		w.applyOnHitEffect(g, e)
 	} else {
@@ -72,16 +128,23 @@ func (g *game) performPlayerShoot(w *item, e *enemy) {
 	}
 	if !g.player.hasAmmo() {
 		g.setLogMessage("You are out of ammunition!")
-		return 
+		return
 	}
 	damage := g.calculateDamageOnHeads(w.weaponInfo, e)
 	g.setLogMessage("You shoot %s with a %s, destroying %d heads. ",
 		e.getName(),
 		w.getName(), damage)
-	regrow := g.calculateHeadsRegrowAfterHitBy(e, w)
+	regrow, regrowType := g.calculateHeadsRegrowAfterHitBy(e, w)
 	e.heads -= damage
 	if e.heads > 0 {
-		g.currLog += fmt.Sprintf("It grows %d heads!", regrow)
+		switch regrowType {
+		case REGROW_SIMPLE:
+			g.currLog += fmt.Sprintf("It grows %d heads!", regrow)
+		case REGROW_DUPLICATE:
+			g.currLog += fmt.Sprintf("It duplicates its %d heads!", e.heads)
+		default:
+			panic("No text for " + regrowType)
+		}
 		e.heads += regrow
 	} else {
 		g.currLog += fmt.Sprintf("It drops dead!")
@@ -103,20 +166,20 @@ func (g *game) calculateDamageOnHeads(weapon *weapon, enemy *enemy) int {
 		}
 		return weapon.damage
 	case WTYPE_DIVISOR:
-		if enemy.heads % weapon.damage != 0 {
+		if enemy.heads%weapon.damage != 0 {
 			return 0
 		}
-		return enemy.heads - enemy.heads / weapon.damage
+		return enemy.heads - enemy.heads/weapon.damage
 	}
 	return 0
 }
 
-func (g *game) calculateHeadsRegrowAfterHitBy(enemy *enemy, weapon *item) int {
+func (g *game) calculateHeadsRegrowAfterHitBy(enemy *enemy, weapon *item) (int, string) {
 	regrow := getHeadRegrowForElement(enemy.element, weapon.element)
 	if regrow == -2 {
-		return enemy.heads - g.calculateDamageOnHeads(weapon.weaponInfo, enemy)
+		return enemy.heads - g.calculateDamageOnHeads(weapon.weaponInfo, enemy), REGROW_DUPLICATE
 	}
-	return regrow
+	return regrow, REGROW_SIMPLE
 }
 
 func (g *game) calculateDamageByHeads(headsNum int) int {
