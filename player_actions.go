@@ -85,6 +85,18 @@ func (g *game) justUseItem(item *item, usedFromGround bool) {
 				turnsRemaining: 4,
 			})
 		}
+	case ITEM_MERGE_HYDRAS_INTO_ONE:
+		g.setLogMessage(fmt.Sprintf("Magic quickly surges around enemies... and creates the new one!"))
+		randomEnemy := rnd.Rand(len(g.enemies))
+		g.appendToLogMessage(fmt.Sprintf("%s is now", g.enemies[randomEnemy].getName()))
+		totalHeadsAdd := 0
+		for _, enemy := range g.enemies {
+			totalHeadsAdd += enemy.heads
+			enemy.heads = 0
+		}
+		g.enemies[randomEnemy].heads += totalHeadsAdd
+		g.appendToLogMessage(fmt.Sprintf("%s!", g.enemies[randomEnemy].getName()))
+
 	default:
 		g.currLog = fmt.Sprintf("ERROR: ADD SIMPLE USAGE OF %s.", item.getName())
 		return

@@ -14,6 +14,7 @@ const (
 	ITEM_IMPROVE_MAGIC
 	ITEM_GAIN_EFFECT
 	ITEM_AMMO
+	ITEM_MERGE_HYDRAS_INTO_ONE
 	TOTAL_ITEM_TYPES_NUMBER // for generators
 )
 
@@ -87,6 +88,12 @@ var consumablesData = []*consumableItemInfo{
 		consumableType: ITEM_GAIN_EFFECT,
 		name:           "Glyph of imbuing",
 		info:           "Used to imbue a random effect onto item.",
+		frequency:      1,
+	},
+	{
+		consumableType: ITEM_MERGE_HYDRAS_INTO_ONE,
+		name:           "Scroll of merge hydras",
+		info:           "Used to make a single hydra from many.",
 		frequency:      1,
 	},
 	{
