@@ -71,6 +71,9 @@ func (gs *gameScreen) renderScreen(g *game) {
 		}
 		cw.println(fmt.Sprintf("%s %c: %s", selectStr, 'A'+i, w.getName()))
 	}
+	if len(g.player.items) < g.player.maxItems {
+		cw.println(fmt.Sprintf("      %d free item slots", g.player.maxItems - len(g.player.items)))
+	}
 
 	cw.println("")
 	cw.println(g.currLog)

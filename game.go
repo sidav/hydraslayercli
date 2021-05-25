@@ -31,6 +31,7 @@ func initGame(difficulty string) *game {
 	g := &game{
 		currentTurn:        1,
 		currentStageNumber: 0,
+		showShortCombatDescription: true,
 		enemies:            []*enemy{},
 		player: &player{
 			hp:       10,
