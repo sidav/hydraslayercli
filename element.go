@@ -8,6 +8,9 @@ const (
 	ELEMENT_STORM
 	ELEMENT_MAGMA
 	ELEMENT_ENERGY
+
+	ELEMENT_REGROW_AURA
+
 	ELEMENT_VAMPIRIC
 	ELEMENT_GROWING
 	ELEMENTS_TOTAL // for random
@@ -18,7 +21,9 @@ type element struct {
 	name                         string
 	defaultRegrowForMissingValue int
 	isNonBasic                   bool
-	isSpecial                    bool
+	isSupporting                 bool // useful only when the hydra is not alone
+	isBoss                       bool
+	restrictedForWeapons         bool
 	colorString                  string
 	description                  string
 }
@@ -71,19 +76,31 @@ var elementsData = []*element{
 		isNonBasic:  true,
 		description: "It regenerates no heads after non-elemental damage. ",
 	},
+
+	{
+		elementCode:          ELEMENT_REGROW_AURA,
+		name:                 "Healer",
+		colorString:          Green,
+		isNonBasic:           true,
+		isSupporting:         true,
+		restrictedForWeapons: true,
+		description:          "It allows other hydras to grow additional head each turn. ",
+	},
+
 	{
 		elementCode: ELEMENT_VAMPIRIC,
 		name:        "Vampiric",
 		colorString: Red,
-		isSpecial:   true,
+		isBoss:      true,
 		description: "It regenerates no heads after damage, but grows heads after damaging someone.",
 	},
 	{
-		elementCode: ELEMENT_GROWING,
-		name:        "Growing",
-		colorString: Green,
-		isSpecial:   true,
-		description: "It regenerates 3 heads each time.",
+		elementCode:                  ELEMENT_GROWING,
+		name:                         "Fast-healing",
+		colorString:                  Green,
+		isBoss:                       true,
+		restrictedForWeapons:         true,
+		description:                  "It regenerates 3 heads each time.",
 		defaultRegrowForMissingValue: 3,
 	},
 }
@@ -96,12 +113,13 @@ func (e *element) getElementColorStr(element uint8) string {
 	}
 }
 
-func getRandomElement(allowNonBasic, allowSpecial bool) *element {
+func getRandomElement(allowNonBasic, allowSpecial, isForItem bool) *element {
 	var element *element
 	conditionsSatisfied := false
 	for !conditionsSatisfied {
 		element = elementsData[rnd.Rand(len(elementsData))]
-		conditionsSatisfied = (allowNonBasic || !element.isNonBasic) && (allowSpecial || !element.isSpecial)
+		conditionsSatisfied = (allowNonBasic || !element.isNonBasic) && (allowSpecial || !element.isBoss) &&
+			(isForItem || !element.restrictedForWeapons)
 	}
 	return element
 }
@@ -127,7 +145,7 @@ func getRandomSpecialElement() *element {
 	counter := 0
 	for !conditionsSatisfied {
 		element = elementsData[rnd.Rand(len(elementsData))]
-		conditionsSatisfied = element.isSpecial
+		conditionsSatisfied = element.isBoss
 		counter++
 		if counter == 100 {
 			panic("randomSpecialElement")
@@ -137,7 +155,7 @@ func getRandomSpecialElement() *element {
 }
 
 const (
-	REGROW_SIMPLE = ""
+	REGROW_SIMPLE    = ""
 	REGROW_DUPLICATE = "duplicate"
 )
 
@@ -162,6 +180,8 @@ var headRegrowsForElementsTable = map[uint8]map[uint8]int{
 
 	ELEMENT_MAGMA:  {ELEMENT_MAGMA: -2, ELEMENT_FIRE: 2, ELEMENT_STONE: 2},
 	ELEMENT_ENERGY: {ELEMENT_ENERGY: -2, ELEMENT_FIRE: 2, ELEMENT_ICE: 2, ELEMENT_STONE: 2, ELEMENT_STORM: 2},
+
+	ELEMENT_REGROW_AURA: {},
 
 	ELEMENT_VAMPIRIC: {},
 	ELEMENT_GROWING:  {},

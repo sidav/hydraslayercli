@@ -15,11 +15,11 @@ func (g *game) generateCurrentStage() {
 }
 
 func (g *game) addRandomHydra(data *stageEnemyData) {
-	element := getRandomElement(data.allowComplexElement, data.allowSpecialElement)
+	element := getRandomElement(data.allowComplexElement, data.allowBossElement, false)
 	if data.forceComplexElement {
 		element = getRandomNonBasicElement()
 	}
-	if data.forceSpecialElement {
+	if data.forceBossElement {
 		element = getRandomSpecialElement()
 	}
 	hydra := &enemy{
@@ -61,7 +61,7 @@ func (g *game) generateTreasure(depth int) *item {
 			eff = getRandomEffect(true, false)
 		}
 		return &item{
-			element:      getRandomElement(true, false),
+			element:      getRandomElement(true, false, true),
 			asConsumable: nil,
 			weaponInfo:   newWeapon,
 			effect: eff,

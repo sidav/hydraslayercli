@@ -15,7 +15,7 @@ type stage struct {
 type stageEnemyData struct {
 	minHeads, maxHeads                       int
 	allowComplexElement, forceComplexElement bool
-	allowSpecialElement, forceSpecialElement bool
+	allowBossElement, forceBossElement       bool
 }
 
 func (d *dungeon) getTotalStages() int {
@@ -44,7 +44,7 @@ func (d *dungeon) getStageNumber(num int) *stage {
 			minHeads:            currHeads,
 			maxHeads:            currHeads + 2,
 			allowComplexElement: num > 3,
-			allowSpecialElement: num > 5,
+			allowBossElement:    num > 5,
 		})
 		numHeads -= currHeads
 	}
@@ -120,7 +120,7 @@ var dungeons = map[string]*dungeon{
 			5: {
 				{
 					enemies: []*stageEnemyData{
-						{minHeads: 17, maxHeads: 25, forceSpecialElement: true},
+						{minHeads: 17, maxHeads: 25, forceBossElement: true},
 					},
 				},
 			},
@@ -193,7 +193,7 @@ var dungeons = map[string]*dungeon{
 			7: {
 				{
 					enemies: []*stageEnemyData{
-						{minHeads: 17, maxHeads: 25, forceSpecialElement: true},
+						{minHeads: 17, maxHeads: 25, forceBossElement: true},
 					},
 					treasure: 5,
 				},
@@ -201,8 +201,8 @@ var dungeons = map[string]*dungeon{
 			8: {
 				{
 					enemies: []*stageEnemyData{
-						{minHeads: 17, maxHeads: 25, forceSpecialElement: true},
-						{minHeads: 17, maxHeads: 25, forceSpecialElement: true},
+						{minHeads: 17, maxHeads: 25, forceBossElement: true},
+						{minHeads: 17, maxHeads: 25, forceBossElement: true},
 					},
 				},
 			},
@@ -210,7 +210,7 @@ var dungeons = map[string]*dungeon{
 	},
 
 	"hard": {
-		name: "hard",
+		name:        "hard",
 		totalStages: 15,
 		stagesVariants: [][]*stage{
 			0: {
@@ -274,7 +274,7 @@ var dungeons = map[string]*dungeon{
 			5: {
 				{
 					enemies: []*stageEnemyData{
-						{minHeads: 17, maxHeads: 25, forceSpecialElement: true},
+						{minHeads: 17, maxHeads: 25, forceBossElement: true},
 					},
 					treasure: 5,
 				},
@@ -283,9 +283,10 @@ var dungeons = map[string]*dungeon{
 	},
 
 	"chaotic": {
-		name: "chaotic",
+		name:        "chaotic",
 		totalStages: 15,
 		stagesVariants: [][]*stage{
+
 		},
 	},
 }

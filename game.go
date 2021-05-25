@@ -38,14 +38,14 @@ func initGame(difficulty string) *game {
 			maxItems: 5,
 			items: []*item{
 				{
-					element: getRandomElement(false, false),
+					element: getRandomElement(false, false, true),
 					weaponInfo: &weapon{
 						weaponType: WTYPE_SUBSTRACTOR,
 						damage:     2,
 					},
 				},
 				{
-					element: getRandomElement(false, false),
+					element: getRandomElement(false, false, true),
 					weaponInfo: &weapon{
 						weaponType: WTYPE_SUBSTRACTOR,
 						damage:     1,
@@ -122,33 +122,6 @@ func (g *game) getTotalExpectedEnemyDamage() int {
 		totaldmg += g.calculateDamageByHeads(e.heads)
 	}
 	return totaldmg
-}
-
-func (g *game) actForEnemies() {
-	for i := len(g.enemies) - 1; i >= 0; i-- {
-		if g.enemies[i].heads == 0 {
-			g.enemies = append(g.enemies[:i], g.enemies[i+1:]...)
-		} else {
-			g.enemies[i].applyStatusEffects(g)
-			if g.enemies[i].skipsThisTurn {
-				g.enemies[i].skipsThisTurn = false
-			} else {
-				if g.allEnemiesSkipTurn {
-					continue
-				}
-				damage := g.calculateDamageByHeads(g.enemies[i].heads)
-				g.appendToLogMessage("%s bites you for %d damage. ", g.enemies[i].getName(), damage)
-				g.player.hp -= damage
-				if g.enemies[i].element.elementCode == ELEMENT_VAMPIRIC {
-					g.appendToLogMessage("%s grows itself %d heads from your blood!! ", g.enemies[i].getName(), damage)
-					g.enemies[i].heads += damage
-				}
-			}
-		}
-	}
-	if g.allEnemiesSkipTurn {
-		g.allEnemiesSkipTurn = false
-	}
 }
 
 func (g *game) setLogMessage(msg string, args ...interface{}) {

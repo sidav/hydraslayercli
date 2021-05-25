@@ -109,7 +109,7 @@ func (i *item) applyActiveEffect(g *game) {
 			g.player.hp = g.player.maxhp
 		}
 	case ITEM_EFFECT_ACTIVE_ELEMENT_SHIFTING:
-		i.element = getRandomElement(true, false)
+		i.element = getRandomElement(true, false, true)
 	}
 	i.effect.canBeUsed = false
 }
@@ -136,7 +136,7 @@ func (i *item) applyPassiveEffect(g *game) {
 			g.appendToLogMessage("You regenerate.")
 		}
 	case ITEM_EFFECT_PASSIVE_ELEMENT_SHIFTING:
-		i.element = getRandomElement(true, false)
+		i.element = getRandomElement(true, false, true)
 	case ITEM_EFFECT_PASSIVE_DISTORTION:
 		i.weaponInfo.damage = auxrnd.RandInRange(1, g.currentStageNumber+2)
 	}

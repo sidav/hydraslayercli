@@ -44,9 +44,11 @@ func (g *game) getPossibleAttackStringDescription(w *item, e *enemy) string {
 		}
 		if resHeads - afterDmg <= 0 {
 			as += " and die."
-		} else {
-			as += fmt.Sprintf(". It will bite you for %d damage.", g.calculateDamageByHeads(resHeads-afterDmg))
+			return as
+		} else if afterDmg > 0 {
+			as += ". "
 		}
+		as += fmt.Sprintf("It will bite you for %d damage.", g.calculateDamageByHeads(resHeads-afterDmg))
 	}
 	return as
 }

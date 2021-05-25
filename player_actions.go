@@ -121,7 +121,7 @@ func (g *game) useItemOnEnemy(item *item, enemy *enemy) {
 		})
 	case ITEM_CHANGE_ELEMENT:
 		g.currLog = fmt.Sprintf("You use %s on %s, making it into ", item.getName(), enemy.getName())
-		enemy.element = getRandomElement(true, false)
+		enemy.element = getRandomElement(true, false, false)
 		g.currLog += fmt.Sprintf("%s.", enemy.getName())
 	default:
 		g.currLog = fmt.Sprintf("ERROR: ADD USAGE %s ON ENEMY.", item.getName())
@@ -150,7 +150,7 @@ func (g *game) useItemOnItem(item, targetItem *item, usedFromGround bool) {
 		g.currLog += fmt.Sprintf("%s.", targetItem.getName())
 	case ITEM_CHANGE_ELEMENT:
 		g.currLog = fmt.Sprintf("You use %s on %s, making it into ", item.getName(), targetItem.getName())
-		targetItem.element = getRandomElement(true, false)
+		targetItem.element = getRandomElement(true, false, true)
 		g.currLog += fmt.Sprintf("%s.", targetItem.getName())
 	case ITEM_GAIN_EFFECT:
 		g.currLog = fmt.Sprintf("You use %s on %s, making it into ", item.getName(), targetItem.getName())
