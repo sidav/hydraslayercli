@@ -37,23 +37,31 @@ func (g *game) addRandomTreasure(depth, difficulty int) {
 func (g *game) generateTreasure(depth int) *item {
 	perc := rnd.RandomPercent()
 	isWeapon := perc < 25
+	var newWeapon *weapon
 	if isWeapon {
-		minDamage := depth - depth/2
-		maxDamage := depth + depth/2 + 2
-		if minDamage == 0 {
-			minDamage = 1
-		}
-		newWeapon := &weapon{
-			weaponType: WTYPE_SUBSTRACTOR,
-			damage:     rnd.RandInRange(minDamage, maxDamage),
-			canShoot: rnd.OneChanceFrom(5),
-		}
-		weaponTypePercent := rnd.RandomPercent()
-		if weaponTypePercent < 25 {
-			newWeapon.weaponType = WTYPE_DIVISOR
-			newWeapon.damage = 2
-		} else {
-
+		wData := getRandomWeaponData()
+		switch wData.wtype {
+		case WTYPE_SUBSTRACTOR:
+			minDamage := depth - depth/2
+			maxDamage := depth + depth/2 + 2
+			if minDamage == 0 {
+				minDamage = 1
+			}
+			newWeapon = &weapon{
+				weaponType: WTYPE_SUBSTRACTOR,
+				damage:     rnd.RandInRange(minDamage, maxDamage),
+				canShoot:   rnd.OneChanceFrom(5),
+			}
+		default:
+			additionalDamage := 0
+			if rnd.OneChanceFrom(4) {
+				additionalDamage++
+			}
+			newWeapon = &weapon{
+				weaponType: wData.wtype,
+				damage:     wData.minDamageForGeneration + additionalDamage,
+				canShoot:   rnd.OneChanceFrom(5),
+			}
 		}
 		hasEffect := rnd.OneChanceFrom(4)
 		var eff *effect
@@ -64,15 +72,16 @@ func (g *game) generateTreasure(depth int) *item {
 			element:      getRandomElement(true, false, true),
 			asConsumable: nil,
 			weaponInfo:   newWeapon,
-			effect: eff,
+			effect:       eff,
 		}
 	}
+
 	isSpecialItem := perc < 33
 	if isSpecialItem {
 		return &item{
 			specialName: "Ring",
-			effect: getRandomEffect(false, true),
-			weaponInfo: nil,
+			effect:      getRandomEffect(false, true),
+			weaponInfo:  nil,
 		}
 	}
 

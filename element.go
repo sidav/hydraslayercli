@@ -23,7 +23,7 @@ type element struct {
 	isNonBasic                   bool
 	isSupporting                 bool // useful only when the hydra is not alone
 	isBoss                       bool
-	restrictedForWeapons         bool
+	isForEnemiesOnly             bool
 	colorString                  string
 	description                  string
 }
@@ -78,13 +78,13 @@ var elementsData = []*element{
 	},
 
 	{
-		elementCode:          ELEMENT_REGROW_AURA,
-		name:                 "Healer",
-		colorString:          Green,
-		isNonBasic:           true,
-		isSupporting:         true,
-		restrictedForWeapons: true,
-		description:          "It allows other hydras to grow additional head each turn. ",
+		elementCode:      ELEMENT_REGROW_AURA,
+		name:             "Healer",
+		colorString:      Green,
+		isNonBasic:       true,
+		isSupporting:     true,
+		isForEnemiesOnly: true,
+		description:      "It allows other hydras to grow additional head each turn. ",
 	},
 
 	{
@@ -99,7 +99,7 @@ var elementsData = []*element{
 		name:                         "Fast-healing",
 		colorString:                  Green,
 		isBoss:                       true,
-		restrictedForWeapons:         true,
+		isForEnemiesOnly:             true,
 		description:                  "It regenerates 3 heads each time.",
 		defaultRegrowForMissingValue: 3,
 	},
@@ -119,7 +119,7 @@ func getRandomElement(allowNonBasic, allowSpecial, isForItem bool) *element {
 	for !conditionsSatisfied {
 		element = elementsData[rnd.Rand(len(elementsData))]
 		conditionsSatisfied = (allowNonBasic || !element.isNonBasic) && (allowSpecial || !element.isBoss) &&
-			(isForItem || !element.restrictedForWeapons)
+			(!isForItem || !element.isForEnemiesOnly)
 	}
 	return element
 }

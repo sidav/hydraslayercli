@@ -26,19 +26,19 @@ var consumablesData = []*consumableItemInfo{
 	},
 	{
 		consumableType: ITEM_ENCHANTER,
-		name:           "Scroll of enchant weapon",
+		name:           "Glyph of enchant weapon",
 		frequency:      2,
 		info:           "Can be used to increase weapon damage.",
 	},
 	{
 		consumableType: ITEM_DESTROY_HYDRA,
-		name:           "Scroll of destroy hydra",
+		name:           "Glyph of destroy hydra",
 		frequency:      1,
 		info:           "Can be used to destroy hydra.",
 	},
 	{
 		consumableType: ITEM_CONFUSE_HYDRA,
-		name:           "Scroll of confuse hydra",
+		name:           "Glyph of confuse hydra",
 		frequency:      1,
 		info:           "Can be used to confuse hydra.",
 	},
@@ -61,7 +61,7 @@ var consumablesData = []*consumableItemInfo{
 	},
 	{
 		consumableType: ITEM_CHANGE_ELEMENT,
-		name:           "Scroll of change element",
+		name:           "Glyph of change element",
 		info:           "Changes hydra's or item's element.",
 		frequency:      1,
 	},
@@ -79,13 +79,13 @@ var consumablesData = []*consumableItemInfo{
 	},
 	{
 		consumableType: ITEM_IMPROVE_MAGIC,
-		name:           "Scroll of improve brand",
+		name:           "Glyph of improve brand",
 		info:           "Can be used to improve branded (magic) items",
 		frequency:      1,
 	},
 	{
 		consumableType: ITEM_GAIN_EFFECT,
-		name:           "Scroll of imbuing",
+		name:           "Glyph of imbuing",
 		info:           "Used to imbue a random effect onto item.",
 		frequency:      1,
 	},

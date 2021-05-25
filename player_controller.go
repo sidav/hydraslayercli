@@ -32,7 +32,7 @@ func (g *game) playerTurn() {
 func (g *game) parsePlayerInput(input string) {
 	splitted := strings.Split(input, " ")
 	// remove all trailing spaces
-	for i := len(splitted)-1; i > 0; i-- {
+	for i := len(splitted) - 1; i > 0; i-- {
 		if splitted[i] == "" {
 			splitted = append(splitted[:i], splitted[i+1:]...)
 		}
@@ -96,7 +96,7 @@ func (g *game) parsePlayerInput(input string) {
 		return
 	}
 
-	if splitted[0] == "cheat" {
+	if splitted[0] == "cheati" {
 		for i := uint8(1); i < TOTAL_ITEM_TYPES_NUMBER; i++ {
 			g.player.maxItems++
 			newItem := &item{asConsumable: consumablesData[i]}
@@ -104,6 +104,12 @@ func (g *game) parsePlayerInput(input string) {
 				newItem.count++
 			}
 			g.player.items = append(g.player.items, newItem)
+		}
+		return
+	}
+	if splitted[0] == "cheatt" {
+		for i := 0; i < 10; i++ {
+			g.player.addItem(g.generateTreasure(auxrnd.RandInRange(1, 15)))
 		}
 		return
 	}
@@ -125,7 +131,7 @@ func (g *game) parsePlayerInput(input string) {
 		for i := 1; i < len(splitted); i++ {
 			takeIndex, indtype := charToIndexWithType(splitted[i][0])
 			if indtype == INDEX_ENEMY_OR_TREASURE {
-				g.pickupItemNumber(takeIndex-i+1)
+				g.pickupItemNumber(takeIndex - i + 1)
 			}
 		}
 		return
@@ -134,7 +140,7 @@ func (g *game) parsePlayerInput(input string) {
 		for i := 1; i < len(splitted); i++ {
 			dropIndex, indtype := charToIndexWithType(splitted[i][0])
 			if indtype == INDEX_ITEM {
-				g.dropItemNumber(dropIndex-i+1)
+				g.dropItemNumber(dropIndex - i + 1)
 			}
 		}
 		return
