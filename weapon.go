@@ -31,7 +31,7 @@ var weaponsStaticData = []*weaponTypeStaticData{
 	},
 	{
 		wtype:                  WTYPE_LOGARITHMER,
-		frequency:              1000,
+		frequency:              1,
 		minDamageForGeneration: 2,
 	},
 }
