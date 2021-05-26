@@ -54,6 +54,7 @@ var consumablesData = []*consumableItemInfo{
 	{
 		consumableType: ITEM_INCREASE_HP,
 		name:           "Potion of vitality",
+		info:           "Permanently increases your maximum HP and heals you.",
 		frequency:      3,
 	},
 	{

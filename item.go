@@ -66,10 +66,14 @@ func (i *item) getName() string {
 		name += i.asConsumable.name
 		switch i.asConsumable.consumableType {
 		case ITEM_CHANGE_ELEMENT_SPECIFIC:
-			name += fmt.Sprintf("%s element",i.auxiliaryElement.name)
-			name = colorizeString(i.auxiliaryElement.getElementColorStr(), name)
+			if i.auxiliaryElement != nil {
+				name += fmt.Sprintf("%s element", i.auxiliaryElement.name)
+				name = colorizeString(i.auxiliaryElement.getElementColorStr(), name)
+			}
 		case ITEM_BRANDING_SPECIFIC:
-			name += fmt.Sprintf("\"%s\" brand",i.auxiliaryBrand.getName())
+			if i.auxiliaryBrand != nil {
+				name += fmt.Sprintf("\"%s\" brand", i.auxiliaryBrand.getName())
+			}
 		}
 	}
 	if i.hasEffect() {
