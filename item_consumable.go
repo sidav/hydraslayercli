@@ -28,7 +28,7 @@ var consumablesData = []*consumableItemInfo{
 	{
 		consumableType: ITEM_ENCHANTER,
 		name:           "Glyph of enchant weapon",
-		frequency:      2,
+		frequency:      3,
 		info:           "Can be used to increase weapon damage.",
 	},
 	{
@@ -52,13 +52,13 @@ var consumablesData = []*consumableItemInfo{
 	{
 		consumableType: ITEM_INCREASE_HP,
 		name:           "Potion of vitality",
-		frequency:      2,
+		frequency:      3,
 	},
 	{
 		consumableType: ITEM_STRENGTH,
 		name:           "Potion of strength",
 		info:           "Permanently increases your inventory size.",
-		frequency:      2,
+		frequency:      3,
 	},
 	{
 		consumableType: ITEM_CHANGE_ELEMENT,
