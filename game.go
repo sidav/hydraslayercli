@@ -102,6 +102,9 @@ func (g *game) run() {
 				screen.readPlayerInput()
 				return
 			}
+			if g.currentStageNumber % 3 == 0 && g.currentStageNumber > 0 {
+				g.selectReward()
+			}
 			g.currentStageNumber++
 			g.currentTurn = 0
 			g.generateCurrentStage()
@@ -123,6 +126,25 @@ func (g *game) getTotalExpectedEnemyDamage() int {
 		totaldmg += g.calculateDamageByHeads(e.heads)
 	}
 	return totaldmg
+}
+
+func (g *game) selectReward() {
+	choice := showSelectScreen(fmt.Sprintf("Congratulations, you've cleared stage %d!\n" +
+					"Select your reward:", g.currentStageNumber+1),
+					[]string{"Max health + 2", "Strength +1", "Acquire an item"})
+	switch choice {
+	case 0: g.player.maxhp += 2
+	case 1: g.player.maxItems += 1
+	case 2:
+		var itemsToGive []*item
+		var namesSlice []string
+		for i := 0; i < 5; i++ {
+			itemsToGive = append(itemsToGive, g.generateTreasure(g.currentStageNumber))
+			namesSlice = append(namesSlice, itemsToGive[i].getName())
+		}
+		itemChoice := showSelectScreen("Select an item to acquire:", namesSlice)
+		g.player.addItem(itemsToGive[itemChoice])
+	}
 }
 
 func (g *game) setLogMessage(msg string, args ...interface{}) {
