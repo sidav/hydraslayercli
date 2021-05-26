@@ -1,24 +1,23 @@
 package main
 
 import (
-	"fmt"
 	"strings"
 )
 
 type INDEXTYPE uint8
 
 const (
-	INDEX_ENEMY_OR_TREASURE = iota
-	INDEX_ITEM
+	INDEX_NUMBER = iota
+	INDEX_LETTER
 	INDEX_WRONG
 )
 
 func charToIndexWithType(char byte) (int, INDEXTYPE) {
 	if char >= 'a' && char <= 'z' {
-		return int(255 - ('a' - char - 1)), INDEX_ITEM
+		return int(255 - ('a' - char - 1)), INDEX_LETTER
 	}
 	if char >= '0' && char <= '9' {
-		return int(char - '1'), INDEX_ENEMY_OR_TREASURE
+		return int(char - '1'), INDEX_NUMBER
 	}
 	return 0, INDEX_WRONG
 }
@@ -68,13 +67,13 @@ func (g *game) parsePlayerInput(input string) {
 			g.setLogMessage("HELP!")
 		} else {
 			ind, itype := charToIndexWithType(splitted[1][0])
-			if itype == INDEX_ITEM {
+			if itype == INDEX_LETTER {
 				if ind < len(g.player.items) {
 					g.setLogMessage(g.player.items[ind].getInfo())
 					return
 				}
 			}
-			if itype == INDEX_ENEMY_OR_TREASURE {
+			if itype == INDEX_NUMBER {
 				if len(g.enemies) > 0 && ind < len(g.enemies) {
 					g.setLogMessage(g.enemies[ind].getInfo())
 					return
@@ -130,7 +129,7 @@ func (g *game) parsePlayerInput(input string) {
 		}
 		for i := 1; i < len(splitted); i++ {
 			takeIndex, indtype := charToIndexWithType(splitted[i][0])
-			if indtype == INDEX_ENEMY_OR_TREASURE {
+			if indtype == INDEX_NUMBER {
 				g.pickupItemNumber(takeIndex - i + 1)
 			}
 		}
@@ -139,7 +138,7 @@ func (g *game) parsePlayerInput(input string) {
 	if splitted[0] == "drop" {
 		for i := 1; i < len(splitted); i++ {
 			dropIndex, indtype := charToIndexWithType(splitted[i][0])
-			if indtype == INDEX_ITEM {
+			if indtype == INDEX_LETTER {
 				g.dropItemNumber(dropIndex - i + 1)
 			}
 		}
@@ -162,7 +161,7 @@ func (g *game) parsePlayerInput(input string) {
 	if len(splitted[0]) == 1 {
 		index, indtype := charToIndexWithType(splitted[0][0])
 		// select item
-		if indtype == INDEX_ITEM {
+		if indtype == INDEX_LETTER {
 			if len(g.player.items) > index {
 				// gs.currLog = g.player.weapons[itemnum].getName()
 				if g.player.items[index].isWeapon() {
@@ -176,7 +175,7 @@ func (g *game) parsePlayerInput(input string) {
 		}
 
 		//select enemy
-		if indtype == INDEX_ENEMY_OR_TREASURE {
+		if indtype == INDEX_NUMBER {
 			// print(splitted[0][0], '1', '0', enemynum)
 			if len(g.enemies) > index {
 				// gs.currLog = g.enemies[enemynum].getName()
@@ -187,5 +186,5 @@ func (g *game) parsePlayerInput(input string) {
 		}
 	}
 	// nothing parsed
-	g.currLog = fmt.Sprintf("Command \"%s\" not recognized.", splitted[0])
+	g.setLogMessage("Command \"%s\" not recognized.", splitted[0])
 }

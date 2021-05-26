@@ -62,15 +62,15 @@ func (g *game) generateTreasure(depth int) *item {
 			}
 		}
 		hasEffect := rnd.OneChanceFrom(4)
-		var eff *effect
+		var eff *brand
 		if hasEffect {
-			eff = getRandomEffect(true, false)
+			eff = getRandomBrand(true, false)
 		}
 		return &item{
 			element:      getRandomElement(true, false, true),
 			asConsumable: nil,
 			weaponInfo:   newWeapon,
-			effect:       eff,
+			brand:        eff,
 		}
 	}
 
@@ -78,17 +78,10 @@ func (g *game) generateTreasure(depth int) *item {
 	if isSpecialItem {
 		return &item{
 			specialName: "Ring",
-			effect:      getRandomEffect(false, true),
+			brand:       getRandomBrand(false, true),
 			weaponInfo:  nil,
 		}
 	}
 
-	item := &item{
-		asConsumable: getWeightedRandomConsumableItemType(),
-		weaponInfo:   nil,
-	}
-	if item.asConsumable.consumableType == ITEM_AMMO {
-		item.count = rnd.RandInRange(1, 3)
-	}
-	return item
+	return getWeightedRandomConsumableItem()
 }

@@ -105,7 +105,7 @@ var elementsData = []*element{
 	},
 }
 
-func (e *element) getElementColorStr(element uint8) string {
+func (e *element) getElementColorStr() string {
 	if e.colorString != "" {
 		return e.colorString
 	} else {

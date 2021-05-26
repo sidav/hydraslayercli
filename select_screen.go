@@ -17,7 +17,7 @@ func showSelectScreen(title string, valsArr []string) int {
 		cw.flush()
 		input := cw.read()
 		inputIndex, cType := charToIndexWithType(input[0])
-		if cType == INDEX_ENEMY_OR_TREASURE && inputIndex < len(valsArr) {
+		if cType == INDEX_NUMBER && inputIndex < len(valsArr) {
 			return inputIndex
 		}
 	}

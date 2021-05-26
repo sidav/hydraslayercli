@@ -36,8 +36,8 @@ func (g *game) getPossibleAttackStringDescription(w *item, e *enemy) string {
 			as += fmt.Sprintf(" with no regrow, resulting in %d heads. ", resHeads)
 		}
 		afterDmg := 0
-		if w.hasEffect() && w.effect.effectCode == ITEM_EFFECT_ONHIT_ADDDAMAGE && w.effect.additionalDamage <= resHeads {
-			afterDmg = w.effect.additionalDamage
+		if w.hasEffect() && w.brand.effectCode == BRAND_ONHIT_ADDDAMAGE && w.brand.additionalDamage <= resHeads {
+			afterDmg = w.brand.additionalDamage
 		}
 		if afterDmg > 0 {
 			as += fmt.Sprintf("It will then suffer additional %d damage", afterDmg)
@@ -62,8 +62,8 @@ func (g *game) getShortPossibleAttackStringDescription(w *item, e *enemy) string
 	descriptionString := " "
 	resHeads := e.heads - hDmg + hRegrw
 	afterDmg := 0
-	if w.hasEffect() && w.effect.effectCode == ITEM_EFFECT_ONHIT_ADDDAMAGE && w.effect.additionalDamage <= resHeads {
-		afterDmg = w.effect.additionalDamage
+	if w.hasEffect() && w.brand.effectCode == BRAND_ONHIT_ADDDAMAGE && w.brand.additionalDamage <= resHeads {
+		afterDmg = w.brand.additionalDamage
 	}
 	if hDmg+afterDmg-hRegrw >= e.heads {
 		return fmt.Sprintf(" (-> kill)")
@@ -101,7 +101,7 @@ func (g *game) getShortPossibleAttackStringDescription(w *item, e *enemy) string
 
 func (g *game) performPlayerHit(w *item, e *enemy) {
 	damage := g.calculateDamageOnHeads(w.weaponInfo, e)
-	g.currLog = fmt.Sprintf("You hit %s with %s, cutting %d heads. ",
+	g.setLogMessage("You hit %s with %s, cutting %d heads. ",
 		e.getName(),
 		w.getName(), damage)
 	regrow, regrowType := g.calculateHeadsRegrowAfterHitBy(e, w)
@@ -110,9 +110,9 @@ func (g *game) performPlayerHit(w *item, e *enemy) {
 		if regrow > 0 {
 			switch regrowType {
 			case REGROW_SIMPLE:
-				g.currLog += fmt.Sprintf("It grows %d heads!", regrow)
+				g.appendToLogMessage("It grows %d heads!", regrow)
 			case REGROW_DUPLICATE:
-				g.currLog += fmt.Sprintf("It duplicates its %d heads!", e.heads)
+				g.appendToLogMessage("It duplicates its %d heads!", e.heads)
 			default:
 				panic("No text for " + regrowType)
 			}
@@ -120,7 +120,7 @@ func (g *game) performPlayerHit(w *item, e *enemy) {
 		}
 		w.applyOnHitEffect(g, e)
 	} else {
-		g.currLog += fmt.Sprintf("It drops dead!")
+		g.appendToLogMessage("It drops dead!")
 	}
 	g.turnMade = true
 }
@@ -130,7 +130,7 @@ func (g *game) performPlayerShoot(w *item, e *enemy) {
 		g.setLogMessage("But %s can't shoot!", w.getName())
 		return
 	}
-	if w.effect.charges == 0 {
+	if w.brand.charges == 0 {
 		g.setLogMessage("But your %s is not charged!", w.getName())
 		return
 	}
@@ -144,17 +144,17 @@ func (g *game) performPlayerShoot(w *item, e *enemy) {
 	if e.heads > 0 {
 		switch regrowType {
 		case REGROW_SIMPLE:
-			g.currLog += fmt.Sprintf("It grows %d heads!", regrow)
+			g.appendToLogMessage("It grows %d heads!", regrow)
 		case REGROW_DUPLICATE:
-			g.currLog += fmt.Sprintf("It duplicates its %d heads!", e.heads)
+			g.appendToLogMessage("It duplicates its %d heads!", e.heads)
 		default:
 			panic("No text for " + regrowType)
 		}
 		e.heads += regrow
 	} else {
-		g.currLog += fmt.Sprintf("It drops dead!")
+		g.appendToLogMessage("It drops dead!")
 	}
-	w.effect.charges--
+	w.brand.charges--
 	g.turnMade = true
 	g.allEnemiesSkipTurn = true
 }

@@ -8,11 +8,13 @@ const (
 	ITEM_MASS_CONFUSION
 	ITEM_INCREASE_HP
 	ITEM_STRENGTH
-	ITEM_CHANGE_ELEMENT
+	ITEM_CHANGE_ELEMENT_RANDOM
+	ITEM_CHANGE_ELEMENT_SPECIFIC
 	ITEM_UNELEMENT_ENEMIES
 	ITEM_DECAPITATION
 	ITEM_IMPROVE_MAGIC
-	ITEM_GAIN_EFFECT
+	ITEM_BRANDING_RANDOM
+	ITEM_BRANDING_SPECIFIC
 	ITEM_AMMO
 	ITEM_MERGE_HYDRAS_INTO_ONE
 	TOTAL_ITEM_TYPES_NUMBER // for generators
@@ -61,9 +63,27 @@ var consumablesData = []*consumableItemInfo{
 		frequency:      3,
 	},
 	{
-		consumableType: ITEM_CHANGE_ELEMENT,
-		name:           "Glyph of change element",
+		consumableType: ITEM_CHANGE_ELEMENT_RANDOM,
+		name:           "Glyph of randomize element",
 		info:           "Changes hydra's or item's element.",
+		frequency:      1,
+	},
+	{
+		consumableType: ITEM_CHANGE_ELEMENT_SPECIFIC,
+		name:           "Glyph of ", // not an error!
+		info:           "Changes hydra's or item's element.",
+		frequency:      1,
+	},
+	{
+		consumableType: ITEM_BRANDING_RANDOM,
+		name:           "Glyph of imbue random brand",
+		info:           "Used to imbue a random brand onto item.",
+		frequency:      1,
+	},
+	{
+		consumableType: ITEM_BRANDING_SPECIFIC,
+		name:           "Glyph of imbue ", // not an error
+		info:           "Used to imbue a specific brand onto item.",
 		frequency:      1,
 	},
 	{
@@ -82,12 +102,6 @@ var consumablesData = []*consumableItemInfo{
 		consumableType: ITEM_IMPROVE_MAGIC,
 		name:           "Glyph of improve brand",
 		info:           "Can be used to improve branded (magic) items",
-		frequency:      1,
-	},
-	{
-		consumableType: ITEM_GAIN_EFFECT,
-		name:           "Glyph of imbuing",
-		info:           "Used to imbue a random effect onto item.",
 		frequency:      1,
 	},
 	{
@@ -110,21 +124,20 @@ type consumableItemInfo struct {
 	frequency      int
 }
 
-func getWeightedRandomConsumableItemType() *consumableItemInfo {
-	if len(consumablesData) < TOTAL_ITEM_TYPES_NUMBER {
-		panic("OH MY NOT ALL CONSUMABLES SET")
+func getWeightedRandomConsumableItem() *item {
+	selectedTypeIndex := rnd.SelectRandomIndexFromWeighted(len(consumablesData), func(i int) int {return consumablesData[i].frequency})
+	item := &item{
+		asConsumable: consumablesData[selectedTypeIndex],
+		weaponInfo:   nil,
 	}
-	totalWeights := 0
-	for i := range consumablesData {
-		totalWeights += consumablesData[i].frequency
+	if item.asConsumable.consumableType == ITEM_AMMO {
+		item.count = rnd.RandInRange(1, 3)
 	}
-
-	rand := rnd.Rand(totalWeights)
-	for i := range consumablesData {
-		if rand < consumablesData[i].frequency {
-			return consumablesData[i]
-		}
-		rand -= consumablesData[i].frequency
+	if item.asConsumable.consumableType == ITEM_CHANGE_ELEMENT_SPECIFIC {
+		item.auxiliaryElement = getRandomElement(true, false, true)
 	}
-	panic("GWRCIT")
+	if item.asConsumable.consumableType == ITEM_BRANDING_SPECIFIC {
+		item.auxiliaryBrand = getRandomBrand(true, true)
+	}
+	return item
 }

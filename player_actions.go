@@ -5,7 +5,7 @@ import "fmt"
 func (g *game) performUseAction(usedIndex int, usedType INDEXTYPE, targetIndex int, targetType INDEXTYPE) {
 	var usedItem *item
 	var usedFromGround bool
-	if usedType != INDEX_ITEM {
+	if usedType != INDEX_LETTER {
 		if usedIndex < len(g.treasure) && len(g.enemies) == 0 {
 			usedItem = g.treasure[usedIndex]
 			usedFromGround = true
@@ -24,7 +24,7 @@ func (g *game) performUseAction(usedIndex int, usedType INDEXTYPE, targetIndex i
 	}
 
 	var targetEnemy *enemy
-	if targetType == INDEX_ENEMY_OR_TREASURE && len(g.enemies) > targetIndex {
+	if targetType == INDEX_NUMBER && len(g.enemies) > targetIndex {
 		targetEnemy = g.enemies[targetIndex]
 	}
 	if usedItem != nil && targetEnemy != nil {
@@ -33,10 +33,10 @@ func (g *game) performUseAction(usedIndex int, usedType INDEXTYPE, targetIndex i
 	}
 
 	var targetItem *item
-	if targetType == INDEX_ITEM && len(g.player.items) > targetIndex {
+	if targetType == INDEX_LETTER && len(g.player.items) > targetIndex {
 		targetItem = g.player.items[targetIndex]
 	}
-	if targetType == INDEX_ENEMY_OR_TREASURE && len(g.treasure) > targetIndex {
+	if targetType == INDEX_NUMBER && len(g.treasure) > targetIndex {
 		targetItem = g.treasure[targetIndex]
 	}
 	if usedItem != nil && targetItem != nil {
@@ -45,8 +45,8 @@ func (g *game) performUseAction(usedIndex int, usedType INDEXTYPE, targetIndex i
 }
 
 func (g *game) justUseItem(item *item, usedFromGround bool) {
-	if item.effect != nil {
-		if !item.effect.canBeUsed {
+	if item.brand != nil {
+		if !item.brand.canBeUsed {
 			g.appendToLogMessage("%s can't be used yet.", item.getName())
 		}
 		item.applyActiveEffect(g)
@@ -58,10 +58,10 @@ func (g *game) justUseItem(item *item, usedFromGround bool) {
 	}
 	switch item.asConsumable.consumableType {
 	case ITEM_HEAL:
-		g.currLog = fmt.Sprintf("You sniff %s and feel good.", item.getName())
+		g.setLogMessage("You sniff %s and feel good.", item.getName())
 		g.player.hp = g.player.maxhp
 	case ITEM_INCREASE_HP:
-		g.currLog = fmt.Sprintf("%s makes you feel amazing!", item.getName())
+		g.setLogMessage("%s makes you feel amazing!", item.getName())
 		g.player.maxhp += 2
 		g.player.hp = g.player.maxhp
 	case ITEM_DECAPITATION:
@@ -75,10 +75,10 @@ func (g *game) justUseItem(item *item, usedFromGround bool) {
 		}
 		g.setLogMessage("All enemies lose their magic!")
 	case ITEM_STRENGTH:
-		g.currLog = fmt.Sprintf("%s makes you feel stronger!", item.getName())
+		g.setLogMessage("%s makes you feel stronger!", item.getName())
 		g.player.maxItems += 1
 	case ITEM_MASS_CONFUSION:
-		g.currLog = fmt.Sprintf("Enemies freeze in confusion!")
+		g.setLogMessage("Enemies freeze in confusion!")
 		for _, enemy := range g.enemies {
 			enemy.statuses = append(enemy.statuses, &statusEffect{
 				statusType:     STATUS_CONFUSED,
@@ -98,7 +98,7 @@ func (g *game) justUseItem(item *item, usedFromGround bool) {
 		g.appendToLogMessage(fmt.Sprintf("%s!", g.enemies[randomEnemy].getName()))
 
 	default:
-		g.currLog = fmt.Sprintf("ERROR: ADD SIMPLE USAGE OF %s.", item.getName())
+		g.setLogMessage("ERROR: ADD SIMPLE USAGE OF %s.", item.getName())
 		return
 	}
 	if usedFromGround {
@@ -117,26 +117,30 @@ func (g *game) useItemOnEnemy(item *item, enemy *enemy) {
 	}
 	switch item.asConsumable.consumableType {
 	case ITEM_HEAL:
-		g.currLog = fmt.Sprintf("Use %s on enemy? Srsly?", item.getName())
+		g.setLogMessage("Use %s on enemy? Srsly?", item.getName())
 		return
 	case ITEM_INCREASE_HP:
-		g.currLog = fmt.Sprintf("Are you nuts?")
+		g.setLogMessage("Are you nuts?")
 		return
 	case ITEM_DESTROY_HYDRA:
-		g.currLog = fmt.Sprintf("The magic obliterates poor %s!", enemy.getName())
+		g.setLogMessage("The magic obliterates poor %s!", enemy.getName())
 		enemy.heads = 0
 	case ITEM_CONFUSE_HYDRA:
-		g.currLog = fmt.Sprintf("The %s starts behaving like crazy.", enemy.getName())
+		g.setLogMessage("The %s starts behaving like crazy.", enemy.getName())
 		enemy.statuses = append(enemy.statuses, &statusEffect{
 			statusType:     STATUS_CONFUSED,
 			turnsRemaining: 6,
 		})
-	case ITEM_CHANGE_ELEMENT:
-		g.currLog = fmt.Sprintf("You use %s on %s, making it into ", item.getName(), enemy.getName())
+	case ITEM_CHANGE_ELEMENT_RANDOM:
+		g.setLogMessage("You use %s on %s, making it into ", item.getName(), enemy.getName())
 		enemy.element = getRandomElement(true, false, false)
-		g.currLog += fmt.Sprintf("%s.", enemy.getName())
+		g.appendToLogMessage("%s.", enemy.getName())
+	case ITEM_CHANGE_ELEMENT_SPECIFIC:
+		g.setLogMessage("You use %s on %s, making it into ", item.getName(), enemy.getName())
+		enemy.element = item.auxiliaryElement
+		g.appendToLogMessage("%s.", enemy.getName())
 	default:
-		g.currLog = fmt.Sprintf("ERROR: ADD USAGE %s ON ENEMY.", item.getName())
+		g.setLogMessage("ERROR: ADD USAGE %s ON ENEMY.", item.getName())
 		return
 	}
 	g.player.spendItem(item, g)
@@ -151,54 +155,70 @@ func (g *game) useItemOnItem(item, targetItem *item, usedFromGround bool, count 
 	}
 	switch item.asConsumable.consumableType {
 	case ITEM_HEAL:
-		g.currLog = fmt.Sprintf("Use %s on %s? But how?", item.getName(), targetItem.getName())
+		g.setLogMessage("Use %s on %s? But how?", item.getName(), targetItem.getName())
 	case ITEM_ENCHANTER:
 		if targetItem.weaponInfo == nil {
-			g.currLog = fmt.Sprintf("But %s is not a weapon!", targetItem.getName())
+			g.setLogMessage("But %s is not a weapon!", targetItem.getName())
 			return
 		}
-		g.currLog = fmt.Sprintf("You use %s on %s, making it into ", item.getName(), targetItem.getName())
+		g.setLogMessage("You use %s on %s, making it into ", item.getName(), targetItem.getName())
 		targetItem.weaponInfo.damage++
-		g.currLog += fmt.Sprintf("%s.", targetItem.getName())
-	case ITEM_CHANGE_ELEMENT:
-		g.currLog = fmt.Sprintf("You use %s on %s, making it into ", item.getName(), targetItem.getName())
+		g.appendToLogMessage("%s.", targetItem.getName())
+	case ITEM_CHANGE_ELEMENT_RANDOM:
+		g.setLogMessage("You use %s on %s, making it into ", item.getName(), targetItem.getName())
 		targetItem.element = getRandomElement(true, false, true)
-		g.currLog += fmt.Sprintf("%s.", targetItem.getName())
-	case ITEM_GAIN_EFFECT:
-		g.currLog = fmt.Sprintf("You use %s on %s, making it into ", item.getName(), targetItem.getName())
-		targetItem.effect = getRandomEffect(targetItem.isWeapon(), !targetItem.isWeapon())
-		g.currLog += fmt.Sprintf("%s.", targetItem.getName())
+		g.appendToLogMessage("%s.", targetItem.getName())
+	case ITEM_CHANGE_ELEMENT_SPECIFIC:
+		g.setLogMessage("You use %s on %s, making it into ", item.getName(), targetItem.getName())
+		targetItem.element = item.auxiliaryElement
+		g.appendToLogMessage("%s.", targetItem.getName())
+	case ITEM_BRANDING_RANDOM:
+		g.setLogMessage("You use %s on %s, making it into ", item.getName(), targetItem.getName())
+		targetItem.brand = getRandomBrand(targetItem.isWeapon(), !targetItem.isWeapon())
+		g.appendToLogMessage("%s.", targetItem.getName())
+	case ITEM_BRANDING_SPECIFIC:
+		if targetItem.isWeapon() && !item.auxiliaryBrand.getStaticData().canBeOnWeapon {
+			g.setLogMessage("Better try using this on another item!")
+			return
+		}
+		if !targetItem.isWeapon() && !item.auxiliaryBrand.getStaticData().canBeOnRing {
+			g.setLogMessage("Better try using this on a weapon!")
+			return
+		}
+		g.setLogMessage("You use %s on %s, making it into ", item.getName(), targetItem.getName())
+		targetItem.brand = item.auxiliaryBrand
+		g.appendToLogMessage("%s.", targetItem.getName())
 	case ITEM_AMMO:
-		if !targetItem.hasEffect() || !targetItem.effect.isChargeable() {
-			g.currLog = fmt.Sprintf("But %s can't be charged!", targetItem.getName())
+		if !targetItem.hasEffect() || !targetItem.brand.isChargeable() {
+			g.setLogMessage("But %s can't be charged!", targetItem.getName())
 			return
 		}
 		charges := item.count
 		if count < charges {
 			charges = count
 		}
-		g.currLog = fmt.Sprintf("You charge %s with %d additional charges.", targetItem.getName(), charges)
-		targetItem.effect.charges += charges
+		g.setLogMessage("You charge %s with %d additional charges.", targetItem.getName(), charges)
+		targetItem.brand.charges += charges
 		for i := 0; i < charges; i++ {
 			g.player.spendItem(item, g)
 		}
 		g.turnMade = true
 		return
 	case ITEM_IMPROVE_MAGIC:
-		if targetItem.effect == nil {
+		if targetItem.brand == nil {
 			g.setLogMessage("But %s can't be improved!", targetItem.getName())
 			return
 		}
-		g.currLog = fmt.Sprintf("You use %s on %s, making it into ", item.getName(), targetItem.getName())
-		if targetItem.effect.activatesEach > 1 && targetItem.effect.getStaticData().defaultActivatesEach > 0 {
-			targetItem.effect.activatesEach--
+		g.setLogMessage("You use %s on %s, making it into ", item.getName(), targetItem.getName())
+		if targetItem.brand.activatesEach > 1 && targetItem.brand.getStaticData().defaultActivatesEach > 0 {
+			targetItem.brand.activatesEach--
 		}
-		if targetItem.effect.getStaticData().defaultAdditionalDamage > 0 {
-			targetItem.effect.additionalDamage++
+		if targetItem.brand.getStaticData().defaultAdditionalDamage > 0 {
+			targetItem.brand.additionalDamage++
 		}
-		g.currLog += fmt.Sprintf("%s.", targetItem.getName())
+		g.appendToLogMessage("%s.", targetItem.getName())
 	default:
-		g.currLog = fmt.Sprintf("ERROR: ADD USAGE %s ON ITEM.", item.getName())
+		g.setLogMessage("ERROR: ADD USAGE %s ON ITEM.", item.getName())
 		return
 	}
 	if usedFromGround {
@@ -212,10 +232,10 @@ func (g *game) useItemOnItem(item, targetItem *item, usedFromGround bool, count 
 func (g *game) pickupItemNumber(i int) {
 	if i == -1 { // pick up all
 		if len(g.treasure) + len(g.player.items) > g.player.maxItems {
-			g.currLog = fmt.Sprintf("You can't pick up everything!")
+			g.setLogMessage("You can't pick up everything!")
 			return
 		}
-		g.currLog = fmt.Sprintf("You pick up everything: ")
+		g.setLogMessage("You pick up everything: ")
 		for i := 0; i < len(g.treasure); i++ {
 			if i > 0 {
 				g.currLog += ", "
@@ -229,11 +249,11 @@ func (g *game) pickupItemNumber(i int) {
 	}
 	if i < len(g.treasure) {
 		if len(g.player.items) >= g.player.maxItems && !(g.player.hasAmmo() && g.treasure[i].isAmmo()) {
-			g.currLog = fmt.Sprintf("You are overburdened!")
+			g.setLogMessage("You are overburdened!")
 			return
 		}
 		g.player.addItem(g.treasure[i])
-		g.currLog = fmt.Sprintf("You pick up the %s.", g.treasure[i].getName())
+		g.setLogMessage("You pick up the %s.", g.treasure[i].getName())
 		g.removeTreasure(g.treasure[i])
 	}
 }
@@ -250,7 +270,7 @@ func (g *game) removeTreasure(t *item) {
 func (g *game) dropItemNumber(i int) {
 	if i < len(g.player.items) {
 		g.treasure = append(g.treasure, g.player.items[i])
-		g.currLog = fmt.Sprintf("You drop the %s.", g.player.items[i].getName())
+		g.setLogMessage("You drop the %s.", g.player.items[i].getName())
 		g.player.items  = append(g.player.items[:i], g.player.items[i+1:]...)
 	}
 }

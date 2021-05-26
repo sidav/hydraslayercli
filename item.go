@@ -6,12 +6,14 @@ import (
 )
 
 type item struct {
-	element      *element
-	asConsumable *consumableItemInfo
-	specialName  string // for randarts and non-consumables
-	effect       *effect
-	weaponInfo   *weapon
-	count        int
+	element          *element
+	asConsumable     *consumableItemInfo
+	specialName      string // for randarts and non-consumables
+	brand            *brand
+	auxiliaryBrand   *brand // needed e.g. for scrolls of specific branding.
+	auxiliaryElement *element
+	weaponInfo       *weapon
+	count            int
 }
 
 func (i *item) isWeapon() bool {
@@ -27,14 +29,14 @@ func (i *item) isConsumable() bool {
 }
 
 func (i *item) hasEffect() bool {
-	return i.effect != nil
+	return i.brand != nil
 }
 
 func (i *item) getInfo() string {
 	info := i.getName()
 	if i.hasEffect() {
 		info += ": "
-		info += i.effect.getHelpText()
+		info += i.brand.getHelpText()
 	}
 	if i.isConsumable() {
 		info += ": "
@@ -59,21 +61,34 @@ func (i *item) getName() string {
 	}
 	if i.asConsumable != nil {
 		if i.isAmmo() {
-			name += fmt.Sprintf("%d ", i.count)
+			name += fmt.Sprintf("x%d ", i.count)
 		}
 		name += i.asConsumable.name
+		switch i.asConsumable.consumableType {
+		case ITEM_CHANGE_ELEMENT_SPECIFIC:
+			name += fmt.Sprintf("%s element",i.auxiliaryElement.name)
+			name = colorizeString(i.auxiliaryElement.getElementColorStr(), name)
+		case ITEM_BRANDING_SPECIFIC:
+			name += fmt.Sprintf("\"%s\" brand",i.auxiliaryBrand.getName())
+		}
 	}
 	if i.hasEffect() {
-		name += " of " + i.effect.getName()
-		if !i.effect.canBeUsed && i.effect.isActivatable() {
+		name += " of " + i.brand.getName()
+		if !i.brand.canBeUsed && i.brand.isActivatable() {
 			name += colorizeString(Gray, " (inactive)")
 		}
 	}
+	//if i.auxiliaryElement != nil {
+	//	name += " " + i.auxiliaryElement.name
+	//}
+	//if i.auxiliaryEffect != nil {
+	//	name += " " + i.auxiliaryEffect.getName()
+	//}
 	if name == "" {
 		panic("No item name!")
 	}
 	if i.element != nil {
-		return colorizeString(i.element.colorString, strings.Title(name))
+		return colorizeString(i.element.getElementColorStr(), strings.Title(name))
 	}
 	return strings.Title(name)
 }
