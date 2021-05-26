@@ -126,18 +126,19 @@ func (g *game) performPlayerHit(w *item, e *enemy) {
 }
 
 func (g *game) performPlayerShoot(w *item, e *enemy) {
-	if !w.weaponInfo.canShoot {
-		g.setLogMessage("%s can't shoot!", w.getName())
+	if !w.hasEffect() {
+		g.setLogMessage("But %s can't shoot!", w.getName())
 		return
 	}
-	if !g.player.hasAmmo() {
-		g.setLogMessage("You are out of ammunition!")
+	if w.effect.charges == 0 {
+		g.setLogMessage("But your %s is not charged!", w.getName())
 		return
 	}
 	damage := g.calculateDamageOnHeads(w.weaponInfo, e)
-	g.setLogMessage("You shoot %s with a %s, destroying %d heads. ",
+	g.setLogMessage("You discharge %s at a %s, destroying %d heads. ",
+		w.getName(),
 		e.getName(),
-		w.getName(), damage)
+		damage)
 	regrow, regrowType := g.calculateHeadsRegrowAfterHitBy(e, w)
 	e.heads -= damage
 	if e.heads > 0 {
@@ -153,7 +154,7 @@ func (g *game) performPlayerShoot(w *item, e *enemy) {
 	} else {
 		g.currLog += fmt.Sprintf("It drops dead!")
 	}
-	g.player.spendAmmo()
+	w.effect.charges--
 	g.turnMade = true
 	g.allEnemiesSkipTurn = true
 }

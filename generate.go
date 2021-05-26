@@ -50,7 +50,6 @@ func (g *game) generateTreasure(depth int) *item {
 			newWeapon = &weapon{
 				weaponType: WTYPE_SUBSTRACTOR,
 				damage:     rnd.RandInRange(minDamage, maxDamage),
-				canShoot:   rnd.OneChanceFrom(5),
 			}
 		default:
 			additionalDamage := 0
@@ -60,7 +59,6 @@ func (g *game) generateTreasure(depth int) *item {
 			newWeapon = &weapon{
 				weaponType: wData.wtype,
 				damage:     wData.minDamageForGeneration + additionalDamage,
-				canShoot:   rnd.OneChanceFrom(5),
 			}
 		}
 		hasEffect := rnd.OneChanceFrom(4)

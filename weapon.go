@@ -38,7 +38,6 @@ var weaponsStaticData = []*weaponTypeStaticData{
 
 type weapon struct {
 	weaponType weaponType
-	canShoot   bool
 	damage     int
 }
 
@@ -67,9 +66,6 @@ func (w *weapon) getName() string {
 		name += fmt.Sprintf("%d-logarithmer", w.damage)
 	default:
 		panic("No weapon name")
-	}
-	if w.canShoot {
-		name += " arbalest"
 	}
 	return name
 }

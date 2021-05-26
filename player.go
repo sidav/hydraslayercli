@@ -53,14 +53,14 @@ func (p *player) hasAmmo() bool {
 	return false
 }
 
-func (p *player) spendAmmo() {
-	for i := range p.items {
-		if p.items[i].isAmmo() {
-			p.items[i].count--
-			if p.items[i].count == 0 {
-				p.spendItem(p.items[i], nil)
-			}
-			return
-		}
-	}
-}
+//func (p *player) spendAmmo() {
+//	for i := range p.items {
+//		if p.items[i].isAmmo() {
+//			p.items[i].count--
+//			if p.items[i].count == 0 {
+//				p.spendItem(p.items[i], nil)
+//			}
+//			return
+//		}
+//	}
+//}

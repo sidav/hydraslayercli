@@ -40,7 +40,7 @@ func (g *game) performUseAction(usedIndex int, usedType INDEXTYPE, targetIndex i
 		targetItem = g.treasure[targetIndex]
 	}
 	if usedItem != nil && targetItem != nil {
-		g.useItemOnItem(usedItem, targetItem, usedFromGround)
+		g.useItemOnItem(usedItem, targetItem, usedFromGround, 999)
 	}
 }
 
@@ -144,7 +144,7 @@ func (g *game) useItemOnEnemy(item *item, enemy *enemy) {
 	g.turnMade = true
 }
 
-func (g *game) useItemOnItem(item, targetItem *item, usedFromGround bool) {
+func (g *game) useItemOnItem(item, targetItem *item, usedFromGround bool, count int) {
 	if item.asConsumable == nil {
 		g.setLogMessage("And what? How did you want to use %s?", item.getName())
 		return
@@ -168,6 +168,22 @@ func (g *game) useItemOnItem(item, targetItem *item, usedFromGround bool) {
 		g.currLog = fmt.Sprintf("You use %s on %s, making it into ", item.getName(), targetItem.getName())
 		targetItem.effect = getRandomEffect(targetItem.isWeapon(), !targetItem.isWeapon())
 		g.currLog += fmt.Sprintf("%s.", targetItem.getName())
+	case ITEM_AMMO:
+		if !targetItem.hasEffect() || !targetItem.effect.isChargeable() {
+			g.currLog = fmt.Sprintf("But %s can't be charged!", targetItem.getName())
+			return
+		}
+		charges := item.count
+		if count < charges {
+			charges = count
+		}
+		g.currLog = fmt.Sprintf("You charge %s with %d additional charges.", targetItem.getName(), charges)
+		targetItem.effect.charges += charges
+		for i := 0; i < charges; i++ {
+			g.player.spendItem(item, g)
+		}
+		g.turnMade = true
+		return
 	case ITEM_IMPROVE_MAGIC:
 		if targetItem.effect == nil {
 			g.setLogMessage("But %s can't be improved!", targetItem.getName())

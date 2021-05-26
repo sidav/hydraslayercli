@@ -9,19 +9,22 @@ const (
 	ITEM_EFFECT_PASSIVE_ELEMENT_SHIFTING
 	ITEM_EFFECT_PASSIVE_DISTORTION
 	ITEM_EFFECT_ONHIT_ADDDAMAGE
+	ITEM_EFFECT_SHOOT
 	TOTAL_ITEM_EFFECTTYPES_NUMBER // for generators
 )
 
-type effectData struct {
+type brandData struct {
 	canBeOnWeapon           bool
 	canBeOnRing             bool
 	isActivatable           bool
 	name, info              string
 	defaultActivatesEach    int
+	isChargeable            bool
+	defaultCharges          int
 	defaultAdditionalDamage int
 }
 
-var effectsStaticData = map[uint8]*effectData{
+var brandsStaticData = map[uint8]*brandData{
 	ITEM_EFFECT_HEALER: {
 		canBeOnWeapon: true,
 		canBeOnRing:   true,
@@ -59,6 +62,14 @@ var effectsStaticData = map[uint8]*effectData{
 		name:                    "",
 		info:                    "Deals additional damage after initial hit with no regrow.",
 	},
+	ITEM_EFFECT_SHOOT: {
+		canBeOnWeapon:           true,
+		defaultAdditionalDamage: 1,
+		defaultCharges:          1,
+		isChargeable:            true,
+		name:                    "",
+		info:                    "Can shoot (use fire or shoot command).",
+	},
 }
 
 type effect struct {
@@ -66,21 +77,26 @@ type effect struct {
 	canBeUsed        bool
 	activatesEach    int
 	additionalDamage int
+	charges          int
 }
 
 func (e *effect) getHelpText() string {
-	return effectsStaticData[e.effectCode].info
+	return brandsStaticData[e.effectCode].info
 }
 
-func (e *effect) getStaticData() *effectData {
-	return effectsStaticData[e.effectCode]
+func (e *effect) getStaticData() *brandData {
+	return brandsStaticData[e.effectCode]
+}
+
+func (e *effect) isChargeable() bool {
+	return e.getStaticData().isChargeable
 }
 
 func getRandomEffect(forWeapon, forRing bool) *effect {
 	rndEffCode := uint8(rnd.Rand(TOTAL_ITEM_EFFECTTYPES_NUMBER))
-	var data *effectData
+	var data *brandData
 	for {
-		data = effectsStaticData[rndEffCode]
+		data = brandsStaticData[rndEffCode]
 		if (!forWeapon || data.canBeOnWeapon) && (!forRing || data.canBeOnRing) {
 			break
 		}
@@ -90,12 +106,13 @@ func getRandomEffect(forWeapon, forRing bool) *effect {
 		effectCode:       rndEffCode,
 		canBeUsed:        false,
 		activatesEach:    data.defaultActivatesEach,
+		charges:          data.defaultCharges,
 		additionalDamage: data.defaultAdditionalDamage,
 	}
 }
 
 func (e *effect) isActivatable() bool {
-	return effectsStaticData[e.effectCode].isActivatable
+	return brandsStaticData[e.effectCode].isActivatable
 }
 
 func (i *item) applyActiveEffect(g *game) {
@@ -161,8 +178,10 @@ func (pe *effect) getName() string {
 		return fmt.Sprintf("%d-turn regen", pe.activatesEach)
 	case ITEM_EFFECT_ONHIT_ADDDAMAGE:
 		return fmt.Sprintf("+%d damage", pe.additionalDamage)
+	case ITEM_EFFECT_SHOOT:
+		return fmt.Sprintf("discharge(%d)", pe.charges)
 	}
-	data, found := effectsStaticData[pe.effectCode]
+	data, found := brandsStaticData[pe.effectCode]
 	if !found || data.name == "" {
 		panic("No effect name...")
 	}

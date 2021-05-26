@@ -98,8 +98,8 @@ var consumablesData = []*consumableItemInfo{
 	},
 	{
 		consumableType: ITEM_AMMO,
-		name:           "Arbalest bolts",
-		info:           "Used with arbalests.",
+		name:           "Charge crystals",
+		info:           "Used with chargeable items.",
 		frequency:      2,
 	},
 }
