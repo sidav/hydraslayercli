@@ -45,7 +45,7 @@ var elementsData = []*element{
 	},
 	{
 		elementCode: ELEMENT_ICE,
-		name:        "Frozen",
+		name:        "Ice",
 		colorString: Blue,
 		isNonBasic:  false,
 		description: "It fears fire.",
@@ -74,7 +74,7 @@ var elementsData = []*element{
 		name:        "Energy",
 		colorString: Cyan,
 		isNonBasic:  true,
-		description: "It regenerates no heads after non-elemental damage. ",
+		description: "It regenerates no heads only after non-elemental damage. ",
 	},
 
 	{
