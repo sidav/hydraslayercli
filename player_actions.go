@@ -204,18 +204,13 @@ func (g *game) useItemOnItem(item, targetItem *item, usedFromGround bool, count 
 		}
 		g.turnMade = true
 		return
-	case ITEM_IMPROVE_MAGIC:
+	case ITEM_IMPROVE_BRAND:
 		if targetItem.brand == nil {
 			g.setLogMessage("But %s can't be improved!", targetItem.getName())
 			return
 		}
 		g.setLogMessage("You use %s on %s, making it into ", item.getName(), targetItem.getName())
-		if targetItem.brand.activatesEach > 1 && targetItem.brand.getStaticData().defaultActivatesEach > 0 {
-			targetItem.brand.activatesEach--
-		}
-		if targetItem.brand.getStaticData().defaultAdditionalDamage > 0 {
-			targetItem.brand.additionalDamage++
-		}
+		targetItem.brand.improve()
 		g.appendToLogMessage("%s.", targetItem.getName())
 	default:
 		g.setLogMessage("ERROR: ADD USAGE %s ON ITEM.", item.getName())

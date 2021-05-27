@@ -12,7 +12,7 @@ const (
 	ITEM_CHANGE_ELEMENT_SPECIFIC
 	ITEM_UNELEMENT_ENEMIES
 	ITEM_DECAPITATION
-	ITEM_IMPROVE_MAGIC
+	ITEM_IMPROVE_BRAND
 	ITEM_BRANDING_RANDOM
 	ITEM_BRANDING_SPECIFIC
 	ITEM_AMMO
@@ -100,7 +100,7 @@ var consumablesData = []*consumableItemInfo{
 		frequency:      1,
 	},
 	{
-		consumableType: ITEM_IMPROVE_MAGIC,
+		consumableType: ITEM_IMPROVE_BRAND,
 		name:           "Glyph of improve brand",
 		info:           "Can be used to improve branded (magic) items",
 		frequency:      1,

@@ -57,7 +57,7 @@ func (g *game) parsePlayerInput(input string) {
 	if splitted[0] == "hit" {
 		if len(g.enemies) > 0 {
 			g.performPlayerHit(g.player.items[g.currSelectedItem],
-				g.enemies[g.currSelectedEnemy])
+				g.enemies[g.currSelectedEnemy], true)
 		}
 		return
 	}
@@ -107,7 +107,7 @@ func (g *game) parsePlayerInput(input string) {
 		return
 	}
 	if splitted[0] == "cheatt" {
-		for i := 0; i < 10; i++ {
+		for i := 0; i < 100; i++ {
 			g.player.addItem(g.generateTreasure(auxrnd.RandInRange(1, 15)))
 		}
 		return

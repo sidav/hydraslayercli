@@ -99,7 +99,7 @@ func (g *game) getShortPossibleAttackStringDescription(w *item, e *enemy) string
 	return descriptionString
 }
 
-func (g *game) performPlayerHit(w *item, e *enemy) {
+func (g *game) performPlayerHit(w *item, e *enemy, applyOnHitEffect bool) {
 	damage := g.calculateDamageOnHeads(w.weaponInfo, e)
 	g.setLogMessage("You hit %s with %s, cutting %d heads. ",
 		e.getName(),
@@ -118,7 +118,9 @@ func (g *game) performPlayerHit(w *item, e *enemy) {
 			}
 			e.heads += regrow
 		}
-		w.applyOnHitEffect(g, e)
+		if applyOnHitEffect {
+			w.applyOnHitEffect(g, e)
+		}
 	} else {
 		g.appendToLogMessage("It drops dead!")
 	}

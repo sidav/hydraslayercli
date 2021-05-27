@@ -9,6 +9,8 @@ const (
 	BRAND_PASSIVE_ELEMENT_SHIFTING
 	BRAND_PASSIVE_DISTORTION
 	BRAND_ONHIT_ADDDAMAGE
+	BRAND_DOUBLE_STRIKE
+	BRAND_SAFE_DOUBLE_STRIKE
 	BRAND_DISCHARGE_SHOT
 	TOTAL_BRANDTYPES_NUMBER // for generators
 )
@@ -70,6 +72,18 @@ var brandsStaticData = map[uint8]*brandData{
 		name:                    "",
 		info:                    "Can shoot (use fire or shoot command).",
 	},
+	BRAND_DOUBLE_STRIKE: {
+		canBeOnWeapon: true,
+		name:          "Double Strike",
+		info:          "Performs additional attack after the initial one. Heads will still regrow.",
+	},
+	BRAND_SAFE_DOUBLE_STRIKE: {
+		canBeOnWeapon: false, // not an error: can be acquired by improvement only, is not generated.
+		canBeOnRing:   false,
+		name:          "Safe Double Strike",
+		info: "Performs additional attack after the initial one - but only if the attack will deal damage." +
+			" Heads will still regrow.",
+	},
 }
 
 type brand struct {
@@ -97,7 +111,7 @@ func getRandomBrand(forWeapon, forRing bool) *brand {
 	var data *brandData
 	for {
 		data = brandsStaticData[rndEffCode]
-		if (!forWeapon || data.canBeOnWeapon) && (!forRing || data.canBeOnRing) {
+		if (!forWeapon || data.canBeOnWeapon) || (!forRing || data.canBeOnRing) {
 			break
 		}
 		rndEffCode = uint8(rnd.Rand(TOTAL_BRANDTYPES_NUMBER))
@@ -169,6 +183,26 @@ func (i *item) applyOnHitEffect(g *game, target *enemy) {
 			target.heads -= i.brand.additionalDamage
 			g.appendToLogMessage("%s discharges its magic on %s for %d damage!", i.getName(), target.getName(), i.brand.additionalDamage)
 		}
+	case BRAND_DOUBLE_STRIKE:
+		g.performPlayerHit(i, target, false)
+		g.appendToLogMessage("Double strike!")
+	case BRAND_SAFE_DOUBLE_STRIKE:
+		if g.calculateDamageOnHeads(i.weaponInfo, target) > 0 {
+			g.performPlayerHit(i, target, false)
+			g.appendToLogMessage("Double strike!")
+		}
+	}
+}
+
+func (b *brand) improve() {
+	if b.effectCode == BRAND_DOUBLE_STRIKE {
+		b.effectCode = BRAND_SAFE_DOUBLE_STRIKE
+	}
+	if b.activatesEach > 1 && b.getStaticData().defaultActivatesEach > 0 {
+		b.activatesEach--
+	}
+	if b.getStaticData().defaultAdditionalDamage > 0 {
+		b.additionalDamage++
 	}
 }
 

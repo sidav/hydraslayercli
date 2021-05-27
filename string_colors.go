@@ -28,11 +28,11 @@ func colorizeStringByArray(colors []string, str string, singleColorLength int) s
 	currColor := 0
 	for i := 0; i < len(str); i+= singleColorChars {
 		if i + singleColorChars >= len(str) {
-			coloredString += colorizeString(colors[currColor % len(colors)], str[i:])
+			coloredString += colors[currColor % len(colors)] + str[i:]
 			break
 		}
-		coloredString += colorizeString(colors[currColor % len(colors)], str[i : i+singleColorChars])
+		coloredString += colors[currColor % len(colors)] + str[i : i+singleColorChars]
 		currColor++
 	}
-	return coloredString
+	return coloredString + Reset
 }

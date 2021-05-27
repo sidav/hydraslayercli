@@ -206,7 +206,8 @@ func (c *cwtcell) considerColorInStringAtPosition(s string, pos int) int {
 		case Cyan:
 			c.style = c.style.Foreground(tcell.ColorLightCyan)
 		default:
-			panic("no color")
+			c.style = c.style.Foreground(tcell.ColorBlack)
+			//panic(fmt.Sprintf("NO COLOR FOR STRING %s AT POS %d_%d (PRINTED %s)", s, pos, len(s), s[:pos]))
 		}
 		return 5
 	}
