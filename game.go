@@ -102,7 +102,7 @@ func (g *game) run() {
 				screen.readPlayerInput()
 				return
 			}
-			if g.currentStageNumber % 3 == 0 && g.currentStageNumber > 0 {
+			if (g.currentStageNumber+1) % 3 == 0 {
 				g.selectReward()
 			}
 			g.currentStageNumber++

@@ -13,3 +13,20 @@ var White  = "\033[97m"
 func colorizeString(color string, str string) string {
 	return color + str + Reset
 }
+
+func colorizeStringByArray(colors []string, str string, colorizeCharwise bool) string {
+	totalColors := len(colors)
+	if totalColors == 1 {
+		return colorizeString(colors[0], str)
+	}
+	singleColorChars := len(str)/totalColors
+	coloredString := ""
+	for i := 0; i < totalColors; i++ {
+		if i < totalColors-1 {
+			coloredString += colorizeString(colors[i], str[i*singleColorChars : (i+1)*singleColorChars])
+		} else {
+			coloredString += colorizeString(colors[i], str[i*singleColorChars : len(str)])
+		}
+	}
+	return coloredString
+}

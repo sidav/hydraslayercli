@@ -6,7 +6,9 @@ const (
 	ELEMENT_ICE
 	ELEMENT_STONE
 	ELEMENT_STORM
+
 	ELEMENT_MAGMA
+	ELEMENT_STEAM
 	ELEMENT_ENERGY
 
 	ELEMENT_REGROW_AURA
@@ -24,7 +26,7 @@ type element struct {
 	isSupporting                 bool // useful only when the hydra is not alone
 	isBoss                       bool
 	isForEnemiesOnly             bool
-	colorString                  string
+	colorString                  []string
 	description                  string
 }
 
@@ -32,55 +34,64 @@ var elementsData = []*element{
 	{
 		elementCode: ELEMENT_NONE,
 		name:        "",
-		colorString: White,
+		colorString: []string{White},
 		isNonBasic:  false,
 		description: "It regenerates no heads from elemental damage. ",
 	},
 	{
 		elementCode: ELEMENT_FIRE,
 		name:        "Blazing",
-		colorString: Red,
+		colorString: []string{Red},
 		isNonBasic:  false,
 		description: "It fears ice.",
 	},
 	{
 		elementCode: ELEMENT_ICE,
 		name:        "Ice",
-		colorString: Blue,
+		colorString: []string{Blue},
 		isNonBasic:  false,
 		description: "It fears fire.",
 	},
 	{
 		elementCode: ELEMENT_STONE,
 		name:        "Stone",
-		colorString: Gray,
+		colorString: []string{Gray},
 		description: "It fears storms.",
 	},
 	{
 		elementCode: ELEMENT_STORM,
 		name:        "Storm",
-		colorString: Yellow,
+		colorString: []string{Yellow},
 		description: "It fears stone.",
 	},
+	 // complex
 	{
 		elementCode: ELEMENT_MAGMA,
 		name:        "Magmatic",
-		colorString: Red,
+		colorString: []string{Red, Gray},
 		isNonBasic:  true,
-		description: "It fears no fire and stone. ",
+		description: "Both fire and stone. It fears ice and storm. ",
+	},
+	{
+		elementCode: ELEMENT_STEAM,
+		name:        "Steaming",
+		colorString: []string{Blue, Yellow},
+		isNonBasic:  true,
+		description: "Both ice and storm. It fears fire and stone.",
 	},
 	{
 		elementCode: ELEMENT_ENERGY,
 		name:        "Energy",
-		colorString: Cyan,
+		colorString: []string{Cyan},
 		isNonBasic:  true,
 		description: "It regenerates no heads only after non-elemental damage. ",
 	},
 
+	// special
 	{
 		elementCode:      ELEMENT_REGROW_AURA,
 		name:             "Healer",
-		colorString:      Green,
+		colorString:      []string{Green},
 		isNonBasic:       true,
 		isSupporting:     true,
 		isForEnemiesOnly: true,
@@ -90,14 +101,14 @@ var elementsData = []*element{
 	{
 		elementCode: ELEMENT_VAMPIRIC,
 		name:        "Vampiric",
-		colorString: Red,
+		colorString: []string{Red},
 		isBoss:      true,
 		description: "It regenerates no heads after damage, but grows heads after damaging someone.",
 	},
 	{
 		elementCode:                  ELEMENT_GROWING,
 		name:                         "Fast-healing",
-		colorString:                  Green,
+		colorString:                  []string{Green},
 		isBoss:                       true,
 		isForEnemiesOnly:             true,
 		description:                  "It regenerates 3 heads each time.",
@@ -105,11 +116,11 @@ var elementsData = []*element{
 	},
 }
 
-func (e *element) getElementColorStr() string {
-	if e.colorString != "" {
+func (e *element) getElementColorStrs() []string {
+	if len(e.colorString) > 0 {
 		return e.colorString
 	} else {
-		return "MISSING ELEMENT COLOR"
+		panic("MISSING ELEMENT COLOR")
 	}
 }
 
