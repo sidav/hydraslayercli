@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/gdamore/tcell/v2"
 )
 
@@ -184,13 +185,11 @@ func (c *cwtcell) putString(s string, x, y int) {
 
 func (c *cwtcell) considerColorInStringAtPosition(s string, pos int) int {
 	if s[pos] == "\033"[0] {
-		if s[pos:pos+4] == Reset {
-			c.style = c.style.Foreground(tcell.ColorWhite)
-			return 4
-		}
 		switch s[pos : pos+5] {
+		case Reset:
+			c.style = c.style.Foreground(tcell.ColorWhite)
 		case White:
-			c.style.Foreground(tcell.ColorWhite)
+			c.style = c.style.Foreground(tcell.ColorWhite)
 		case Red:
 			c.style = c.style.Foreground(tcell.ColorRed)
 		case Blue:
@@ -207,7 +206,7 @@ func (c *cwtcell) considerColorInStringAtPosition(s string, pos int) int {
 			c.style = c.style.Foreground(tcell.ColorLightCyan)
 		default:
 			c.style = c.style.Foreground(tcell.ColorBlack)
-			//panic(fmt.Sprintf("NO COLOR FOR STRING %s AT POS %d_%d (PRINTED %s)", s, pos, len(s), s[:pos]))
+			panic(fmt.Sprintf("NO COLOR FOR STRING %s AT POS %d_%d (PRINTED %s)", s, pos, len(s), s[:pos]))
 		}
 		return 5
 	}

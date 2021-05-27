@@ -107,7 +107,7 @@ func (g *game) parsePlayerInput(input string) {
 		return
 	}
 	if splitted[0] == "cheatt" {
-		for i := 0; i < 100; i++ {
+		for i := 0; i < 10; i++ {
 			g.player.addItem(g.generateTreasure(auxrnd.RandInRange(1, 15)))
 		}
 		return
