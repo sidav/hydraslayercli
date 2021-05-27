@@ -135,7 +135,7 @@ func getWeightedRandomConsumableItem() *item {
 		item.count = rnd.RandInRange(1, 3)
 	}
 	if item.asConsumable.consumableType == ITEM_CHANGE_ELEMENT_SPECIFIC {
-		item.auxiliaryElement = getRandomElement(true, false, true)
+		item.auxiliaryElement = getRandomElement(true, true, true)
 	}
 	if item.asConsumable.consumableType == ITEM_BRANDING_SPECIFIC {
 		item.auxiliaryBrand = getRandomBrand(true, true)

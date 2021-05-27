@@ -10,6 +10,7 @@ const (
 	ELEMENT_MAGMA
 	ELEMENT_STEAM
 	ELEMENT_ENERGY
+	ELEMENT_VOID
 
 	ELEMENT_REGROW_AURA
 
@@ -64,7 +65,7 @@ var elementsData = []*element{
 		colorString: []string{Yellow},
 		description: "It fears stone.",
 	},
-	 // complex
+	// complex
 	{
 		elementCode: ELEMENT_MAGMA,
 		name:        "Magmatic",
@@ -85,6 +86,14 @@ var elementsData = []*element{
 		colorString: []string{Cyan},
 		isNonBasic:  true,
 		description: "It regenerates no heads only after non-elemental damage. ",
+	},
+	{
+		elementCode: ELEMENT_VOID,
+		name:        "Void",
+		colorString: []string{Purple, Gray, White},
+		isNonBasic:  true,
+		description: "It regenerates heads always. ",
+		defaultRegrowForMissingValue: 1,
 	},
 
 	// special
@@ -192,6 +201,7 @@ var headRegrowsForElementsTable = map[uint8]map[uint8]int{
 	ELEMENT_MAGMA:  {ELEMENT_MAGMA: -2, ELEMENT_FIRE: 2, ELEMENT_STONE: 2},
 	ELEMENT_STEAM:  {ELEMENT_STEAM: -2, ELEMENT_ICE: 2, ELEMENT_STORM: 2},
 	ELEMENT_ENERGY: {ELEMENT_ENERGY: -2, ELEMENT_FIRE: 2, ELEMENT_ICE: 2, ELEMENT_STONE: 2, ELEMENT_STORM: 2},
+	ELEMENT_VOID:   {ELEMENT_VOID: -2},
 
 	ELEMENT_REGROW_AURA: {},
 
