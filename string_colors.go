@@ -14,19 +14,25 @@ func colorizeString(color string, str string) string {
 	return color + str + Reset
 }
 
-func colorizeStringByArray(colors []string, str string, colorizeCharwise bool) string {
+func colorizeStringByArray(colors []string, str string, singleColorLength int) string {
 	totalColors := len(colors)
 	if totalColors == 1 {
 		return colorizeString(colors[0], str)
 	}
-	singleColorChars := len(str)/totalColors
+
+	singleColorChars := singleColorLength
+	if singleColorChars == 0 {
+		singleColorChars = len(str)/totalColors
+	}
 	coloredString := ""
-	for i := 0; i < totalColors; i++ {
-		if i < totalColors-1 {
-			coloredString += colorizeString(colors[i], str[i*singleColorChars : (i+1)*singleColorChars])
-		} else {
-			coloredString += colorizeString(colors[i], str[i*singleColorChars : len(str)])
+	currColor := 0
+	for i := 0; i < len(str); i+= singleColorChars {
+		if i + singleColorChars >= len(str) {
+			coloredString += colorizeString(colors[currColor % len(colors)], str[i:])
+			break
 		}
+		coloredString += colorizeString(colors[currColor % len(colors)], str[i : i+singleColorChars])
+		currColor++
 	}
 	return coloredString
 }

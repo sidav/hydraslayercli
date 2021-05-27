@@ -68,7 +68,7 @@ func (i *item) getName() string {
 		case ITEM_CHANGE_ELEMENT_SPECIFIC:
 			if i.auxiliaryElement != nil {
 				name += fmt.Sprintf("%s element", i.auxiliaryElement.name)
-				name = colorizeStringByArray(i.auxiliaryElement.getElementColorStrs(), name, false)
+				name = colorizeStringByArray(i.auxiliaryElement.getElementColorStrs(), name, 3)
 			}
 		case ITEM_BRANDING_SPECIFIC:
 			if i.auxiliaryBrand != nil {
@@ -92,7 +92,7 @@ func (i *item) getName() string {
 		panic("No item name!")
 	}
 	if i.element != nil {
-		return colorizeStringByArray(i.element.getElementColorStrs(), strings.Title(name), false)
+		return colorizeStringByArray(i.element.getElementColorStrs(), strings.Title(name), 3)
 	}
 	return strings.Title(name)
 }

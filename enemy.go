@@ -18,7 +18,7 @@ func (e *enemy) getName() string {
 	if e.element.name != "" {
 		name = e.element.name + " " + name
 	}
-	return colorizeStringByArray(e.element.colorString, strings.Title(name), false)
+	return colorizeStringByArray(e.element.colorString, strings.Title(name), 4)
 }
 
 func (e *enemy) getNameWithStatus() string {
