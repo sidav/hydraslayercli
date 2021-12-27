@@ -55,7 +55,9 @@ func initGame(difficulty string) *game {
 			},
 		},
 	}
+
 	g.dungeon = dungeons[difficulty]
+	g.dungeon.generate()
 	return g
 }
 

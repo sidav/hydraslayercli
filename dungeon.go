@@ -1,9 +1,21 @@
 package main
 
+import (
+	"github.com/sidav/cyclicdungeongenerator/generator"
+)
+
 type dungeon struct {
 	name           string
+	layout         generator.LayoutInterface
+	rooms          [][]*room
 	stagesVariants [][]*stage
 	totalStages    int
+}
+
+type room struct {
+	isCleared bool
+	isGenerated bool
+	stg *stage
 }
 
 type stage struct {
@@ -18,11 +30,36 @@ type stageEnemyData struct {
 	allowBossElement, forceBossElement       bool
 }
 
+func (d *dungeon) generate() {
+	const size = 5
+	gen := generator.InitGeneratorsWrapper()
+	d.layout, _ = gen.GenerateLayout(size, size, "explore_or_fight.ptn")
+	d.rooms = make([][]*stage, size)
+	for i := range d.rooms {
+		d.rooms[i] = make([]*stage, size)
+	}
+	for x := range d.rooms {
+		for y := range d.rooms[x] {
+			if d.layout.GetElement(x, y).IsNode() {
+				d.rooms[x][y] = stage{
+					name:     "",
+					enemies:  nil,
+					treasure: 0,
+				}
+			}
+		}
+	}
+}
+
 func (d *dungeon) getTotalStages() int {
 	if d.totalStages != 0 {
 		return d.totalStages
 	}
 	return len(d.stagesVariants)
+}
+
+func (d *dungeon) getRoomByCoords(x, y int) *stage {
+	return d.rooms[x][y]
 }
 
 func (d *dungeon) getStageNumber(num int) *stage {
