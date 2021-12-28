@@ -30,25 +30,31 @@ type stageEnemyData struct {
 	allowBossElement, forceBossElement       bool
 }
 
-func (d *dungeon) generate() {
-	const size = 5
+func (d *dungeon) generate() (int, int) {
+	const sizew, sizeh = 6, 4
+	playerx, playery := 0, 0
 	gen := generator.InitGeneratorsWrapper()
-	d.layout, _ = gen.GenerateLayout(size, size, "explore_or_fight.ptn")
-	d.rooms = make([][]*stage, size)
+	d.layout, _ = gen.GenerateLayout(sizew, sizeh, "explore_or_fight.ptn")
+	d.rooms = make([][]*room, sizew)
 	for i := range d.rooms {
-		d.rooms[i] = make([]*stage, size)
+		d.rooms[i] = make([]*room, sizeh)
 	}
 	for x := range d.rooms {
 		for y := range d.rooms[x] {
 			if d.layout.GetElement(x, y).IsNode() {
-				d.rooms[x][y] = stage{
-					name:     "",
-					enemies:  nil,
-					treasure: 0,
+				d.rooms[x][y] = &room{
+					isCleared:   false,
+					isGenerated: false,
+					stg:         nil,
 				}
+			}
+			if d.layout.GetElement(x, y).IsNode() && d.layout.GetElement(x, y).HasTag("start") {
+				playerx = x
+				playery = y
 			}
 		}
 	}
+	return playerx, playery
 }
 
 func (d *dungeon) getTotalStages() int {
@@ -58,8 +64,18 @@ func (d *dungeon) getTotalStages() int {
 	return len(d.stagesVariants)
 }
 
-func (d *dungeon) getRoomByCoords(x, y int) *stage {
-	return d.rooms[x][y]
+func (d *dungeon) getOrGenerateStageByRoomCoords(x, y int) *stage {
+	r := d.rooms[x][y]
+	if r == nil {
+		return nil
+	}
+	if r.isGenerated == true {
+		return r.stg
+	}
+	if r.isGenerated == false {
+
+	}
+	return nil
 }
 
 func (d *dungeon) getStageNumber(num int) *stage {

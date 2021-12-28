@@ -86,6 +86,24 @@ func (gs *gameScreen) renderScreen(g *game) {
 	cw.flush()
 }
 
+func (gs *gameScreen) renderDungeon(g *game) {
+	cw.clear()
+	carr := *(g.dungeon.layout.WholeMapToCharArray(false, false, false))
+	carr[5 * g.coordsX + 2][5 * g.coordsY + 2] = '@'
+	for y := range carr[0] {
+		str := ""
+		for x := range carr {
+			run := string(carr[x][y])
+			switch run {
+			case "#": run = colorizeString(Red, run)
+			}
+			str += run
+		}
+		cw.print(str + "\n")
+	}
+	cw.flush()
+}
+
 func (gs *gameScreen) readPlayerInput() string {
 	return cw.read()
 }

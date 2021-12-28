@@ -23,7 +23,8 @@ func charToIndexWithType(char byte) (int, INDEXTYPE) {
 }
 
 func (g *game) playerTurn() {
-	screen.renderScreen(g)
+	// screen.renderScreen(g)
+	screen.renderDungeon(g)
 	input := screen.readPlayerInput()
 	g.parsePlayerInput(input)
 }

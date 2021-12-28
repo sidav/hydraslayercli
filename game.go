@@ -15,6 +15,7 @@ type game struct {
 	allEnemiesSkipTurn bool
 
 	// player-related
+	coordsX, coordsY                    int
 	turnMade, stageFinished             bool
 	currLog                             string
 	currSelectedItem, currSelectedEnemy int
@@ -29,10 +30,10 @@ func (g *game) getCurrentStage() *stage {
 
 func initGame(difficulty string) *game {
 	g := &game{
-		currentTurn:        1,
-		currentStageNumber: 0,
+		currentTurn:                1,
+		currentStageNumber:         0,
 		showShortCombatDescription: true,
-		enemies:            []*enemy{},
+		enemies:                    []*enemy{},
 		player: &player{
 			hp:       10,
 			maxhp:    10,
@@ -57,7 +58,7 @@ func initGame(difficulty string) *game {
 	}
 
 	g.dungeon = dungeons[difficulty]
-	g.dungeon.generate()
+	g.coordsX, g.coordsY = g.dungeon.generate()
 	return g
 }
 
@@ -104,7 +105,7 @@ func (g *game) run() {
 				screen.readPlayerInput()
 				return
 			}
-			if (g.currentStageNumber+1) % 3 == 0 {
+			if (g.currentStageNumber+1)%3 == 0 {
 				g.selectReward()
 			}
 			g.currentStageNumber++
@@ -131,12 +132,14 @@ func (g *game) getTotalExpectedEnemyDamage() int {
 }
 
 func (g *game) selectReward() {
-	choice := showSelectScreen(fmt.Sprintf("Congratulations, you've cleared stage %d!\n" +
-					"Select your reward:", g.currentStageNumber+1),
-					[]string{"Max health + 2", "Strength +1", "Acquire an item"})
+	choice := showSelectScreen(fmt.Sprintf("Congratulations, you've cleared stage %d!\n"+
+		"Select your reward:", g.currentStageNumber+1),
+		[]string{"Max health + 2", "Strength +1", "Acquire an item"})
 	switch choice {
-	case 0: g.player.maxhp += 2
-	case 1: g.player.maxItems += 1
+	case 0:
+		g.player.maxhp += 2
+	case 1:
+		g.player.maxItems += 1
 	case 2:
 		var itemsToGive []*item
 		var namesSlice []string
